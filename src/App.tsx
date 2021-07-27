@@ -1,6 +1,6 @@
 import React from 'react'
-import './App.scss'
-import { Editor } from './editor'
+import './App.css'
+import Editor from './editor'
 
 function App () {
   return (
