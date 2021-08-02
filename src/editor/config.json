@@ -1,180 +1,198 @@
 {
   "style": {
-    "direction": {
-      "key": "direction",
-      "title": "切换方向",
-      "type": "select",
+    "flexDirection": {
+      "label": "切换方向",
       "default": "row",
       "value": [
         {
-          "title": "行",
+          "label": "行",
           "value": "row"
         },
         {
-          "title": "列",
-          "value": "col"
+          "label": "列",
+          "value": "column"
         }
       ]
     },
     "justifyContent": {
-      "title": "主轴对齐",
-      "type": "select",
+      "label": "主轴对齐",
       "default": "flex-start",
       "value": [
         {
-          "title": "居中",
+          "label": "居中",
           "value": "center"
         },
         {
-          "title": "起点",
+          "label": "起点",
           "value": "flex-start"
         },
         {
-          "title": "终点",
+          "label": "终点",
           "value": "flex-end"
         },
         {
-          "title": "环绕平均",
+          "label": "环绕平均",
           "value": "space-between"
         },
         {
-          "title": "尺寸平均",
+          "label": "尺寸平均",
           "value": "space-around"
         },
         {
-          "title": "间隔平均",
+          "label": "间隔平均",
           "value": "space-evenly"
         }
       ]
     },
     "alignItems": {
-      "title": "交叉轴对齐",
-      "type": "select",
+      "label": "交叉轴对齐",
       "default": "center",
       "value": [
         {
-          "title": "居中",
+          "label": "居中",
           "value": "center"
         },
         {
-          "title": "起点",
+          "label": "起点",
           "value": "flex-start"
         },
         {
-          "title": "终点",
+          "label": "终点",
           "value": "flex-end"
         },
         {
-          "title": "环绕平均",
+          "label": "环绕平均",
           "value": "space-between"
         },
         {
-          "title": "尺寸平均",
+          "label": "尺寸平均",
           "value": "space-around"
         },
         {
-          "title": "间隔平均",
+          "label": "间隔平均",
           "value": "space-evenly"
         }
       ]
     },
     "padding": {
-      "type": "input",
-      "title": "边距",
-      "default": "2mm"
+      "label": "边距",
+      "isMulti": true,
+      "default": {
+        "top": "5",
+        "right": "5",
+        "bottom": "5",
+        "left": "5"
+      },
+      "value": [
+        {
+          "label": "上",
+          "key": "top"
+        },
+        {
+          "label": "右",
+          "key": "right"
+        },
+        {
+          "label": "下",
+          "key": "bottom"
+        },
+        {
+          "label": "左",
+          "key": "left"
+        }
+      ]
     },
     "flexGrow": {
-      "title": "主轴计算值",
-      "type": "select",
+      "label": "主轴计算值",
       "default": "1",
-      "value": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5
-      ]
+      "max": 5
     },
     "minWidth": "最小宽",
     "minHeight": "最小高",
     "maxWidth": "最大宽",
     "maxHeight": "最大高",
     "ellipsis": {
-      "title": "超出省略",
-      "type": "select",
+      "label": "超出省略",
       "value": [
-        "启用",
-        "停用"
+        {
+          "label": "停用",
+          "value": "0"
+        },
+        {
+          "label": "启用",
+          "value": "1"
+        }
       ]
     },
     "fontSize": {
-      "title": "字体大小",
-      "default": "3mm"
+      "label": "字体大小",
+      "default": "14",
+      "min": 12,
+      "max": 30
     },
     "fontWeight": {
-      "title": "字体粗细",
+      "label": "字体粗细",
       "type": "select",
-      "default": "400",
-      "value": [
-        500,
-        600,
-        700,
-        800,
-        900
-      ]
+      "max": 900,
+      "min": 500
     },
     "textIndent": "首行缩进",
     "borderBlock": {
-      "title": "边距线",
-      "type": "group",
+      "label": "边距线",
+      "isMulti": true,
       "value": [
         {
-          "title": "方向",
-          "type": "select",
+          "label": "方向",
           "key": "direction",
+          "isMulti": true,
           "value": [
-            "环绕",
-            "上",
-            "下",
-            "左",
-            "右",
-            "上下",
-            "左右"
+            {
+              "label": "上",
+              "value": "top"
+            },
+            {
+              "label": "右",
+              "value": "right"
+            },
+            {
+              "label": "下",
+              "value": "bottom"
+            },
+            {
+              "label": "左",
+              "value": "left"
+            }
           ]
         },
         {
-          "title": "宽度",
-          "key": "width",
-          "type": "input"
+          "label": "宽度",
+          "key": "width"
         },
         {
-          "title": "线型",
+          "label": "线型",
           "key": "style",
-          "type": "select",
           "value": [
             {
-              "title": "实线",
+              "label": "实线",
               "value": "solid"
             },
             {
-              "title": "双实线",
+              "label": "双实线",
               "value": "double"
             },
             {
-              "title": "圆虚线",
+              "label": "圆虚线",
               "value": "dotted"
             },
             {
-              "title": "方虚线",
+              "label": "方虚线",
               "value": "dotted"
             }
           ]
         },
         {
-          "title": "颜色",
-          "key": "color",
-          "type": "input"
+          "label": "颜色",
+          "key": "color"
         }
       ]
     }
@@ -182,31 +200,15 @@
   "content": {
     "readme": "内容",
     "text": {
-      "icon": "description",
       "readme": "文本",
+      "icon": "description",
       "describe?": "说明",
-      "value": "固定文本或解析内容"
+      "value": "属性值"
     },
     "filed": {
       "readme": "字段",
       "icon": "compare",
-      "title": "标题",
-      "value": "固定文本或解析内容",
-      "styles": [
-        "direction",
-        "justifyContent",
-        "alignItems",
-        ["padding", "33"],
-        "flexAuto",
-        "minWidth",
-        "minHeight",
-        "maxWidth",
-        "maxHeight",
-        "ellipsis",
-        "fontSize",
-        "fontWeight",
-        "textIndent"
-      ]
+      "label": "标题"
     },
     "list": {
       "readme": "列表",
@@ -214,73 +216,32 @@
       "describe": "row",
       "colLayout": "启用列容器",
       "size": 1,
-      "items": {
-        "title": {
-          "readme": "标题",
-          "value": "固定文本或解析内容",
-          "styles": [
-            "direction",
-            "justifyContent",
-            "alignItems",
-            "padding",
-            "flexAuto",
-            "minWidth",
-            "minHeight",
-            "maxWidth",
-            "maxHeight",
-            "ellipsis",
-            "fontSize",
-            "fontWeight",
-            "textIndent"
-          ]
-        },
-        "value": {
-          "readme": "标题",
-          "value": "固定文本或解析内容",
-          "styles": [
-            "font-weight",
-            "font-size",
-            "padding",
-            "justify-content"
-          ]
-        }
-      }
+      "title":"标题",
+      "value": "属性"
     },
     "image": {
       "readme": "图片",
-      "icon": "image",
-      "styles": [
-        "width",
-        "height"
-      ]
+      "icon": "image"
     },
     "barcode": {
-      "readme": "条码",
-      "value": "固定文本或解析内容",
-      "styles": [
-        "width",
-        "height"
-      ]
+      "readme": "条码"
     },
     "qrcode": {
       "readme": "二维码",
-      "value": null,
-      "styles": [
-        "height"
-      ]
+      "value": null
     }
   },
   "layout": {
     "readme": "布局",
-    "col": {
-      "readme": "列布局",
+    "row": {
+      "readme": "行布局",
       "styles": [
         "borderBlock",
         "flex"
       ]
     },
-    "row": {
-      "readme": "行布局",
+    "col": {
+      "readme": "列布局",
       "styles": [
         "borderBlock",
         "flex"
@@ -298,14 +259,14 @@
     "readme": "页面",
     "sizes": [
       {
-        "width": "148mm",
-        "height": "210mm",
-        "title": "A5"
+        "width": "148",
+        "height": "210",
+        "label": "A5"
       },
       {
-        "width": "210mm",
-        "height": "297mm",
-        "title": "A4"
+        "width": "210",
+        "height": "297",
+        "label": "A4"
       }
     ],
     "pageable": {

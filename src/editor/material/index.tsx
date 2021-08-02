@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import config from '../config.json'
-import { mapValues } from 'lodash'
 import {
   createStyles,
   FormControl,
@@ -12,15 +11,9 @@ import {
   Switch,
   Theme
 } from '@material-ui/core'
-import {
-  Draggable,
-  DraggableProvided,
-  DraggableStateSnapshot,
-  Droppable,
-  DroppableProvided
-} from 'react-beautiful-dnd'
+import { Draggable, Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
-import { Page } from '../index'
+import { MATERIAL_DROP_ID, DEFINITIONS, Page, BUILD_TYPE } from '../enum'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 )
-const DefinitionContainer = styled.aside`
+const MaterialContainer = styled.aside`
   width: 250px;
   color: #333;
 
@@ -93,15 +86,15 @@ const Clone = styled(Item)`
   }
 `
 
-function Definition (props: {
+function Material (props: {
   onChangePage: (page: Page) => void
   page: Page
 }) {
-  const [size, setSize] = useState<string>('')
+  const [size, setSize] = useState<string>('A4')
 
   const changeSize = (ev: React.ChangeEvent<{ value: string | unknown }>) => {
-    const size = config.page.sizes.find(it => it.title === ev.target.value)
-    setSize(size?.title ?? '')
+    const size = config.page.sizes.find(it => it.label === ev.target.value)
+    setSize(size?.label ?? '')
     props.onChangePage({
       ...props.page,
       width: size?.width ?? '0',
@@ -119,7 +112,7 @@ function Definition (props: {
 
   const PageSizes = () => {
     const sizes = config.page.sizes.map(it =>
-      <MenuItem key={it.title} value={it.title}>{it.title}</MenuItem>
+      <MenuItem key={it.label} value={it.label}>{it.label}</MenuItem>
     )
     const classes = useStyles()
     return (
@@ -138,17 +131,15 @@ function Definition (props: {
     )
   }
 
-  const ItemsBox = (props: { data: object}) => {
-    const list = Object.values(mapValues(props.data, (val: any, key) => ({
-      ...val,
-      key
-    }))).filter(it => it.key !== 'readme')
-
+  const ItemsBox = (props: { page: Page, list: {[key: string]: string | string[] | object[]}[]}) => {
     return (
       <Items>
-        {list.map((it, idx) =>
-          <Draggable key={it.key} draggableId={it.key} index={idx}>
-            {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
+        {props.list.map((it) => (
+          <Draggable
+            key={it.buildId as string}
+            draggableId={it.buildId! as string}
+            index={DEFINITIONS.findIndex(jt => jt.buildId as string === it.buildId as string)}>
+            {(provided, snapshot) => (
               <React.Fragment>
                 <Item
                     ref={provided.innerRef}
@@ -173,17 +164,14 @@ function Definition (props: {
               </React.Fragment>
             )}
           </Draggable>
-        )}
+        ))}
       </Items>
     )
   }
   return (
-    <Droppable droppableId="definition">
-      {(provided: DroppableProvided) => (
-        <DefinitionContainer
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-        >
+    <Droppable droppableId={MATERIAL_DROP_ID} isDropDisabled={true} >
+      {(provided) => (
+        <MaterialContainer ref={provided.innerRef}>
           <Title>{config.page.readme}</Title>
           <PageSizes/>
           <SwitchBox>
@@ -213,13 +201,14 @@ function Definition (props: {
             />
           </SwitchBox>
           <Title>{config.content.readme}</Title>
-          <ItemsBox data={config.content}/>
+          <ItemsBox list={DEFINITIONS.filter(it => it.type === BUILD_TYPE.CONTENT)} page={props.page} />
           <Title>{config.layout.readme}</Title>
-          <ItemsBox data={config.layout}/>
-        </DefinitionContainer>
+          <ItemsBox list={DEFINITIONS.filter(it => it.type === BUILD_TYPE.LAYOUT)} page={props.page} />
+          {provided.placeholder}
+        </MaterialContainer>
       )}
     </Droppable>
   )
 }
 
-export default Definition
+export default Material

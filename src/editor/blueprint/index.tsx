@@ -1,8 +1,8 @@
 import { makeStyles, Paper, Tab, Tabs } from '@material-ui/core'
 import React, { useState } from 'react'
-import Style from './style'
+import StyleBlueprint from './style-blueprint'
 import styled from 'styled-components'
-import { Content, Layout } from '../index'
+import { Content, Layout, Style } from '../enum'
 
 const useStyles = makeStyles({
   tabs: {
@@ -10,15 +10,15 @@ const useStyles = makeStyles({
   }
 })
 
-const PropertyContainer = styled.aside`
+const BlueprintContainer = styled.aside`
   width: 300px;
   display: flex;
   flex-direction: column;
 `
 
-function Property (props: {
-  value: Layout | Content | null
-  onChange: (key: string, val: boolean | string[] | string | number) => void
+function Blueprint (props: {
+  value: Layout | Content | undefined
+  onChange: (style: Style, data: {[key: string]: string}) => void
 }) {
   const [current, setCurrent] = useState<number>(0)
 
@@ -28,7 +28,7 @@ function Property (props: {
 
   const classes = useStyles()
   return (
-    <PropertyContainer>
+    <BlueprintContainer>
       <Paper square className={classes.tabs}>
         <Tabs
           value={current}
@@ -41,14 +41,14 @@ function Property (props: {
           <Tab label="属性"/>
         </Tabs>
       </Paper>
-      <div hidden={current !== 0 && !!props.value} className="f-auto">
-        <Style value={props.value!} onChange={props.onChange}/>
+      <div hidden={current !== 0}>
+        {!!props.value && (<StyleBlueprint value={props.value!} onChange={style => { props.onChange(style, props.value!.data) }}/>)}
       </div>
-      <div hidden={current! !== 1 && !!props.value} className="f-auto">
-        属性
+      <div hidden={current !== 1}>
+        {!!props.value && (<span>属性</span>)}
       </div>
-    </PropertyContainer>
+    </BlueprintContainer>
   )
 }
 
-export default Property
+export default Blueprint
