@@ -36,7 +36,7 @@ function Editor () {
 
   const [layouts] = useState<Layout[]>([])
 
-  const [activeId] = useState<string | undefined>()
+  const [active, setActive] = useState<Layout | Content | undefined>()
 
   const changeProperty = (style: Style, data: { [key: string]: string }) => {
     console.log(style, data)
@@ -72,12 +72,13 @@ function Editor () {
           data: {},
           contents: []
         }
+        setActive(layout)
       } else {
         // 内容需要先有布局
         layout = {
           id: `${BUILD_TYPE.LAYOUT}-${uuid4()}`,
-          style: newStyle(BUILD_IDS.ROW),
-          buildId: BUILD_IDS.ROW,
+          style: newStyle(BUILD_IDS.SIMPLE),
+          buildId: BUILD_IDS.SIMPLE,
           data: {},
           contents: [
             {
@@ -88,6 +89,7 @@ function Editor () {
             }
           ]
         }
+        setActive(layout.contents[0])
       }
 
       layouts.splice(destination.index, 0, layout)
@@ -100,8 +102,8 @@ function Editor () {
     //   const target = contents[source.index]
     //   const layout: Layout = {
     //     id: `${BUILD_TYPE.LAYOUT}-${uuid4()}`,
-    //     style: newStyle(BUILD_IDS.ROW),
-    //     buildId: BUILD_IDS.ROW,
+    //     style: newStyle(BUILD_IDS.SIMPLE),
+    //     buildId: BUILD_IDS.SIMPLE,
     //     data: {},
     //     contents: [target]
     //   }
@@ -146,13 +148,16 @@ function Editor () {
       const origin = layouts.find(it => it.id === source.droppableId)!
       const target = layouts.find(it => it.id === destination.droppableId)!
       const index = origin.contents[source.index]
-      console.log(index, draggableId, origin.contents, target.contents)
       target.contents.splice(destination.index, 0, origin.contents[source.index])
       origin.contents.splice(source.index, 1)
       // 删除空布局
       if (!origin.contents.length) {
         const idx = layouts.findIndex(it => it.id === source.droppableId)!
         layouts.splice(idx, 1)
+        console.log(index, draggableId)
+        console.log(origin.contents)
+        console.log(target.contents)
+        console.log(layouts)
       }
       return
     }
@@ -164,22 +169,12 @@ function Editor () {
     console.log('onBeforeCapture---', before)
   }
 
-  const active = () => {
-    if (activeId) {
-      if (activeId.startsWith(BUILD_TYPE.LAYOUT)) {
-        return layouts.find(it => it.id === activeId)
-      } else if (activeId.startsWith(BUILD_TYPE.CONTENT)) {
-        return layouts.flatMap(it => it.contents).find(it => it.id === activeId)
-      }
-    }
-  }
-
   return (
     <EditorContainer>
       <DragDropContext onDragEnd={onDragEnd} onBeforeCapture={onBeforeCapture}>
         <Material page={page} onChangePage={setPage}/>
-        <Build page={page} layouts={layouts} active={active()}/>
-        <Blueprint value={active()} onChange={changeProperty}/>
+        <Build page={page} layouts={layouts} active={active} onChangeActive={setActive}/>
+        <Blueprint value={active} onChange={changeProperty}/>
       </DragDropContext>
     </EditorContainer>
   )

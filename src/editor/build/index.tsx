@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Header from './header'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
-import { Layout, Page, BUILD_DROP_ID, BUILD_IDS, Content, BUILD_TYPE, DEFINITIONS } from '../enum'
+import { BUILD_DROP_ID, BUILD_IDS, BUILD_TYPE, Content, DEFINITIONS, Layout, Page } from '../enum'
 import { toReactStyle } from '../utils'
 
 const BuildContainer = styled.section`
@@ -26,6 +26,7 @@ const PageContainer = styled.article<{isDraggingOver: boolean}>`
   position: relative;
   display: flex;
   flex-direction: column;
+  box-sizing: content-box;
   border: 1px ${props => (props.isDraggingOver ? 'dashed #4099ff' : 'solid #ddd')};
 `
 
@@ -54,10 +55,10 @@ const ContentContainer = styled(LayoutContainer)`
   flex: 1;
 `
 
-const RowLayout = styled.div<{isDraggingOver: boolean}>`
+const SimpleLayout = styled.div<{isDraggingOver: boolean}>`
   display: flex;
+  flex: auto;
   flex-direction: row;
-  flex: 1;
   ${props => props.isDraggingOver ? 'border: 1px dashed #4099ff;' : ''}
 `
 
@@ -71,73 +72,90 @@ const Notice = styled.div`
   color: #aaa;
 `
 
-function View (props: { page: Page, layouts: Layout[], active: Layout | Content | undefined }) {
+function Build (props: {
+  page: Page,
+  layouts: Layout[], active: Layout | Content | undefined,
+  onChangeActive: (active: Layout | Content) => void
+}) {
   const width = props.page.width ? `${props.page.width}mm` : ''
   const height = props.page.height ? `${props.page.height}mm` : ''
 
-  const TextContent = (props: {content: Content}) => {
+  const TextContent = (props: {
+    content: Content,
+    onChangeActive: (active: Layout | Content) => void
+  }) => {
     let value = props.content.data.value
     if (props.content.style.flexDirection === 'column') {
       value = Array.from(value).map((it, idx) => (<div key={idx}>{it}</div>)).join()
     }
     return (
-      <div style={{ ...toReactStyle(props.content.style) }}>
-        {value || (<Notice>{props.content.buildId}-{props.content.id.substring(0, 5)}</Notice>)}
+      <div style={{ ...toReactStyle(props.content.style) }} onClick={() => props.onChangeActive(props.content)}>
+        {value || <Notice>请设置属性({DEFINITIONS.find(it => it.buildId === props.content.buildId)?.readme})</Notice>}
       </div>
     )
   }
 
-  const ContentComp = (props: {content: Content}) => {
+  const ContentComp = (props: {
+    content: Content,
+    onChangeActive: (active: Layout | Content) => void
+  }) => {
     switch (props.content.buildId) {
       case BUILD_IDS.TEXT:
-        return (<TextContent content={props.content} />)
+        return (<TextContent content={props.content} onChangeActive={props.onChangeActive} />)
       default:
         return null
     }
   }
 
-  const Layout = (props: {layout: Layout}) => {
+  const Layout = (props: {
+    layout: Layout,
+    onChangeActive: (active: Layout | Content) => void
+  }) => {
     const layoutStyle = toReactStyle(props.layout.style)
-    return (
-        <Droppable droppableId={props.layout.id} direction={'horizontal'}>
-          {(provided, dropSnapshot) => {
-            switch (props.layout.buildId) {
-              case BUILD_IDS.ROW:
-                return (
-                    <RowLayout ref={provided.innerRef}
-                               isDraggingOver={dropSnapshot.isDraggingOver}
-                               style={layoutStyle}>
-                      {props.layout.contents.length
-                        ? props.layout.contents.map((it, index) => (
-                        <Draggable
-                          key={it.id}
-                          draggableId={it.id}
-                          index={index}
+
+    switch (props.layout.buildId) {
+      case BUILD_IDS.SIMPLE:
+        return (
+          <Droppable
+            droppableId={props.layout.id}
+            direction={ 'horizontal' }
+          >
+            {(provided, dropSnapshot) => (
+              <SimpleLayout
+                ref={provided.innerRef}
+                         isDraggingOver={dropSnapshot.isDraggingOver}
+                         style={layoutStyle}
+              >
+                {props.layout.contents.length
+                  ? props.layout.contents.map((it, index) => (
+                    <Draggable
+                      key={it.id}
+                      draggableId={it.id}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
+                        <ContentContainer
+                          ref={provided.innerRef}
+                          isDragging={snapshot.isDragging}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={provided.draggableProps.style}
                         >
-                          {(provided, snapshot) => (
-                            <ContentContainer
-                              ref={provided.innerRef}
-                              isDragging={snapshot.isDragging}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              style={provided.draggableProps.style}
-                            >
-                              <ContentComp content={it} />
-                            </ContentContainer>
-                          )}
-                        </Draggable>
-                        ))
-                        : <Notice>请添加内容({DEFINITIONS.find(it => it.buildId === props.layout.buildId)?.readme})</Notice>
-                      }
-                      {provided.placeholder}
-                    </RowLayout>
-                )
-              default:
-                return (<div/>)
-            }
-          }}
-        </Droppable>
-    )
+                          <ContentComp content={it} onChangeActive={props.onChangeActive} />
+                        </ContentContainer>
+                      )}
+                    </Draggable>
+                  ))
+                  : <Notice>请设置属性({DEFINITIONS.find(it => it.buildId === props.layout.buildId)?.readme})</Notice>
+                }
+                {provided.placeholder}
+              </SimpleLayout>
+            )}
+          </Droppable>
+        )
+      default:
+        return null
+    }
   }
 
   console.log('layouts', props.layouts)
@@ -153,9 +171,7 @@ function View (props: { page: Page, layouts: Layout[], active: Layout | Content 
               {(provided, dropSnapshot) => (
                 <PageContainer
                   ref={provided.innerRef}
-                  isDraggingOver={
-                    dropSnapshot.isDraggingOver
-                  }
+                  isDraggingOver={dropSnapshot.isDraggingOver}
                   {...provided.droppableProps}
                   style={{
                     width: props.page.landscape ? height : width,
@@ -178,7 +194,9 @@ function View (props: { page: Page, layouts: Layout[], active: Layout | Content 
                               : provided.draggableProps.style}
                           >
                             <LayoutHandle
-                              {...provided.dragHandleProps}>
+                              {...provided.dragHandleProps}
+                              onClick={() => props.onChangeActive(it)}
+                            >
                               <svg
                                 width="24"
                                 height="24"
@@ -189,7 +207,7 @@ function View (props: { page: Page, layouts: Layout[], active: Layout | Content 
                                 />
                               </svg>
                             </LayoutHandle>
-                            <Layout layout={it} />
+                            <Layout layout={it} onChangeActive={props.onChangeActive} />
                           </LayoutContainer>
                         )}
                       </Draggable>
@@ -207,4 +225,4 @@ function View (props: { page: Page, layouts: Layout[], active: Layout | Content 
   )
 }
 
-export default View
+export default Build

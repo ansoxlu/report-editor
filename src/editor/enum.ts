@@ -8,9 +8,9 @@ export enum BUILD_IDS {
   IMAGE = 'image',
   BARCODE = 'barcode',
   QRCODE = 'qrcode',
-  COL = 'col',
-  ROW = 'row',
-  ABSOLUTE = 'ABSOLUTE',
+  SIMPLE = 'simple',
+  ABSOLUTE = 'absolute',
+  TABLE = 'table',
 }
 
 export enum BUILD_TYPE {

@@ -9,12 +9,12 @@ const getRawStyles = (id: BUILD_IDS) => {
         styleAll,
         styleAll
       ]
-    case BUILD_IDS.ROW:
-      return config.layout.row.styles
-    case BUILD_IDS.COL:
-      return config.layout.col.styles
+    case BUILD_IDS.SIMPLE:
+      return config.layout.simple.styles
     case BUILD_IDS.ABSOLUTE:
       return config.layout.absolute.styles
+    case BUILD_IDS.TABLE:
+      return config.layout.table.styles
     default:
       return styleAll
   }

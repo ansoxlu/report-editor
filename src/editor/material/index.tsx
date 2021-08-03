@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
-import { MATERIAL_DROP_ID, DEFINITIONS, Page, BUILD_TYPE } from '../enum'
+import { MATERIAL_DROP_ID, DEFINITIONS, Page, BUILD_TYPE, BUILD_IDS } from '../enum'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -75,9 +75,12 @@ const Item = styled.li<{isDragging?: boolean}>`
   margin: 1%;
   align-items: center;
   background: #f3f3f3;
-  padding-left: 5px;
   border: 1px ${props => (props.isDragging ? 'dashed #4099ff' : 'solid #ddd')};
   user-select: none;
+
+  > svg {
+    margin: 0 5px;
+  }
 `
 
 const Clone = styled(Item)`
@@ -134,37 +137,47 @@ function Material (props: {
   const ItemsBox = (props: { page: Page, list: {[key: string]: string | string[] | object[]}[]}) => {
     return (
       <Items>
-        {props.list.map((it) => (
-          <Draggable
-            key={it.buildId as string}
-            draggableId={it.buildId! as string}
-            index={DEFINITIONS.findIndex(jt => jt.buildId as string === it.buildId as string)}>
-            {(provided, snapshot) => (
-              <React.Fragment>
-                <Item
+        {props.list.map((it) => it.buildId === BUILD_IDS.TABLE
+          ? (
+            <Item>
+              <svg className="icon" aria-hidden="true">
+                <use xlinkHref="#icon-bar-code"/>
+              </svg>
+              {it.readme}---
+            </Item>
+            )
+          : (
+            <Draggable
+              key={it.buildId as string}
+              draggableId={it.buildId! as string}
+              index={DEFINITIONS.findIndex(jt => jt.buildId as string === it.buildId as string)}>
+              {(provided, snapshot) => (
+                <React.Fragment>
+                  <Item
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     isDragging={snapshot.isDragging}
                     style={snapshot.isDragging ? provided.draggableProps.style : {}}
-                >
-                  <svg className="icon" aria-hidden="true">
-                    <use xlinkHref="#icon-bar-code"/>
-                  </svg>
-                  {it.readme}
-                </Item>
-                {snapshot.isDragging && (
-                  <Clone>
+                  >
                     <svg className="icon" aria-hidden="true">
                       <use xlinkHref="#icon-bar-code"/>
                     </svg>
                     {it.readme}
-                  </Clone>
-                )}
-              </React.Fragment>
-            )}
-          </Draggable>
-        ))}
+                  </Item>
+                  {snapshot.isDragging && (
+                    <Clone>
+                      <svg className="icon" aria-hidden="true">
+                        <use xlinkHref="#icon-bar-code"/>
+                      </svg>
+                      {it.readme}
+                    </Clone>
+                  )}
+                </React.Fragment>
+              )}
+            </Draggable>
+            )
+        )}
       </Items>
     )
   }

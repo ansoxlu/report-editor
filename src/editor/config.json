@@ -78,10 +78,10 @@
       "label": "边距",
       "isMulti": true,
       "default": {
-        "top": "5",
-        "right": "5",
-        "bottom": "5",
-        "left": "5"
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0"
       },
       "value": [
         {
@@ -214,7 +214,7 @@
       "readme": "列表",
       "icon": "ListAlt",
       "describe": "row",
-      "colLayout": "启用列容器",
+      "table": "启用表格布局",
       "size": 1,
       "title":"标题",
       "value": "属性"
@@ -233,15 +233,8 @@
   },
   "layout": {
     "readme": "布局",
-    "row": {
-      "readme": "行布局",
-      "styles": [
-        "borderBlock",
-        "flex"
-      ]
-    },
-    "col": {
-      "readme": "列布局",
+    "simple": {
+      "readme": "普通布局",
       "styles": [
         "borderBlock",
         "flex"
@@ -249,6 +242,13 @@
     },
     "absolute": {
       "readme": "固定定位",
+      "styles": [
+        "min-width",
+        "max-width"
+      ]
+    },
+    "table": {
+      "readme": "表格内容",
       "styles": [
         "min-width",
         "max-width"
