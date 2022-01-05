@@ -1,53 +1,51 @@
 import React, { useState } from 'react'
 import Material from './material'
-import Build from './build'
 import Blueprint from './blueprint'
-import { BeforeCapture, DragDropContext, DropResult } from 'react-beautiful-dnd'
+import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import styled from 'styled-components'
-import {
-  BUILD_DROP_ID,
-  BUILD_IDS,
-  BUILD_TYPE,
-  Content,
-  DEFINITIONS,
-  Layout,
-  MATERIAL_DROP_ID,
-  Page,
-  Style
-} from './enum'
-import { newStyle } from './utils'
-import { v4 as uuid4 } from 'uuid'
+import { DroppableIds, flattenData, getData, MaterialType, Page } from './constants'
+import Building from './building'
+import { LayoutAll, createActive as createLayoutActive, LayoutActive } from './layout'
+import Row from './layout/row'
+import { ContentActive, ContentAll, createActive as createContentActive } from './content'
+import { message } from 'antd'
 
-const EditorContainer = styled.div`
+const Container = styled.div`
   width: 100vw;
   height: 100vh;
   display: flex;
 `
 
+const data = flattenData({
+  hospital: {
+    name: '人民医院'
+  },
+  patient: {
+    name: '张三',
+    gender: '男',
+    age: '18岁'
+  }
+})
+
 function Editor () {
   const [page, setPage] = useState<Page>(
     {
-      width: '0',
-      height: '',
+      width: 0,
+      height: 0,
       landscape: false,
-      pageable: false
+      styles: [],
+      contexts: [],
+      absolutes: []
     }
   )
 
-  const [layouts] = useState<Layout[]>([])
+  const [layouts] = useState<LayoutActive<any>[]>([])
 
-  const [active, setActive] = useState<Layout | Content | undefined>()
+  const [active, setActive] = useState<LayoutActive<any> | ContentActive<any, any> | undefined>()
 
-  const changeProperty = (style: Style, data: { [key: string]: string }) => {
-    console.log(style, data)
-  }
   const onDragEnd = (result: DropResult) => {
-    // if (result.source.droppableId === 'definition') {
-    //
-    // }
     // dropped outside the list
     console.log('result => ', result)
-    // setActiveId(result.draggableId)
 
     const {
       destination,
@@ -55,109 +53,113 @@ function Editor () {
       draggableId
     } = result
 
-    if (!destination || destination.droppableId === MATERIAL_DROP_ID) {
+    if (!destination || destination.droppableId === DroppableIds.Material) {
       return
     }
 
-    // 从素材区 => 到建造区
-    if (source.droppableId === MATERIAL_DROP_ID && destination.droppableId === BUILD_DROP_ID) {
-      const target = DEFINITIONS.find(it => it.buildId === draggableId)!
-      let layout: Layout
-      // 布局类型
-      if (target.type === BUILD_TYPE.LAYOUT) {
-        layout = {
-          id: `${BUILD_TYPE.LAYOUT}-${uuid4()}`,
-          style: newStyle(target.buildId as BUILD_IDS),
-          buildId: target.buildId as BUILD_IDS,
-          data: {},
-          contents: []
+    // 拖动素材
+    if (source.droppableId === DroppableIds.Material) {
+      // 移动到空白区域
+      if (destination.droppableId === DroppableIds.Building) {
+        const lay = LayoutAll.find(it => it.key === draggableId)
+        // 移动内容到基础布局
+        const layout = createLayoutActive(lay || Row)
+        // 添加内容到布局
+        if (!lay) {
+          const content = ContentAll.find(it => it.key === draggableId)!
+          const contentActive = createContentActive(layout, content)
+          layout.contents.push(contentActive)
+          contentActive.layout = layout
+          setActive(contentActive)
         }
-        setActive(layout)
-      } else {
-        // 内容需要先有布局
-        layout = {
-          id: `${BUILD_TYPE.LAYOUT}-${uuid4()}`,
-          style: newStyle(BUILD_IDS.SIMPLE),
-          buildId: BUILD_IDS.SIMPLE,
-          data: {},
-          contents: [
-            {
-              id: `${BUILD_TYPE.CONTENT}-${uuid4()}`,
-              buildId: target.buildId as BUILD_IDS,
-              style: newStyle(target.buildId as BUILD_IDS),
-              data: {}
-            }
-          ]
-        }
-        setActive(layout.contents[0])
+        layouts.splice(destination.index, 0, layout)
+        return
       }
+      // null 表示移动布局
+      const content = ContentAll.find(it => it.key === draggableId)!
 
-      layouts.splice(destination.index, 0, layout)
+      // 禁止布局套布局
+      if (!content) {
+        return
+      }
+      // 移动到现有布局
+      const layout = layouts.find(it => destination.droppableId.startsWith(it.id))!
+      const contentActive = createContentActive(layout, content)
+      layout.contents.splice(destination.index, 0, contentActive)
+      setActive(contentActive)
       return
     }
 
-    // 内容 => 建造区
-    // if (draggableId.startsWith(BUILD_TYPE.CONTENT) && destination.droppableId === BUILD_DROP_ID) {
-    //   const contents = layouts.find(it => it.id === source.droppableId)!.contents
-    //   const target = contents[source.index]
-    //   const layout: Layout = {
-    //     id: `${BUILD_TYPE.LAYOUT}-${uuid4()}`,
-    //     style: newStyle(BUILD_IDS.SIMPLE),
-    //     buildId: BUILD_IDS.SIMPLE,
-    //     data: {},
-    //     contents: [target]
-    //   }
-    //   layouts.splice(destination.index, 0, layout)
-    //   contents.splice(source.index, 1)
-    //   // 删除空布局
-    //   if (!contents.length) {
-    //     const idx = layouts.findIndex(it => it.id === source.droppableId)!
-    //     layouts.splice(idx, 1)
-    //   }
-    //   return
-    // }
-
-    // 素材区 => 布局内容
-    if (source.droppableId === MATERIAL_DROP_ID && destination.droppableId.startsWith(BUILD_TYPE.LAYOUT)) {
-      const target = DEFINITIONS.find(it => it.buildId === draggableId)!
-      const content: Content = {
-        id: `${BUILD_TYPE.CONTENT}-${uuid4()}`,
-        buildId: draggableId as BUILD_IDS,
-        style: newStyle(target.buildId as BUILD_IDS),
-        data: {}
-      }
-      const layout = layouts.find(it => it.id === destination.droppableId)!
-      layout.contents.splice(destination.index, 0, content)
-      return
-    }
-
-    // 布局 或 同布局内容 修改顺序
+    // 移动布局/内容, 修改顺序
     if (source.droppableId === destination.droppableId) {
-      const node = source.droppableId.startsWith(BUILD_TYPE.LAYOUT) ? layouts.find(it => it.id === destination.droppableId)!.contents : layouts
-      const target = node[source.index]
-      // 删除原目录
-      node.splice(source.index, 1)
-      // 插入新目录
+      // 删除后的位置调整
       const offset = destination.index > 0 && source.index > destination.index ? destination.index - 1 : 0
-      node.splice(destination.index - offset, 0, target)
+
+      // 布局修改顺序
+      if (source.droppableId === DroppableIds.Building) {
+        const target = layouts[source.index]
+        // 删除原有
+        layouts.splice(source.index, 1)
+        // 重新插入
+        layouts.splice(destination.index - offset, 0, target)
+        setActive(target)
+        return
+      }
+      // 内容修改顺序
+      const layout = layouts.find(it => destination.droppableId.startsWith(it.id))!
+      const contents = layout.contents
+      const target = contents[source.index]
+      // 删除原有
+      contents.splice(source.index, 1)
+      // 重新插入
+      contents.splice(destination.index - offset, 0, target)
+      target.layout = layout
+      setActive(target)
       return
     }
 
-    // 内容 => 到另一布局
-    if (draggableId.startsWith(BUILD_TYPE.CONTENT) && destination.droppableId.startsWith(BUILD_TYPE.LAYOUT)) {
-      const origin = layouts.find(it => it.id === source.droppableId)!
-      const target = layouts.find(it => it.id === destination.droppableId)!
-      const index = origin.contents[source.index]
-      target.contents.splice(destination.index, 0, origin.contents[source.index])
-      origin.contents.splice(source.index, 1)
-      // 删除空布局
-      if (!origin.contents.length) {
-        const idx = layouts.findIndex(it => it.id === source.droppableId)!
+    // 移动布局到内容
+    if (draggableId.endsWith(MaterialType.Layout) && destination.droppableId.endsWith(MaterialType.Content)) {
+      const index = layouts.findIndex(it => draggableId.startsWith(it.id))
+      const contents = layouts[index].contents
+      // 删除旧布局
+      layouts.splice(index, 1)
+      // 将旧布局内容合并到目标布局
+      const layout = layouts.find(it => destination.droppableId.startsWith(it.id))!
+      if (layout.source !== Row) {
+        return
+      }
+      layout.contents.splice(destination.index, 0, ...contents)
+    }
+
+    // 移动内容
+    if (!draggableId.endsWith(MaterialType.Layout) && !draggableId.endsWith(MaterialType.Content)) {
+      const sourceLayout = layouts.find(it => source.droppableId.startsWith(it.id))!
+      const content = sourceLayout.contents.find(it => it.id === draggableId)!
+
+      // 内容移出旧布局,插入新布局
+      if (destination.droppableId === DroppableIds.Building) {
+        const layout = createLayoutActive(Row)
+        layout.contents.push(content)
+        layouts.splice(destination.index, 0, layout)
+        content.layout = layout
+        setActive(content)
+      }
+      // 向目标布局插入
+      const destinationLayout = layouts.find(it => destination.droppableId.startsWith(it.id))!
+      if (!destinationLayout || destinationLayout.source !== Row) {
+        return
+      }
+      destinationLayout.contents.splice(destination.index, 0, content)
+      content.layout = destinationLayout
+      setActive(content)
+
+      // 从原布局删除内容
+      sourceLayout.contents.splice(source.index, 1)
+      // 判断删除原空布局
+      if (!sourceLayout.contents.length) {
+        const idx = layouts.findIndex(it => source.droppableId.startsWith(it.id))!
         layouts.splice(idx, 1)
-        console.log(index, draggableId)
-        console.log(origin.contents)
-        console.log(target.contents)
-        console.log(layouts)
       }
       return
     }
@@ -165,18 +167,50 @@ function Editor () {
     console.log('layouts => ', layouts)
   }
 
-  const onBeforeCapture = (before: BeforeCapture) => {
-    console.log('onBeforeCapture---', before)
+  const changeActive = (layoutId: string, contentId?: string) => {
+    const layout = layouts.find(it => it.id === layoutId)!
+    if (contentId) {
+      const content = layout.contents.find(it => it.id === contentId)!
+      setActive(content)
+    } else {
+      setActive(layout)
+    }
+  }
+
+  const changeActiveValue = (value: LayoutActive<any> | ContentActive<any, any>) => {
+    setActive(value)
+    let layoutIndex = layouts.findIndex(it => it.id === value.id)
+    if (layoutIndex !== -1) {
+      const layout = layouts[layoutIndex]
+      layout.value = value.value
+      layout.styles = value.styles
+      layouts.splice(layoutIndex, 1, layout)
+      return
+    }
+    const content = value as ContentActive<any, any>
+    layoutIndex = layouts.findIndex(it => it.id === content.layout.id)
+    if (layoutIndex === -1) {
+      setActive(undefined)
+      message.error('无效的修改,编辑的内容已过期')
+      return
+    }
+    const layout = layouts[layoutIndex]
+    const contentIndex = layout.contents.findIndex(it => it.id === content.id)
+    const target = layout.contents[contentIndex]
+    target.value = value.value
+    target.styles = value.styles
+    layout.contents.splice(contentIndex, 1, target)
+    layouts.splice(layoutIndex, 1, layout)
   }
 
   return (
-    <EditorContainer>
-      <DragDropContext onDragEnd={onDragEnd} onBeforeCapture={onBeforeCapture}>
-        <Material page={page} onChangePage={setPage}/>
-        <Build page={page} layouts={layouts} active={active} onChangeActive={setActive}/>
-        <Blueprint value={active} onChange={changeProperty}/>
+    <Container>
+      <DragDropContext onDragEnd={onDragEnd}>
+         <Material page={page} onChangePage={setPage}/>
+         <Building page={page} layouts={layouts} getData={(texts) => getData(texts, data)} onChangeActive={changeActive} />
+         <Blueprint value={active} data={data} onChange={changeActiveValue}/>
       </DragDropContext>
-    </EditorContainer>
+    </Container>
   )
 }
 

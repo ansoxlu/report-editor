@@ -1,53 +1,70 @@
-import { makeStyles, Paper, Tab, Tabs } from '@material-ui/core'
 import React, { useState } from 'react'
-import StyleBlueprint from './style-blueprint'
 import styled from 'styled-components'
-import { Content, Layout, Style } from '../enum'
+import { LayoutActive } from '../layout'
+import { ContentActive } from '../content'
+import { Tabs } from 'antd'
 
-const useStyles = makeStyles({
-  tabs: {
-    height: 45
-  }
-})
-
-const BlueprintContainer = styled.aside`
+const Container = styled.aside`
   width: 300px;
   display: flex;
   flex-direction: column;
 `
+const Items = styled.div`
+  border-bottom: 1px solid #aaa;
+  padding: 10px 15px;
+`
+const Title = styled.span`
+  display: inline-block;
+  width: 80px;
+`
 
 function Blueprint (props: {
-  value: Layout | Content | undefined
-  onChange: (style: Style, data: {[key: string]: string}) => void
+  value: LayoutActive<any> | ContentActive<any, any> | undefined,
+  data: object,
+  onChange: (value: LayoutActive<any> | ContentActive<any, any>) => void
 }) {
   const [current, setCurrent] = useState<number>(0)
 
-  const changeTab = (ev: React.ChangeEvent<{}>, val: number) => {
-    setCurrent(val)
+  const changeValue = (value: any) => {
+    props.onChange({
+      ...props.value!,
+      value: value
+    })
+  }
+  const changeStyle = (key: string, value: any) => {
+    const styles = props.value!.styles
+    const index = styles.findIndex(it => it.source.key === key)
+    const style = styles[index]
+    style.value = value
+    styles.splice(index, 1, style)
+
+    props.onChange({
+      ...props.value!,
+      styles
+    })
   }
 
-  const classes = useStyles()
   return (
-    <BlueprintContainer>
-      <Paper square className={classes.tabs}>
-        <Tabs
-          value={current}
-          indicatorColor="primary"
-          textColor="primary"
-          onChange={changeTab}
-          aria-label="disabled tabs example"
-        >
-          <Tab label="样式"/>
-          <Tab label="属性"/>
-        </Tabs>
-      </Paper>
-      <div hidden={current !== 0}>
-        {!!props.value && (<StyleBlueprint value={props.value!} onChange={style => { props.onChange(style, props.value!.data) }}/>)}
-      </div>
-      <div hidden={current !== 1}>
-        {!!props.value && (<span>属性</span>)}
-      </div>
-    </BlueprintContainer>
+    <Container>
+      <Tabs
+        activeKey={String(current)}
+        onChange={v => setCurrent(Number(v))}
+        centered
+        size="large"
+      >
+        <Tabs.TabPane tab="样式" key="0">
+          {!!props.value && (props.value.styles.map((it, index) => (
+              <Items key={index} >
+                <Title>{it.source.title}</Title>
+                <it.source.Blueprint value={it.value} onChange={value => changeStyle(it.source.key, value)}/>
+              </Items>
+          )))}
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="属性" key="1">
+          {!!props.value && (<props.value.source.Blueprint value={props.value.value} onChange={value => changeValue(value)} />)}
+        </Tabs.TabPane>
+      </Tabs>
+    </Container>
   )
 }
 
