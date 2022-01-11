@@ -19,9 +19,9 @@ const Title = styled.span`
 `
 
 function Blueprint (props: {
-  value: LayoutActive<any> | ContentActive<any, any> | undefined,
+  value: LayoutActive | ContentActive<any, any> | undefined,
   data: object,
-  onChange: (value: LayoutActive<any> | ContentActive<any, any>) => void
+  onChange: (value: LayoutActive | ContentActive<any, any>) => void
 }) {
   const [current, setCurrent] = useState<number>(0)
 
@@ -31,6 +31,14 @@ function Blueprint (props: {
       value: value
     })
   }
+
+  const changeContents = (contents: ContentActive<any, any>[]) => {
+    props.onChange({
+      ...props.value!,
+      contents
+    })
+  }
+
   const changeStyle = (key: string, value: any) => {
     const styles = props.value!.styles
     const index = styles.findIndex(it => it.source.key === key)
@@ -44,6 +52,19 @@ function Blueprint (props: {
     })
   }
 
+  const renderContentOrLayout = () => {
+    if ((props.value as LayoutActive)?.contents) {
+      const layout = props.value as LayoutActive
+      return (
+        <layout.source.Blueprint contents={(props.value as LayoutActive).contents} onChangeContents={changeContents} />
+      )
+    }
+    const content = props.value as ContentActive<any, any>
+    return (
+      <content.source.Blueprint value={content.value} onChange={changeValue} />
+    )
+  }
+
   return (
     <Container>
       <Tabs
@@ -52,16 +73,16 @@ function Blueprint (props: {
         centered
         size="large"
       >
-        <Tabs.TabPane tab="样式" key="0">
-          {!!props.value && (props.value.styles.map((it, index) => (
-              <Items key={index} >
-                <Title>{it.source.title}</Title>
-                <it.source.Blueprint value={it.value} onChange={value => changeStyle(it.source.key, value)}/>
-              </Items>
-          )))}
+        <Tabs.TabPane tab="属性" key="0">
+          {!!props.value && (renderContentOrLayout())}
         </Tabs.TabPane>
-        <Tabs.TabPane tab="属性" key="1">
-          {!!props.value && (<props.value.source.Blueprint value={props.value.value} onChange={value => changeValue(value)} />)}
+        <Tabs.TabPane tab="样式" key="1">
+          {!!props.value && (props.value.styles.map((it, index) => (
+            <Items key={index} >
+              <Title>{it.source.title}</Title>
+              <it.source.Blueprint value={it.value} onChange={value => changeStyle(it.source.key, value)}/>
+            </Items>
+          )))}
         </Tabs.TabPane>
       </Tabs>
     </Container>

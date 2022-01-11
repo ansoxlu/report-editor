@@ -31,13 +31,13 @@ export interface ContentActive<T, R> {
   styles: StyleActive<any>[]
   value: T
   source: Content<T, R>
-  layout: LayoutActive<any>
+  layout: LayoutActive
   toJSON: () => any
 }
 
 export const ContentAll: Content<any, any>[] = [Text]
 
-export const createActive = (layout: LayoutActive<any>, content: Content<any, any>): ContentActive<any, any> => {
+export const createActive = (layout: LayoutActive, content: Content<any, any>): ContentActive<any, any> => {
   return {
     id: uuid4(),
     layout: layout,

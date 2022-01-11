@@ -1,6 +1,5 @@
-import React, { CSSProperties } from 'react'
-import { Layout } from './index'
-import { ContentActive } from '../content'
+import React from 'react'
+import { Layout, LayoutBuildingProps, LayoutRenderProps } from './index'
 import styled from 'styled-components'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import { render } from '../styles'
@@ -9,6 +8,7 @@ const Container = styled.div<{ isDragging: boolean }>`
   display: flex;
   flex: auto;
   flex-direction: row;
+  background-color: aliceblue;
   ${props => props.isDragging ? 'border: 1px dashed #4099ff;' : ''}
 `
 
@@ -29,11 +29,11 @@ const Notice = styled.div`
   font-size: 12px;
 `
 
-const Row: Layout<void> = {
+const Row: Layout = {
   Blueprint () {
     return (<div/>)
   },
-  Render (props: { value: void; contents: ContentActive<any, any>[]; style: CSSProperties, getData: (keys: string | string[]) => any }) {
+  Render (props: LayoutRenderProps) {
     return (
       <div style={props.style}>
         {props.contents.map((it, index) => (
@@ -42,7 +42,7 @@ const Row: Layout<void> = {
       </div>
     )
   },
-  Building (props: { id: string; value: void; contents: ContentActive<any, any>[]; style: CSSProperties; getData: (keys: (string | string[])) => any, onChangeActive: (contentId: string) => void }) {
+  Building (props: LayoutBuildingProps) {
     return (
       <Droppable droppableId={props.id} direction={ 'horizontal'}>
         {(provided, snapshot) => (
@@ -64,7 +64,7 @@ const Row: Layout<void> = {
                     >
                       {it.value
                         ? (<it.source.Building key={index} style={render(it.styles)} result={props.getData(it.value) || it.value} onChangeActive={() => props.onChangeActive(it.id)} />)
-                        : (<Notice onClick={() => props.onChangeActive(it.id)}>请配置属性</Notice>)
+                        : (<Notice key={index} onClick={() => props.onChangeActive(it.id)}>未配置属性</Notice>)
                       }
                     </ContentContainer>
                   )}
@@ -81,7 +81,6 @@ const Row: Layout<void> = {
   describe: '',
   styles: [],
   title: '行排列',
-  key: 'Row',
-  defaultValue: undefined
+  key: 'Row'
 }
 export default Row

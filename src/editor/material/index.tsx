@@ -88,7 +88,7 @@ function Material (props: {
     })
   }
 
-  const ItemsBox = (props: { offset: number, list: Layout<any>[] | Content<any, any>[]}) => {
+  const ItemsBox = (props: { offset: number, list: Layout[] | Content<any, any>[]}) => {
     return (
       <Items>
         {props.list.map((it, index) => (

@@ -1,0 +1,27 @@
+extend type Query {
+  findTemplateAll: [Template]!
+  findTemplate(id: ID, title: String): Template!
+}
+
+
+extend type Mutation {
+  saveTemplate(id: ID!, title: String!, description: String, metadataId: ID!, tpl: String!): Template
+}
+
+# 模板
+type Template {
+  #  主键
+  id: ID!
+  #  标题
+  title: String!
+  #  说明
+  description: String
+  #  创建于
+  createdAt: DataTime
+  #  更新于
+  updatedAt: DataTime
+  #  模板数据源
+  metadata: Metadata!
+  #  模板数据
+  tpl: String
+}

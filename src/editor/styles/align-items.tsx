@@ -2,7 +2,7 @@ import React from 'react'
 import { Style } from './index'
 import { Select } from 'antd'
 
-type Category = 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly'
+type Category = 'center' | 'flex-start' | 'flex-end'
 
 const Categories: {title: string, value: Category}[] = [
   {
@@ -16,18 +16,6 @@ const Categories: {title: string, value: Category}[] = [
   {
     title: '居中',
     value: 'center'
-  },
-  {
-    title: '环绕平均',
-    value: 'space-between'
-  },
-  {
-    title: '尺寸平均',
-    value: 'space-around'
-  },
-  {
-    title: '间隔平均',
-    value: 'space-evenly'
   }
 ]
 

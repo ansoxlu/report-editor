@@ -1,5 +1,4 @@
-import React from 'react'
-import { rem, Style } from './index'
+import React, { ReactElement } from 'react'
 import { InputNumber, Select } from 'antd'
 
 export type Unit = 'px' | '%'
@@ -13,7 +12,14 @@ const SizeSelect = (props: { value: Unit, onChange: (value: Unit) => void }) => 
     <Select.Option value="%">%</Select.Option>
   </Select>
 )
-export const BaseSizeInputStyle: Style<SizeInputValue> = {
+
+export interface SizeInputStyle<T> {
+  defaultValue: T
+  // 在 blueprint 区域显示的内容
+  Blueprint: (props: {value: T, onChange: (value: T) => void}) => ReactElement
+}
+
+export const BaseSizeInputStyle: SizeInputStyle<SizeInputValue> = {
   Blueprint (props: { value: SizeInputValue; onChange: (value: SizeInputValue) => void }) {
     return (
       <InputNumber
@@ -26,14 +32,8 @@ export const BaseSizeInputStyle: Style<SizeInputValue> = {
       />
     )
   },
-  render (value: SizeInputValue) {
-    return { minWidth: value.size ? (value.unit === 'px' ? rem(value.size) : `${value.size}${value.unit}`) : 'none' }
-  },
   defaultValue: {
     size: 0,
     unit: 'px'
-  },
-  title: '',
-  describe: '',
-  key: ''
+  }
 }

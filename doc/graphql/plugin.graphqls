@@ -1,0 +1,17 @@
+
+type Query {
+  hello: String
+}
+
+type Mutation {
+  world: String
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+scalar DataTime
+scalar Data
+scalar Time

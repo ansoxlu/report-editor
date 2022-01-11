@@ -2,26 +2,33 @@ import { createActive as createStyleActive, Style, StyleActive, StyleDeserialize
 import { ContentActive, ContentAll, ContentDeserialize } from '../content'
 import { CSSProperties, ReactElement } from 'react'
 import { v4 as uuid4 } from 'uuid'
-import { cloneDeep } from 'lodash'
 import Row from './row'
 import Wrap from './wrap'
 
-export interface Layout<T> {
+export interface LayoutRenderProps {
+  contents: ContentActive<any, any>[],
+  style: CSSProperties,
+  getData: (texts: string | string[]) => any | undefined,
+}
+
+export interface LayoutBuildingProps extends LayoutRenderProps{
+  id: string,
+  onChangeActive: (contentId: string) => void
+}
+
+export interface LayoutBlueprintProps {
+  contents: ContentActive<any, any>[]
+  onChangeContents: (contents: ContentActive<any, any>[]) => void
+}
+
+export interface Layout {
   key: string
   title: string
   describe: string
   styles: Style<any>[]
-  defaultValue: T
-  Render: (props: { value: T, contents: ContentActive<any, any>[], style: CSSProperties, getData: (texts: string | string[]) => any }) => ReactElement
-  Blueprint: (props: { value: T, onChange: (value: T) => void }) => ReactElement
-  Building: (props: {
-    id: string,
-    value: T,
-    contents: ContentActive<any, any>[],
-    style: CSSProperties,
-    getData: (texts: string | string[]) => any | undefined,
-    onChangeActive: (contentId: string) => void
-  }) => ReactElement
+  Render: (props: LayoutRenderProps) => ReactElement
+  Blueprint: (props: LayoutBlueprintProps) => ReactElement
+  Building: (props: LayoutBuildingProps) => ReactElement
 }
 
 export interface LayoutDeserialize {
@@ -32,24 +39,22 @@ export interface LayoutDeserialize {
   source: string
 }
 
-export interface LayoutActive<T> {
+export interface LayoutActive {
   id: string
   styles: StyleActive<any>[]
-  value: T
   contents: ContentActive<any, any>[]
-  source: Layout<T>
+  source: Layout
   toJSON: () => any
 }
 
-export const LayoutAll: Layout<any>[] = [Row, Wrap]
+export const LayoutAll: Layout[] = [Row, Wrap]
 
-export const createActive = (layout: Layout<any> | LayoutDeserialize): LayoutActive<any> => {
+export const createActive = (layout: Layout | LayoutDeserialize): LayoutActive => {
   if ((layout as LayoutDeserialize).source) {
     const dv = layout as LayoutDeserialize
-    const l: LayoutActive<any> = {
+    const l: LayoutActive = {
       id: dv.id,
       styles: dv.styles.map(it => createStyleActive(it)),
-      value: dv.value,
       source: LayoutAll.find(it => it.key === dv.source)!,
       contents: [],
       toJSON () {
@@ -76,10 +81,9 @@ export const createActive = (layout: Layout<any> | LayoutDeserialize): LayoutAct
     })
     return l
   }
-  const lv = layout as Layout<any>
+  const lv = layout as Layout
   return {
     id: uuid4(),
-    value: cloneDeep(lv.defaultValue),
     styles: lv.styles.map(it => createStyleActive(it)),
     contents: [],
     source: lv,

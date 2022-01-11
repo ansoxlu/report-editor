@@ -8,11 +8,19 @@ interface BlockStyle {
   color: string
 }
 
-const Border: Style<{ top: BlockStyle, bottom: BlockStyle, left: BlockStyle, right: BlockStyle }> = {
-  Blueprint (_props: { value: { top: BlockStyle; bottom: BlockStyle; left: BlockStyle; right: BlockStyle }; onChange: (value: { top: BlockStyle; bottom: BlockStyle; left: BlockStyle; right: BlockStyle }) => void }) {
+interface Value {
+  top: BlockStyle
+  bottom: BlockStyle
+  left: BlockStyle
+  right: BlockStyle
+}
+
+const Border: Style<Value> = {
+  // TODO 待完成
+  Blueprint (_props: { value: Value; onChange: (value: Value) => void }) {
     return (<div/>)
   },
-  render (value: { top: BlockStyle; bottom: BlockStyle; left: BlockStyle; right: BlockStyle }) {
+  render (value: Value) {
     return {
       borderTop: `${rem(value.top.size)} ${value.top.style} ${value.top.color}`,
       borderBottom: `${rem(value.bottom.size)} ${value.bottom.style} ${value.bottom.color}`,

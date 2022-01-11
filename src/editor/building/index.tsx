@@ -61,7 +61,7 @@ const Notice = styled.div`
   font-size: 32px;
 `
 
-const Building = (props: { page: Page, layouts: LayoutActive<any>[], getData: (values: string | string[]) => any, onChangeActive: (activeId: string, contentId?: string) => void }) => {
+const Building = (props: { page: Page, layouts: LayoutActive[], getData: (values: string | string[]) => any, onChangeActive: (activeId: string, contentId?: string) => void }) => {
   return (
     <Container>
       <View>
@@ -106,7 +106,7 @@ const Building = (props: { page: Page, layouts: LayoutActive<any>[], getData: (v
                                 />
                               </svg>
                             </LayoutHandle>
-                            {<it.source.Building key={it.id} contents={it.contents} value={it.value} id={`${it.id}_${MaterialType.Content}`}
+                            {<it.source.Building key={it.id} contents={it.contents} id={`${it.id}_${MaterialType.Content}`}
                                                  style={render(it.styles)} getData={props.getData} onChangeActive={(id) => props.onChangeActive(it.id, id)}/>}
                           </LayoutContainer>
                         )}

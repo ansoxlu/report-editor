@@ -11,8 +11,7 @@ import { ContentActive, ContentAll, createActive as createContentActive } from '
 import { message } from 'antd'
 
 const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
 `
 
@@ -34,14 +33,14 @@ function Editor () {
       height: 0,
       landscape: false,
       styles: [],
-      contexts: [],
+      pages: [],
       absolutes: []
     }
   )
 
-  const [layouts] = useState<LayoutActive<any>[]>([])
+  const [layouts] = useState<LayoutActive[]>([])
 
-  const [active, setActive] = useState<LayoutActive<any> | ContentActive<any, any> | undefined>()
+  const [active, setActive] = useState<LayoutActive | ContentActive<any, any> | undefined>()
 
   const onDragEnd = (result: DropResult) => {
     // dropped outside the list
@@ -85,7 +84,11 @@ function Editor () {
       // 移动到现有布局
       const layout = layouts.find(it => destination.droppableId.startsWith(it.id))!
       const contentActive = createContentActive(layout, content)
-      layout.contents.splice(destination.index, 0, contentActive)
+      if (layout.source === Row) {
+        layout.contents.splice(destination.index, 0, contentActive)
+      } else {
+        layout.contents.push(contentActive)
+      }
       setActive(contentActive)
       return
     }
@@ -121,12 +124,17 @@ function Editor () {
     // 移动布局到内容
     if (draggableId.endsWith(MaterialType.Layout) && destination.droppableId.endsWith(MaterialType.Content)) {
       const index = layouts.findIndex(it => draggableId.startsWith(it.id))
+      // 布局不是行排列禁止合并
+      if (index === -1 || layouts[index].source !== Row) {
+        return
+      }
       const contents = layouts[index].contents
       // 删除旧布局
       layouts.splice(index, 1)
       // 将旧布局内容合并到目标布局
       const layout = layouts.find(it => destination.droppableId.startsWith(it.id))!
-      if (layout.source !== Row) {
+      // 布局不是行排列禁止合并
+      if (!layout || layout.source !== Row) {
         return
       }
       layout.contents.splice(destination.index, 0, ...contents)
@@ -177,18 +185,21 @@ function Editor () {
     }
   }
 
-  const changeActiveValue = (value: LayoutActive<any> | ContentActive<any, any>) => {
+  const changeActiveValue = (value: LayoutActive | ContentActive<any, any>) => {
     setActive(value)
     let layoutIndex = layouts.findIndex(it => it.id === value.id)
+    // layout 修改
     if (layoutIndex !== -1) {
       const layout = layouts[layoutIndex]
-      layout.value = value.value
+      layout.contents = (value as LayoutActive).contents
       layout.styles = value.styles
       layouts.splice(layoutIndex, 1, layout)
       return
     }
+    // content 修改
     const content = value as ContentActive<any, any>
     layoutIndex = layouts.findIndex(it => it.id === content.layout.id)
+    // 移动后未修改 content.layout 发生错误
     if (layoutIndex === -1) {
       setActive(undefined)
       message.error('无效的修改,编辑的内容已过期')
@@ -197,7 +208,7 @@ function Editor () {
     const layout = layouts[layoutIndex]
     const contentIndex = layout.contents.findIndex(it => it.id === content.id)
     const target = layout.contents[contentIndex]
-    target.value = value.value
+    target.value = (value as ContentActive<any, any>).value
     target.styles = value.styles
     layout.contents.splice(contentIndex, 1, target)
     layouts.splice(layoutIndex, 1, layout)
@@ -208,8 +219,8 @@ function Editor () {
       <DragDropContext onDragEnd={onDragEnd}>
          <Material page={page} onChangePage={setPage}/>
          <Building page={page} layouts={layouts} getData={(texts) => getData(texts, data)} onChangeActive={changeActive} />
-         <Blueprint value={active} data={data} onChange={changeActiveValue}/>
       </DragDropContext>
+       <Blueprint value={active} data={data} onChange={changeActiveValue}/>
     </Container>
   )
 }

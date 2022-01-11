@@ -1,0 +1,41 @@
+extend type Query {
+  findMetadataAll: [Metadata]!
+}
+extend type Mutation {
+  saveMetadata(id: ID!, title: String!, description: String, items: [ISaveMetadataItem]!): Metadata
+}
+
+# 模板数据源
+type Metadata {
+  id: ID!
+  #  标题
+  title: String!
+  description: String
+  createdAt: DataTime!
+  updatedAt: DataTime!
+  #  数据项
+  items: [MetadataItem]!
+  #  数据示例
+  examples: [MetadataExample]!
+}
+
+# 模板数据项
+type MetadataItem {
+  id: ID!
+  #  数据的扁平化定位
+  uri: String!
+  #  标题
+  title: String!
+  #  是否必须
+  required: Boolean!
+  description: String
+}
+
+# 数据示例
+type MetadataExample {
+  id: ID!
+  #  标题
+  title: String!
+  #  示例json数据
+  data: String!
+}

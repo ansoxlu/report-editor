@@ -1,18 +1,33 @@
-import React, { CSSProperties } from 'react'
-import { Layout } from './index'
-import { ContentActive } from '../content'
+import React from 'react'
+import { Layout, LayoutBlueprintProps, LayoutBuildingProps, LayoutRenderProps } from './index'
 import { render } from '../styles'
 import styled from 'styled-components'
-import { Droppable } from 'react-beautiful-dnd'
+import { Droppable, DragDropContext, DropResult, Draggable } from 'react-beautiful-dnd'
 
 const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex: 1;
+  background-color: antiquewhite;
 `
 
 const BuildingContainer = styled(Container)<{ isDragging: boolean }>`
   ${props => props.isDragging ? 'border: 1px dashed #4099ff;' : ''}
+`
+
+const BlueprintContainer = styled.div<{isDragging: boolean}>`
+  border: 1px ${props => (props.isDragging ? 'dashed #4099ff' : 'solid #ddd')};
+  height: 100%;
+`
+
+const BlueprintItem = styled.div<{isDragging: boolean}>`
+  border: 1px ${props => (props.isDragging ? 'dashed #4099ff' : 'solid #ddd')};
+  margin: 15px;
+  padding: 10px 12px;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  background: #f3f3f3;
 `
 
 const Notice = styled.div`
@@ -25,19 +40,63 @@ const Notice = styled.div`
   font-size: 12px;
 `
 
-const Wrap: Layout<boolean> = {
-  Blueprint (props: { value: any; onChange: (value: any) => void }) {
-    return (<div/>)
+const Wrap: Layout = {
+  Blueprint (props: LayoutBlueprintProps) {
+    const onDragEnd = (result: DropResult) => {
+      const { destination, source } = result
+      if (!destination) {
+        return
+      }
+      const contents = props.contents
+      // 删除后的位置调整
+      const offset = destination.index > 0 && source.index > destination.index ? destination.index - 1 : 0
+      const target = contents[source.index]
+      // 删除原有
+      contents.splice(source.index, 1)
+      // 重新插入
+      contents.splice(destination.index - offset, 0, target)
+      props.onChangeContents(contents)
+    }
+    return (
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="wrap_blueprint">
+          {(provided, snapshot) => (
+            <BlueprintContainer
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              isDragging={snapshot.isDraggingOver}
+            >
+              {props.contents.map((it, index) => (
+                <Draggable key={it.id} draggableId={it.id} index={index}>
+                  {(provided, snapshot) => (
+                    <BlueprintItem
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      style={provided.draggableProps.style}
+                      isDragging={snapshot.isDragging}
+                    >
+                      {index}
+                    </BlueprintItem>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </BlueprintContainer>
+          )}
+        </Droppable>
+      </DragDropContext>
+    )
   },
-  Building (props: { id: string; value: any; contents: ContentActive<any, any>[]; style: CSSProperties; getData: (texts: (string | string[])) => any; onChangeActive: (contentId: string) => void }) {
+  Building (props: LayoutBuildingProps) {
     return (
       <Droppable droppableId={props.id} direction={ 'horizontal'}>
         {(provided, snapshot) => (
           <BuildingContainer ref={provided.innerRef} isDragging={snapshot.isDraggingOver} style={props.style}>
             {props.contents.length
               ? props.contents.map((it, index) => it.value
-                ? (<it.source.Building key={index} style={render(it.styles)} result={props.getData(it.value)} onChangeActive={() => props.onChangeActive(props.id)} />)
-                : <Notice>请配置属性</Notice>)
+                ? (<it.source.Building key={index} style={render(it.styles)} result={props.getData(it.value)} onChangeActive={() => props.onChangeActive(it.id)} />)
+                : <Notice key={index} onClick={() => props.onChangeActive(it.id)}>未配置属性</Notice>)
               : <Notice>请添加内容</Notice>
             }
             {provided.placeholder}
@@ -46,7 +105,7 @@ const Wrap: Layout<boolean> = {
       </Droppable>
     )
   },
-  Render (props: { value: any; contents: ContentActive<any, any>[]; style:CSSProperties; getData: (texts: (string | string[])) => any }) {
+  Render (props: LayoutRenderProps) {
     return (
       <Container style={props.style}>
         {props.contents.map((it, index) => (
@@ -55,11 +114,10 @@ const Wrap: Layout<boolean> = {
       </Container>
     )
   },
-  defaultValue: false,
-  describe: '',
+  describe: '能过最小宽度',
   key: 'Wrap',
   styles: [],
-  title: '组合排列'
+  title: '宽组合'
 }
 
 export default Wrap

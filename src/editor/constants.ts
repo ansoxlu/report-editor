@@ -19,9 +19,9 @@ export interface Page {
   // 默认样式
   styles: Style<any>[],
   // 多页内容, layout[] 为一页
-  contexts: Layout<any>[][]
+  pages: Layout[][]
   // 绝对定位内容
-  absolutes: Layout<any>[]
+  absolutes: Layout[]
 }
 
 export const PaperSizes = [
