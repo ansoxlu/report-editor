@@ -46,6 +46,32 @@ export const flattenData = (data: any | undefined): FlattenData => {
   return result
 }
 
+export const flattenUri = (data: object) => {
+  const result: Record<string, boolean> = {}
+  const precess = (key: string, value: any) => {
+    if (value === undefined || value === null) {
+      result[key] = false
+    } else if (['string', 'number', 'boolean'].includes(typeof value)) {
+      const val = result[key]
+      if (val === undefined) {
+        result[key] = true
+      }
+    } else if (Array.isArray(value)) {
+      for (const it of value) {
+        precess(`${key}[]`, it)
+      }
+    } else {
+      for (const nextKey in value) {
+        if (Object.prototype.hasOwnProperty.call(value, nextKey)) {
+          precess(`${key}.${nextKey}`, value[nextKey])
+        }
+      }
+    }
+  }
+  precess('', data)
+  return result
+}
+
 export interface SearchResult {
   key: string
   value: any

@@ -37,5 +37,5 @@ type MetadataExample {
   #  标题
   title: String!
   #  示例json数据
-  data: String!
+  json: String!
 }

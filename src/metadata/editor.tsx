@@ -13,15 +13,24 @@ const Nav = styled.div`
   border-bottom: 2px solid #eee;
 `
 
-const Editor = (props: {}) => {
+const Editor = (props: { value: object, onChange: (value: object) => void }) => {
+  const handleChange = (result: any) => {
+    console.log(result)
+    if (!result.error && result.jsObject) {
+      props.onChange(result.jsObject)
+    }
+  }
+
   return (
     <Container>
       <Nav>
-        dafd
+        TODO nav
       </Nav>
       <div style={{ flex: 1, color: '#000' }}>
         <JSONInput
           id = 'json-editor'
+          placeholder={props.value}
+          onChange={(result: any) => handleChange(result)}
           colors = { {
             default: '#000',
             background: '#FCFDFD',
@@ -31,8 +40,9 @@ const Editor = (props: {}) => {
             colon: '#49B8F7',
             keys: '#59A5D8',
             keys_whiteSpace: '#835FB6',
-            primitive: '#386FA4'
-          } }
+            primitive: '#386FA4',
+            error: '#e30b0b'
+          } as any}
           locale = { locale }
           width = '100%'
           height = '100%'

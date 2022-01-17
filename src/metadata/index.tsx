@@ -14,7 +14,7 @@ const Container = styled.div`
 
 const Left = styled.div`
   width: 45%;
-  border: 1px solid #eee;
+  border-right: 1px solid #eee;
   @media (max-width: 900px) {
     width: 100%;
   }
@@ -22,20 +22,22 @@ const Left = styled.div`
 
 const Right = styled.div`
   width: 55%;
-  border: 1px solid #eee;
+  border-left: 1px solid #eee;
   @media (max-width: 900px) {
     width: 100%;
   }
 `
 
 const Metadata = () => {
+  const [data, setData] = useState<object>({})
+
   return (
     <Container>
       <Left>
         <Structure/>
       </Left>
       <Right>
-        <Editor />
+        <Editor value={data} onChange={value => setData(value)} />
       </Right>
     </Container>
   )
