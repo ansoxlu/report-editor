@@ -1,5 +1,5 @@
 import React from 'react'
-import { rem, Style } from './index'
+import { rem, StyleDefinition } from './index'
 
 type LineStyle = 'solid' | 'double' | 'dotted'
 interface BlockStyle {
@@ -15,7 +15,7 @@ interface Value {
   right: BlockStyle
 }
 
-const Border: Style<Value> = {
+const Border: StyleDefinition<Value> = {
   // TODO 待完成
   Blueprint (_props: { value: Value; onChange: (value: Value) => void }) {
     return (<div/>)

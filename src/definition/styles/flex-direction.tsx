@@ -1,9 +1,9 @@
 import React from 'react'
-import { Style } from './index'
+import { StyleDefinition } from './index'
 import { Switch } from 'antd'
 
 type Direction = 'row' | 'column'
-const FlexDirection: Style<Direction> = {
+const FlexDirection: StyleDefinition<Direction> = {
   title: '方向',
   defaultValue: 'row',
   describe: '',

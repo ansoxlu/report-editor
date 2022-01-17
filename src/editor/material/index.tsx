@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
-import { Page, DroppableIds, PaperSizes } from '../constants'
-import { Content, ContentAll } from '../content'
-import { Layout, LayoutAll } from '../layout'
-import { Select, Switch } from 'antd'
+import { DroppableIds } from '../constants'
+import { Page, PAPER_SIZES } from '../../definition/page'
+import { CONTENT_DEFINITIONS, ContentDefinition } from '../../definition/content'
+import { LAYOUT_DEFINITIONS, LayoutDefinition } from '../../definition/layout'
+import { Select } from 'antd'
 
 const Container = styled.aside`
   width: 250px;
@@ -64,12 +65,12 @@ function Material (props: {
 
   const changeSize = (value: string) => {
     setSize(value)
-    const sizes = PaperSizes.find(it => it.title === value)
+    const sizes = PAPER_SIZES.find(it => it.title === value)
     if (sizes) {
       props.onChangePage({
         ...props.page,
-        width: props.page.landscape ? sizes.height : sizes.width,
-        height: props.page.landscape ? sizes.width : sizes.height
+        width: sizes.width,
+        height: sizes.height
       })
     }
   }
@@ -79,16 +80,7 @@ function Material (props: {
     }
   })
 
-  const changePageSwitch = (v: boolean) => {
-    props.onChangePage({
-      ...props.page,
-      width: props.page.height,
-      height: props.page.width,
-      landscape: v
-    })
-  }
-
-  const ItemsBox = (props: { offset: number, list: Layout[] | Content<any, any>[]}) => {
+  const ItemsBox = (props: { offset: number, list: LayoutDefinition[] | ContentDefinition<any, any>[]}) => {
     return (
       <Items>
         {props.list.map((it, index) => (
@@ -136,21 +128,13 @@ function Material (props: {
               onChange={v => changeSize(v)}
               style={{ width: 135 }}
             >
-              {PaperSizes.map((it, index) => (<Select.Option key={index} value={it.title}>{it.title}</Select.Option>))}
+              {PAPER_SIZES.map((it, index) => (<Select.Option key={index} value={it.title}>{it.title}</Select.Option>))}
             </Select>
           </TitleBox>
-          <TitleBox>
-            <Title>方向</Title>
-            <Switch
-              checked={props.page.landscape}
-              onChange={changePageSwitch}
-              checkedChildren="横" unCheckedChildren="竖"
-            />
-          </TitleBox>
           <Title>布局</Title>
-          <ItemsBox list={LayoutAll} offset={0} />
+          <ItemsBox list={LAYOUT_DEFINITIONS} offset={0} />
           <Title>内容</Title>
-          <ItemsBox list={ContentAll} offset={LayoutAll.length} />
+          <ItemsBox list={CONTENT_DEFINITIONS} offset={CONTENT_DEFINITIONS.length} />
           {provided.placeholder}
         </Container>
       )}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Style } from './index'
+import { StyleDefinition } from './index'
 import { Select } from 'antd'
 
 type Category = 'center' | 'flex-start' | 'flex-end'
@@ -19,7 +19,7 @@ const Categories: {title: string, value: Category}[] = [
   }
 ]
 
-const AlignItems: Style<Category> = {
+const AlignItems: StyleDefinition<Category> = {
   Blueprint (props: { value: Category; onChange: (value: Category) => void }) {
     return (
       <Select

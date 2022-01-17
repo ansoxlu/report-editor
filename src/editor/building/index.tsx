@@ -1,9 +1,10 @@
 import React from 'react'
-import { LayoutActive } from '../layout'
+import { Layout } from '../../definition/layout'
 import styled from 'styled-components'
-import { render } from '../styles'
+import { render } from '../../definition/styles'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
-import { DroppableIds, MaterialType, Page } from '../constants'
+import { DroppableIds, MaterialType } from '../constants'
+import { Page } from '../../definition/page'
 
 const Container = styled.section`
   border-left: 1px solid #e0e0e0;
@@ -61,7 +62,7 @@ const Notice = styled.div`
   font-size: 32px;
 `
 
-const Building = (props: { page: Page, layouts: LayoutActive[], getData: (values: string | string[]) => any, onChangeActive: (activeId: string, contentId?: string) => void }) => {
+const Building = (props: { page: Page, layouts: Layout[], getData: (values: string | string[]) => any, onChangeActive: (activeId: string, contentId?: string) => void }) => {
   return (
     <Container>
       <View>
@@ -106,7 +107,7 @@ const Building = (props: { page: Page, layouts: LayoutActive[], getData: (values
                                 />
                               </svg>
                             </LayoutHandle>
-                            {<it.source.Building key={it.id} contents={it.contents} id={`${it.id}_${MaterialType.Content}`}
+                            {<it.definition.Building key={it.id} contents={it.contents} id={`${it.id}_${MaterialType.Content}`}
                                                  style={render(it.styles)} getData={props.getData} onChangeActive={(id) => props.onChangeActive(it.id, id)}/>}
                           </LayoutContainer>
                         )}

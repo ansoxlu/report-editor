@@ -1,8 +1,8 @@
 import React from 'react'
-import { Style } from './index'
+import { StyleDefinition } from './index'
 import { Select } from 'antd'
 
-const FontWeight: Style<number> = {
+const FontWeight: StyleDefinition<number> = {
   Blueprint (props: { value: number; onChange: (value: number) => void }) {
     return (
       <Select

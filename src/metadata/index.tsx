@@ -1,47 +1,43 @@
 import React, { useState } from 'react'
-import BookView from '../components/book-view'
-import { Button, Input, message } from 'antd'
+import Structure from './structure'
+import styled from 'styled-components'
+import Editor from './editor'
 
-interface EditData {
-  id?: string
-  title?: string
-  description?: string
-}
+const Container = styled.div`
+  display: flex;
+  height: 100vh;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
+`
+
+const Left = styled.div`
+  width: 45%;
+  border: 1px solid #eee;
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+`
+
+const Right = styled.div`
+  width: 55%;
+  border: 1px solid #eee;
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+`
 
 const Metadata = () => {
-  const EditContent = (props: { value?: EditData, onConfirm: (value: EditData) => void, onCancel?: () => void }) => {
-    const [value, setValue] = useState<EditData>(props.value || {})
-
-    const handleSave = () => {
-      props.onConfirm(value)
-    }
-
-    return (
-      <div>
-        <div style={{ display: 'flex' }}>
-          <p>*请输入标题：</p>
-          <Input value={value.title} onChange={ev => setValue({ ...value, title: ev.target.value })}/>
-          <Button type="primary" onClick={() => handleSave()}>确认保存</Button>
-          {props.value && (<Button type="primary" onClick={() => handleSave()}>取消修改</Button>)}
-        </div>
-        <div>
-          <p>请输入标题：</p>
-          <Input.TextArea value={value.description} autoSize={{ minRows: 2, maxRows: 6 }}/>
-        </div>
-      </div>
-    )
-  }
-
-  const save = (value: EditData) => {
-    if (!value.title) {
-      return message.error('请输入标题')
-    }
-  }
-
   return (
-    <BookView>
-      <EditContent onConfirm={value => save(value)}/>
-    </BookView>
+    <Container>
+      <Left>
+        <Structure/>
+      </Left>
+      <Right>
+        <Editor />
+      </Right>
+    </Container>
   )
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layout, LayoutBuildingProps, LayoutRenderProps } from './index'
+import { LayoutDefinition, LayoutBuildingProps, LayoutRenderProps } from './index'
 import styled from 'styled-components'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import { render } from '../styles'
@@ -29,7 +29,7 @@ const Notice = styled.div`
   font-size: 12px;
 `
 
-const Row: Layout = {
+const Row: LayoutDefinition = {
   Blueprint () {
     return (<div/>)
   },
@@ -37,7 +37,7 @@ const Row: Layout = {
     return (
       <div style={props.style}>
         {props.contents.map((it, index) => (
-          <it.source.Render key={index} style={render(it.styles)} result={props.getData(it.value)} />
+          <it.definition.Render key={index} style={render(it.styles)} result={props.getData(it.value)} />
         ))}
       </div>
     )
@@ -63,7 +63,7 @@ const Row: Layout = {
                       style={Object.assign(provided.draggableProps.style, render(it.styles))}
                     >
                       {it.value
-                        ? (<it.source.Building key={index} style={render(it.styles)} result={props.getData(it.value) || it.value} onChangeActive={() => props.onChangeActive(it.id)} />)
+                        ? (<it.definition.Building key={index} style={render(it.styles)} result={props.getData(it.value) || it.value} onChangeActive={() => props.onChangeActive(it.id)} />)
                         : (<Notice key={index} onClick={() => props.onChangeActive(it.id)}>未配置属性</Notice>)
                       }
                     </ContentContainer>

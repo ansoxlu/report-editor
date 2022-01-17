@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Style } from './index'
+import { StyleDefinition } from './index'
 import { SketchPicker } from 'react-color'
 import styled from 'styled-components'
 
@@ -34,7 +34,7 @@ const Cover = styled.div`
   left: 0;
 `
 
-const Color: Style<string> = {
+const Color: StyleDefinition<string> = {
   Blueprint (props: { value: string; onChange: (value: string) => void }) {
     const [display, setDisplay] = useState(false)
 

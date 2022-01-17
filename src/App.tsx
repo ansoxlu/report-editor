@@ -6,7 +6,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from './home'
 import Error404 from './errors/error-404'
 import { MockedProvider } from '@apollo/client/testing'
-import mocks from '../mock/graphql'
+import mocks from './mock/graphql'
+import Metadata from './metadata'
 
 // import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 
@@ -21,6 +22,7 @@ function App () {
       <Router>
         <Routes>
           <Route path="/" element={<Home/>} />
+          <Route path="/metadata" element={<Metadata/>} />
           <Route path="/editor" element={<Editor/>} />
           <Route path="*" element={<Error404/>} />
         </Routes>

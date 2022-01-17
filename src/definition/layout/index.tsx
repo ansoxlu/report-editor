@@ -1,12 +1,12 @@
-import { createActive as createStyleActive, Style, StyleActive, StyleDeserialize } from '../styles'
-import { ContentActive, ContentAll, ContentDeserialize } from '../content'
+import { createStyle, StyleDefinition, Style, StyleDeserialize } from '../styles'
+import { Content, CONTENT_DEFINITIONS, ContentDeserialize } from '../content'
 import { CSSProperties, ReactElement } from 'react'
 import { v4 as uuid4 } from 'uuid'
 import Row from './row'
 import Wrap from './wrap'
 
 export interface LayoutRenderProps {
-  contents: ContentActive<any, any>[],
+  contents: Content<any, any>[],
   style: CSSProperties,
   getData: (texts: string | string[]) => any | undefined,
 }
@@ -17,15 +17,15 @@ export interface LayoutBuildingProps extends LayoutRenderProps{
 }
 
 export interface LayoutBlueprintProps {
-  contents: ContentActive<any, any>[]
-  onChangeContents: (contents: ContentActive<any, any>[]) => void
+  contents: Content<any, any>[]
+  onChangeContents: (contents: Content<any, any>[]) => void
 }
 
-export interface Layout {
+export interface LayoutDefinition {
   key: string
   title: string
   describe: string
-  styles: Style<any>[]
+  styles: StyleDefinition<any>[]
   Render: (props: LayoutRenderProps) => ReactElement
   Blueprint: (props: LayoutBlueprintProps) => ReactElement
   Building: (props: LayoutBuildingProps) => ReactElement
@@ -36,61 +36,61 @@ export interface LayoutDeserialize {
   styles: StyleDeserialize[]
   value: any
   contents: ContentDeserialize[]
-  source: string
+  definition: string
 }
 
-export interface LayoutActive {
+export interface Layout {
   id: string
-  styles: StyleActive<any>[]
-  contents: ContentActive<any, any>[]
-  source: Layout
+  styles: Style<any>[]
+  contents: Content<any, any>[]
+  definition: LayoutDefinition
   toJSON: () => any
 }
 
-export const LayoutAll: Layout[] = [Row, Wrap]
+export const LAYOUT_DEFINITIONS: LayoutDefinition[] = [Row, Wrap]
 
-export const createActive = (layout: Layout | LayoutDeserialize): LayoutActive => {
-  if ((layout as LayoutDeserialize).source) {
+export const createLayout = (layout: LayoutDefinition | LayoutDeserialize): Layout => {
+  if ((layout as LayoutDeserialize).definition) {
     const dv = layout as LayoutDeserialize
-    const l: LayoutActive = {
+    const l: Layout = {
       id: dv.id,
-      styles: dv.styles.map(it => createStyleActive(it)),
-      source: LayoutAll.find(it => it.key === dv.source)!,
+      styles: dv.styles.map(it => createStyle(it)),
+      definition: LAYOUT_DEFINITIONS.find(it => it.key === dv.definition)!,
       contents: [],
       toJSON () {
         return {
           ...this,
-          source: this.source.key
+          definition: this.definition.key
         }
       }
     }
     l.contents = dv.contents.map(it => {
       return {
         id: it.id,
-        styles: it.styles.map(it => createStyleActive(it)),
+        styles: it.styles.map(it => createStyle(it)),
         value: it.value,
-        source: ContentAll.find(item => item.key === it.source)!,
+        definition: CONTENT_DEFINITIONS.find(item => item.key === it.definition)!,
         layout: l,
         toJSON () {
           return {
             ...this,
-            source: this.source.key
+            source: this.definition.key
           }
         }
       }
     })
     return l
   }
-  const lv = layout as Layout
+  const definition = layout as LayoutDefinition
   return {
     id: uuid4(),
-    styles: lv.styles.map(it => createStyleActive(it)),
+    styles: definition.styles.map(it => createStyle(it)),
     contents: [],
-    source: lv,
+    definition: definition,
     toJSON () {
       return {
         ...this,
-        source: this.source.key
+        source: this.definition.key
       }
     }
   }

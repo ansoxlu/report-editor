@@ -1,8 +1,8 @@
 import React from 'react'
-import { rem, Style } from './index'
+import { rem, StyleDefinition } from './index'
 import { InputNumber } from 'antd'
 
-const Padding:Style<{top: number, bottom: number, left: number, right: number}> = {
+const Padding:StyleDefinition<{top: number, bottom: number, left: number, right: number}> = {
   Blueprint (props: { value: { top: number; bottom: number; left: number; right: number }; onChange: (value: { top: number; bottom: number; left: number; right: number }) => void }) {
     return (
       <div style={{ marginTop: 5 }}>

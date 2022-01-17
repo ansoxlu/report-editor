@@ -1,8 +1,8 @@
 import React from 'react'
-import { Style } from './index'
+import { StyleDefinition } from './index'
 import { InputNumber } from 'antd'
 
-const FlexGrow: Style<number> = {
+const FlexGrow: StyleDefinition<number> = {
   Blueprint (props: { value: number; onChange: (value: number) => void }) {
     return (
       <InputNumber min="0" max="99" style={{ width: 190 }} value={String(props.value)} onChange={(v) => props.onChange(Number(v))} />

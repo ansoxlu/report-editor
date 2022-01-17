@@ -1,8 +1,8 @@
 import React from 'react'
 import { Switch } from 'antd'
-import { Style } from './index'
+import { StyleDefinition } from './index'
 
-const Ellipsis: Style<boolean> = {
+const Ellipsis: StyleDefinition<boolean> = {
   Blueprint (props: { value: boolean; onChange: (value: boolean) => void }) {
     return (
       <Switch checked={props.value} checkedChildren="开启" unCheckedChildren="关闭" onChange={(v) => props.onChange(v)} />

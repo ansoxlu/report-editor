@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layout, LayoutBlueprintProps, LayoutBuildingProps, LayoutRenderProps } from './index'
+import { LayoutDefinition, LayoutBlueprintProps, LayoutBuildingProps, LayoutRenderProps } from './index'
 import { render } from '../styles'
 import styled from 'styled-components'
 import { Droppable, DragDropContext, DropResult, Draggable } from 'react-beautiful-dnd'
@@ -40,7 +40,7 @@ const Notice = styled.div`
   font-size: 12px;
 `
 
-const Wrap: Layout = {
+const Wrap: LayoutDefinition = {
   Blueprint (props: LayoutBlueprintProps) {
     const onDragEnd = (result: DropResult) => {
       const { destination, source } = result
@@ -95,7 +95,7 @@ const Wrap: Layout = {
           <BuildingContainer ref={provided.innerRef} isDragging={snapshot.isDraggingOver} style={props.style}>
             {props.contents.length
               ? props.contents.map((it, index) => it.value
-                ? (<it.source.Building key={index} style={render(it.styles)} result={props.getData(it.value)} onChangeActive={() => props.onChangeActive(it.id)} />)
+                ? (<it.definition.Building key={index} style={render(it.styles)} result={props.getData(it.value)} onChangeActive={() => props.onChangeActive(it.id)} />)
                 : <Notice key={index} onClick={() => props.onChangeActive(it.id)}>未配置属性</Notice>)
               : <Notice>请添加内容</Notice>
             }
@@ -109,7 +109,7 @@ const Wrap: Layout = {
     return (
       <Container style={props.style}>
         {props.contents.map((it, index) => (
-          <it.source.Render key={index} style={render(it.styles)} result={props.getData(it.value)} />
+          <it.definition.Render key={index} style={render(it.styles)} result={props.getData(it.value)} />
         ))}
       </Container>
     )

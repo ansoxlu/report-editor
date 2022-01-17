@@ -20,7 +20,7 @@ import LetterSpacing from './letter-spacing'
 /**
  * T 需要的参数
  */
-export interface Style<T> {
+export interface StyleDefinition<T> {
   key: string
   title: string
   describe: string
@@ -31,13 +31,13 @@ export interface Style<T> {
   Blueprint: (props: {value: T, onChange: (value: T) => void}) => ReactElement
 }
 
-export interface StyleActive<T> {
+export interface Style<T> {
   value: T
-  source: Style<T>,
+  definition: StyleDefinition<T>,
   toJSON: () => any
 }
 
-export interface StyleDeserialize { value: any, source: string }
+export interface StyleDeserialize { value: any, definition: string }
 
 /**
  * 使用 html2pdf 生成 pdf, html -> canvas -> img -> pdf
@@ -48,7 +48,7 @@ export const rem = (px: number): string => {
   return `${px / 100}rem`
 }
 
-export const StyleAll = [
+export const STYLE_DEFINITIONS = [
   FlexDirection,
   JustifyContent,
   AlignItems,
@@ -67,33 +67,33 @@ export const StyleAll = [
   Border
 ]
 
-export const render = (styles: StyleActive<any>[]): CSSProperties => {
+export const render = (styles: Style<any>[]): CSSProperties => {
   return styles.reduce<CSSProperties>((pv, it) => {
-    return Object.assign(pv, it.source.render(it.value)) as CSSProperties
+    return Object.assign(pv, it.definition.render(it.value)) as CSSProperties
   }, { display: 'flex' })
 }
 
-export const createActive = (style: StyleDeserialize | Style<any>): StyleActive<any> => {
-  if ((style as StyleDeserialize).source) {
+export const createStyle = (style: StyleDeserialize | StyleDefinition<any>): Style<any> => {
+  if ((style as StyleDeserialize).definition) {
     const dv = style as StyleDeserialize
     return {
       value: dv.value,
-      source: StyleAll.find(it => it.key === dv.source)!,
+      definition: STYLE_DEFINITIONS.find(it => it.key === dv.definition)!,
       toJSON () {
         return {
-          source: this.source.key,
+          definition: this.definition.key,
           value: this.value
         }
       }
     }
   }
-  const sv = style as Style<any>
+  const definition = style as StyleDefinition<any>
   return {
-    value: cloneDeep(sv.defaultValue),
-    source: sv,
+    value: cloneDeep(definition.defaultValue),
+    definition: definition,
     toJSON () {
       return {
-        source: this.source.key,
+        definition: this.definition.key,
         value: this.value
       }
     }

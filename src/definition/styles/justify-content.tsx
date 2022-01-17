@@ -1,5 +1,5 @@
 import React from 'react'
-import { Style } from './index'
+import { StyleDefinition } from './index'
 import { Select } from 'antd'
 
 type Category = 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly'
@@ -31,7 +31,7 @@ const Categories: {title: string, value: Category}[] = [
   }
 ]
 
-const JustifyContent: Style<Category> = {
+const JustifyContent: StyleDefinition<Category> = {
   Blueprint (props: { value: Category; onChange: (value: Category) => void }) {
     return (
       <Select

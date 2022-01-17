@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { LayoutActive } from '../layout'
-import { ContentActive } from '../content'
+import { Layout } from '../../definition/layout'
+import { Content } from '../../definition/content'
 import { Tabs } from 'antd'
 
 const Container = styled.aside`
@@ -19,9 +19,9 @@ const Title = styled.span`
 `
 
 function Blueprint (props: {
-  value: LayoutActive | ContentActive<any, any> | undefined,
+  value: Layout | Content<any, any> | undefined,
   data: object,
-  onChange: (value: LayoutActive | ContentActive<any, any>) => void
+  onChange: (value: Layout | Content<any, any>) => void
 }) {
   const [current, setCurrent] = useState<number>(0)
 
@@ -32,7 +32,7 @@ function Blueprint (props: {
     })
   }
 
-  const changeContents = (contents: ContentActive<any, any>[]) => {
+  const changeContents = (contents: Content<any, any>[]) => {
     props.onChange({
       ...props.value!,
       contents
@@ -41,7 +41,7 @@ function Blueprint (props: {
 
   const changeStyle = (key: string, value: any) => {
     const styles = props.value!.styles
-    const index = styles.findIndex(it => it.source.key === key)
+    const index = styles.findIndex(it => it.definition.key === key)
     const style = styles[index]
     style.value = value
     styles.splice(index, 1, style)
@@ -53,15 +53,15 @@ function Blueprint (props: {
   }
 
   const renderContentOrLayout = () => {
-    if ((props.value as LayoutActive)?.contents) {
-      const layout = props.value as LayoutActive
+    if ((props.value as Layout)?.contents) {
+      const layout = props.value as Layout
       return (
-        <layout.source.Blueprint contents={(props.value as LayoutActive).contents} onChangeContents={changeContents} />
+        <layout.definition.Blueprint contents={(props.value as Layout).contents} onChangeContents={changeContents} />
       )
     }
-    const content = props.value as ContentActive<any, any>
+    const content = props.value as Content<any, any>
     return (
-      <content.source.Blueprint value={content.value} onChange={changeValue} />
+      <content.definition.Blueprint value={content.value} onChange={changeValue} />
     )
   }
 
@@ -79,8 +79,8 @@ function Blueprint (props: {
         <Tabs.TabPane tab="样式" key="1">
           {!!props.value && (props.value.styles.map((it, index) => (
             <Items key={index} >
-              <Title>{it.source.title}</Title>
-              <it.source.Blueprint value={it.value} onChange={value => changeStyle(it.source.key, value)}/>
+              <Title>{it.definition.title}</Title>
+              <it.definition.Blueprint value={it.value} onChange={value => changeStyle(it.definition.key, value)}/>
             </Items>
           )))}
         </Tabs.TabPane>

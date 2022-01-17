@@ -3,12 +3,14 @@ import Material from './material'
 import Blueprint from './blueprint'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import styled from 'styled-components'
-import { DroppableIds, flattenData, getData, MaterialType, Page } from './constants'
+import { DroppableIds, MaterialType } from './constants'
 import Building from './building'
-import { LayoutAll, createActive as createLayoutActive, LayoutActive } from './layout'
-import Row from './layout/row'
-import { ContentActive, ContentAll, createActive as createContentActive } from './content'
+import { LAYOUT_DEFINITIONS, createLayout, Layout } from '../definition/layout'
+import Row from '../definition/layout/row'
+import { Content, CONTENT_DEFINITIONS, createContent } from '../definition/content'
 import { message } from 'antd'
+import { flattenData, getData } from '../definition/utils'
+import { Page } from '../definition/page'
 
 const Container = styled.div`
   min-height: 100vh;
@@ -31,16 +33,19 @@ function Editor () {
     {
       width: 0,
       height: 0,
-      landscape: false,
       styles: [],
-      pages: [],
-      absolutes: []
+      layouts: [],
+      absolutes: [],
+      pageable: {
+        mode: 'auto',
+        offsets: []
+      }
     }
   )
 
-  const [layouts] = useState<LayoutActive[]>([])
+  const [layouts] = useState<Layout[]>([])
 
-  const [active, setActive] = useState<LayoutActive | ContentActive<any, any> | undefined>()
+  const [active, setActive] = useState<Layout | Content<any, any> | undefined>()
 
   const onDragEnd = (result: DropResult) => {
     // dropped outside the list
@@ -60,36 +65,36 @@ function Editor () {
     if (source.droppableId === DroppableIds.Material) {
       // 移动到空白区域
       if (destination.droppableId === DroppableIds.Building) {
-        const lay = LayoutAll.find(it => it.key === draggableId)
+        const lay = LAYOUT_DEFINITIONS.find(it => it.key === draggableId)
         // 移动内容到基础布局
-        const layout = createLayoutActive(lay || Row)
+        const layout = createLayout(lay || Row)
         // 添加内容到布局
         if (!lay) {
-          const content = ContentAll.find(it => it.key === draggableId)!
-          const contentActive = createContentActive(layout, content)
-          layout.contents.push(contentActive)
-          contentActive.layout = layout
-          setActive(contentActive)
+          const contentDefinition = CONTENT_DEFINITIONS.find(it => it.key === draggableId)!
+          const content = createContent(layout, contentDefinition)
+          layout.contents.push(content)
+          content.layout = layout
+          setActive(content)
         }
         layouts.splice(destination.index, 0, layout)
         return
       }
       // null 表示移动布局
-      const content = ContentAll.find(it => it.key === draggableId)!
+      const contentDefinition = CONTENT_DEFINITIONS.find(it => it.key === draggableId)!
 
       // 禁止布局套布局
-      if (!content) {
+      if (!contentDefinition) {
         return
       }
       // 移动到现有布局
       const layout = layouts.find(it => destination.droppableId.startsWith(it.id))!
-      const contentActive = createContentActive(layout, content)
-      if (layout.source === Row) {
-        layout.contents.splice(destination.index, 0, contentActive)
+      const content = createContent(layout, contentDefinition)
+      if (layout.definition === Row) {
+        layout.contents.splice(destination.index, 0, content)
       } else {
-        layout.contents.push(contentActive)
+        layout.contents.push(content)
       }
-      setActive(contentActive)
+      setActive(content)
       return
     }
 
@@ -125,7 +130,7 @@ function Editor () {
     if (draggableId.endsWith(MaterialType.Layout) && destination.droppableId.endsWith(MaterialType.Content)) {
       const index = layouts.findIndex(it => draggableId.startsWith(it.id))
       // 布局不是行排列禁止合并
-      if (index === -1 || layouts[index].source !== Row) {
+      if (index === -1 || layouts[index].definition !== Row) {
         return
       }
       const contents = layouts[index].contents
@@ -134,7 +139,7 @@ function Editor () {
       // 将旧布局内容合并到目标布局
       const layout = layouts.find(it => destination.droppableId.startsWith(it.id))!
       // 布局不是行排列禁止合并
-      if (!layout || layout.source !== Row) {
+      if (!layout || layout.definition !== Row) {
         return
       }
       layout.contents.splice(destination.index, 0, ...contents)
@@ -147,7 +152,7 @@ function Editor () {
 
       // 内容移出旧布局,插入新布局
       if (destination.droppableId === DroppableIds.Building) {
-        const layout = createLayoutActive(Row)
+        const layout = createLayout(Row)
         layout.contents.push(content)
         layouts.splice(destination.index, 0, layout)
         content.layout = layout
@@ -155,7 +160,7 @@ function Editor () {
       }
       // 向目标布局插入
       const destinationLayout = layouts.find(it => destination.droppableId.startsWith(it.id))!
-      if (!destinationLayout || destinationLayout.source !== Row) {
+      if (!destinationLayout || destinationLayout.definition !== Row) {
         return
       }
       destinationLayout.contents.splice(destination.index, 0, content)
@@ -185,19 +190,19 @@ function Editor () {
     }
   }
 
-  const changeActiveValue = (value: LayoutActive | ContentActive<any, any>) => {
+  const changeActiveValue = (value: Layout | Content<any, any>) => {
     setActive(value)
     let layoutIndex = layouts.findIndex(it => it.id === value.id)
     // layout 修改
     if (layoutIndex !== -1) {
       const layout = layouts[layoutIndex]
-      layout.contents = (value as LayoutActive).contents
+      layout.contents = (value as Layout).contents
       layout.styles = value.styles
       layouts.splice(layoutIndex, 1, layout)
       return
     }
     // content 修改
-    const content = value as ContentActive<any, any>
+    const content = value as Content<any, any>
     layoutIndex = layouts.findIndex(it => it.id === content.layout.id)
     // 移动后未修改 content.layout 发生错误
     if (layoutIndex === -1) {
@@ -208,7 +213,7 @@ function Editor () {
     const layout = layouts[layoutIndex]
     const contentIndex = layout.contents.findIndex(it => it.id === content.id)
     const target = layout.contents[contentIndex]
-    target.value = (value as ContentActive<any, any>).value
+    target.value = (value as Content<any, any>).value
     target.styles = value.styles
     layout.contents.splice(contentIndex, 1, target)
     layouts.splice(layoutIndex, 1, layout)
