@@ -1,7 +1,12 @@
 import React, { useState } from 'react'
-import { Button, Input, message, List, Result } from 'antd'
+import { Button, Input, message, List } from 'antd'
 import styled from 'styled-components'
-import { useQuery, gql } from '@apollo/client'
+import useLocalStorage from 'react-use-localstorage'
+import { METATABLES } from '../plugins/database'
+import { Metadata } from '../types'
+import moment from 'moment'
+import { v4 as uuid4 } from 'uuid'
+import { DATE_TIME_FORMAT } from '../types/moment'
 
 const Container = styled.div`
   padding: 15px;
@@ -36,57 +41,37 @@ const EditDescription = styled.div`
   }
 `
 
-interface EditData {
-  id?: string
-  title?: string
-  description?: string
-}
-
-const GET_METADATA_ALL = gql`
-  query {
-    findMetadataAll {
-      id, title, description, updatedAt, examples {
-        id, title, json
-      }
-    }
-  }
-`
-interface GetMetadataAll {
-  findMetadataAll: {
-    id: string
-    title: string
-    description?:string
-    updatedAt: string
-    examples: {
-      id: string
-      title: string
-      json: string
-    }[]
-  }[]
-}
-
 const Structure = () => {
-  const { data, error, loading } = useQuery<GetMetadataAll>(GET_METADATA_ALL)
-  const result = useQuery<GetMetadataAll>(GET_METADATA_ALL)
-  console.log('result', result)
-  if (error) {
-    return (<Result status={500} title={'数据加载失败， 请刷新重试'} />)
-  }
+  const [metatables, setMetatables] = useLocalStorage('metatables', JSON.stringify(METATABLES))
 
-  const EditItem = (props: { value?: EditData, onConfirm: (value: EditData) => void, onCancel?: () => void }) => {
-    const [value, setValue] = useState<EditData>(props.value || {})
+  const EditItem = (props: { value?: undefined | Metadata, onOk: (value: Metadata) => void, onCancel?: () => void }) => {
+    const [value, setValue] = useState<Metadata>(props.value || {
+      id: uuid4(),
+      title: '',
+      description: '',
+      createdAt: moment().from(DATE_TIME_FORMAT),
+      examples: [],
+      items: [],
+      updatedAt: ''
+    })
 
     const handleSave = () => {
-      props.onConfirm(value)
+      if (!value.title) {
+        return message.error('请输入标题')
+      }
+      props.onOk({
+        ...value,
+        updatedAt: moment().from(DATE_TIME_FORMAT)
+      })
     }
 
     return (
       <EditContainer>
         <EditHeader>
           <div>* 请输入标题：</div>
-          <Input value={value.title} onChange={ev => setValue({ ...value, title: ev.target.value })}/>
+          <Input value={value.title} placeholder="请输入标题" onChange={ev => setValue({ ...value, title: ev.target.value })}/>
           <Button type="primary" onClick={() => handleSave()}>{ value.id ? '确定修改' : '确定新增' }</Button>
-          {props.value && (<Button type="primary" onClick={() => handleSave()}>取消修改</Button>)}
+          {props.value && (<Button type="primary" onClick={() => props.onCancel && props.onCancel()}>取消修改</Button>)}
         </EditHeader>
         <EditDescription>
           <p>请输入说明:</p>
@@ -96,16 +81,21 @@ const Structure = () => {
     )
   }
 
-  const save = (value: EditData) => {
-    if (!value.title) {
-      return message.error('请输入标题')
+  const save = (value: Metadata) => {
+    const list = JSON.parse(metatables) as Metadata[]
+    const index = list.findIndex(it => it.id === value.id)
+    if (index !== -1) {
+      list.splice(index, 1, value)
+    } else {
+      list.push(value)
     }
+    setMetatables(JSON.stringify(list))
   }
-  console.log(111, data)
+
   return (
     <Container>
-      <EditItem onConfirm={value => save(value)}/>
-      <List loading={loading} dataSource={data?.findMetadataAll ?? []} renderItem={it => (
+      <EditItem onOk={value => save(value)}/>
+      <List dataSource={JSON.parse(metatables) as Metadata[]} renderItem={it => (
         <List.Item.Meta title={it.title} description={it.description} />
       )} />
     </Container>

@@ -1,7 +1,0 @@
-input ISaveMetadataItem {
-  id: ID!
-  uri: String!
-  title: String!
-  description: String
-  nullable: Boolean!
-}
