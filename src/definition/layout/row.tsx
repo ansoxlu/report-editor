@@ -2,7 +2,7 @@ import React from 'react'
 import { LayoutDefinition, LayoutBuildingProps, LayoutRenderProps } from './index'
 import styled from 'styled-components'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
-import { render } from '../styles'
+import { render, renderLayout } from '../styles'
 
 const Container = styled.div<{ isDragging: boolean }>`
   display: flex;
@@ -60,7 +60,7 @@ const Row: LayoutDefinition = {
                       isDragging={snapshot.isDragging}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      style={Object.assign(provided.draggableProps.style, render(it.styles))}
+                      style={Object.assign(provided.draggableProps.style, renderLayout(it.styles))}
                     >
                       {it.value
                         ? (<it.definition.Building key={index} style={render(it.styles)} result={props.getData(it.value) || it.value} onChangeActive={() => props.onChangeActive(it.id)} />)

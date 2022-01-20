@@ -12,7 +12,7 @@ const FlexGrow: StyleDefinition<number> = {
     return { flexGrow: value }
   },
   defaultValue: 1,
-  title: '主轴计算值',
+  title: '主方向占比',
   describe: '',
   key: 'FlexGrow'
 }

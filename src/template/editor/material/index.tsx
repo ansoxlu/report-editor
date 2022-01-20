@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 import { DroppableIds } from '../constants'
-import { Page, PAPER_SIZES } from '../../definition/page'
-import { CONTENT_DEFINITIONS, ContentDefinition } from '../../definition/content'
-import { LAYOUT_DEFINITIONS, LayoutDefinition } from '../../definition/layout'
+import { Page, PAPER_SIZES } from '../../../definition/page'
+import { CONTENT_DEFINITIONS, ContentDefinition } from '../../../definition/content'
+import { LAYOUT_DEFINITIONS, LayoutDefinition } from '../../../definition/layout'
 import { Select } from 'antd'
 
 const Container = styled.aside`

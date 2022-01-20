@@ -6,6 +6,8 @@ import styled from 'styled-components'
 const Container = styled.div`
   display: inline-block;
   position: relative;
+  width: 190px;
+  height: 30px;
 `
 
 const Swatch = styled.div<{color: string}>`
@@ -14,16 +16,16 @@ const Swatch = styled.div<{color: string}>`
   box-shadow: 0 0 0 1px rgba(0, 0, 0, .1);
   display: inline-block;
   cursor: pointer;
-  width: 190px;
-  height: 24px;
+  width: 100%;
+  height: 100%;
   position: absolute;
-  top: -17px;
 `
 
 const Popover = styled.div`
   position: absolute;
   z-index: 2;
-  left: -100px;
+  left: -80px;
+  top: -271px
 `
 
 const Cover = styled.div`

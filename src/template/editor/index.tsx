@@ -5,12 +5,12 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 import { DroppableIds, MaterialType } from './constants'
 import Building from './building'
-import { LAYOUT_DEFINITIONS, createLayout, Layout } from '../definition/layout'
-import Row from '../definition/layout/row'
-import { Content, CONTENT_DEFINITIONS, createContent } from '../definition/content'
+import { LAYOUT_DEFINITIONS, createLayout, Layout } from '../../definition/layout'
+import Row from '../../definition/layout/row'
+import { Content, CONTENT_DEFINITIONS, createContent } from '../../definition/content'
 import { message } from 'antd'
-import { flattenData, getData } from '../definition/utils'
-import { Page } from '../definition/page'
+import { flattenData, getData } from '../../definition/utils'
+import { Page } from '../../definition/page'
 
 const Container = styled.div`
   min-height: 100vh;

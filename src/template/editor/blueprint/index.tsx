@@ -1,17 +1,20 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Layout } from '../../definition/layout'
-import { Content } from '../../definition/content'
+import { Layout } from '../../../definition/layout'
+import { Content } from '../../../definition/content'
 import { Tabs } from 'antd'
 
 const Container = styled.aside`
   width: 300px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 `
 const Items = styled.div`
   border-bottom: 1px solid #aaa;
   padding: 10px 15px;
+  display: flex;
+  align-items: center;
 `
 const Title = styled.span`
   display: inline-block;
@@ -72,6 +75,7 @@ function Blueprint (props: {
         onChange={v => setCurrent(Number(v))}
         centered
         size="large"
+        style={{ height: '100%' }}
       >
         <Tabs.TabPane tab="属性" key="0">
           {!!props.value && (renderContentOrLayout())}

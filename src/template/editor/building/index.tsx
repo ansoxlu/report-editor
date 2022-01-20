@@ -1,10 +1,10 @@
 import React from 'react'
-import { Layout } from '../../definition/layout'
+import { Layout } from '../../../definition/layout'
 import styled from 'styled-components'
-import { render } from '../../definition/styles'
+import { render } from '../../../definition/styles'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import { DroppableIds, MaterialType } from '../constants'
-import { Page } from '../../definition/page'
+import { Page } from '../../../definition/page'
 
 const Container = styled.section`
   border-left: 1px solid #e0e0e0;

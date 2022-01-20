@@ -73,6 +73,16 @@ export const render = (styles: Style<any>[]): CSSProperties => {
   }, { display: 'flex' })
 }
 
+const LAYOUT_STYLE = ['FlexDirection', 'JustifyContent', 'AlignItems', 'FlexGrow']
+export const renderLayout = (styles: Style<any>[]): CSSProperties => {
+  return styles.reduce<CSSProperties>((pv, it) => {
+    if (!LAYOUT_STYLE.includes(it.definition.key)) {
+      return pv
+    }
+    return Object.assign(pv, it.definition.render(it.value)) as CSSProperties
+  }, { display: 'flex' })
+}
+
 export const createStyle = (style: StyleDeserialize | StyleDefinition<any>): Style<any> => {
   if ((style as StyleDeserialize).definition) {
     const dv = style as StyleDeserialize

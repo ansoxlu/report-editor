@@ -1,5 +1,25 @@
 import React from 'react'
 import { rem, StyleDefinition } from './index'
+import { InputNumber, Select } from 'antd'
+import styled from 'styled-components'
+import Color from './color'
+
+const Container = styled.div`
+  flex: auto;
+`
+
+const ItemsContainer = styled.div`
+  display: flex;
+
+  > div:last-child {
+    width: 58px;
+
+    > div:nth-child(2) {
+      left: -212px;
+      top: -279px;
+    }
+  }
+`
 
 type LineStyle = 'solid' | 'double' | 'dotted'
 interface BlockStyle {
@@ -15,10 +35,38 @@ interface Value {
   right: BlockStyle
 }
 
+const StyleSelect = (props: { value: LineStyle, onChange: (value: LineStyle) => void }) => (
+  <Select value={props.value} onChange={props.onChange}>
+    <Select.Option value="solid">实线</Select.Option>
+    <Select.Option value="double">双实</Select.Option>
+    <Select.Option value="dotted">点线</Select.Option>
+  </Select>
+)
+
+const Items = (props: { title: string, value: BlockStyle, onChange: (value: BlockStyle) => void }) => (
+  <ItemsContainer>
+    <InputNumber
+      addonBefore={props.title}
+      min="0"
+      max="999"
+      style={{ width: 190 }}
+      value={String(props.value.size)}
+      onChange={(v) => props.onChange({ ...props.value, size: Number(v) })}
+      addonAfter={<StyleSelect value={props.value.style} onChange={(v) => props.onChange({ ...props.value, style: v })} />}
+    />
+    <Color.Blueprint value={props.value.color} onChange={v => props.onChange({ ...props.value, color: v })} />
+  </ItemsContainer>
+)
 const Border: StyleDefinition<Value> = {
-  // TODO 待完成
-  Blueprint (_props: { value: Value; onChange: (value: Value) => void }) {
-    return (<div/>)
+  Blueprint (props: { value: Value; onChange: (value: Value) => void }) {
+    return (
+      <Container>
+        <Items title="上" value={props.value.top} onChange={(v) => props.onChange({ ...props.value, top: v })} />
+        <Items title="下" value={props.value.bottom} onChange={(v) => props.onChange({ ...props.value, bottom: v })} />
+        <Items title="左" value={props.value.left} onChange={(v) => props.onChange({ ...props.value, left: v })} />
+        <Items title="右" value={props.value.right} onChange={(v) => props.onChange({ ...props.value, right: v })} />
+      </Container>
+    )
   },
   render (value: Value) {
     return {

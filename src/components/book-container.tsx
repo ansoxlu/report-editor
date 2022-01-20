@@ -11,11 +11,11 @@ const Container = styled.div`
 
 const Book = styled.div`
   width: 148mm;
-  height: 210mm;
+  min-height: 210mm;
   background-color: antiquewhite;
 `
 
-const BookView = (props: { children: ReactNode }) => {
+const BookContainer = (props: { children: ReactNode }) => {
   return (
     <Container>
       <Book>
@@ -25,4 +25,4 @@ const BookView = (props: { children: ReactNode }) => {
   )
 }
 
-export default BookView
+export default BookContainer
