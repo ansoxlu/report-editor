@@ -6,6 +6,6 @@ export const METATABLES = [
     createdAt: '2022-01-01 01:02:03',
     updatedAt: '2022-01-01 01:02:03',
     items: [],
-    examples: []
+    example: '{}'
   }
 ]

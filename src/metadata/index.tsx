@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Input, message, Select } from 'antd'
+import { Button, Input, message } from 'antd'
 import styled from 'styled-components'
 import { Metadata } from '../types'
 import moment from 'moment'
@@ -43,10 +43,6 @@ const Items = styled.div`
     > div:nth-child(2) {
       flex: auto;
     }
-
-    > div:nth-child(3) {
-      width: 170px;
-    }
   }
 `
 
@@ -73,7 +69,8 @@ const EditDescription = styled.div`
   display: flex;
 
   > p {
-    padding: 0 11px 0 10px;
+    padding-left: 10px;
+    width: 94px;
   }
   > textarea {
     width: auto;
@@ -83,7 +80,7 @@ const EditDescription = styled.div`
 
 const Index = () => {
   const navigate = useNavigate()
-  const [metatables, setMetatables] = useLocalStorage('metatables', JSON.stringify(METATABLES))
+  const [metatables, setMetatables] = useLocalStorage('RE-metatables', JSON.stringify(METATABLES))
 
   const [editId, setEditId] = useState<string | undefined>()
 
@@ -93,7 +90,7 @@ const Index = () => {
       title: '',
       description: '',
       createdAt: '',
-      examples: [],
+      example: '{}',
       items: [],
       updatedAt: ''
     })
@@ -120,7 +117,7 @@ const Index = () => {
         </EditHeader>
         <EditDescription>
           <p>请输入说明:</p>
-          <Input.TextArea value={value.description} autoSize={{ minRows: 2, maxRows: 6 }} placeholder="请输入说明"/>
+          <Input.TextArea value={value.description} onChange={ev => setValue({ ...value, description: ev.target.value })} autoSize={{ minRows: 2, maxRows: 6 }} placeholder="请输入说明"/>
         </EditDescription>
       </EditContainer>
     )
@@ -150,19 +147,12 @@ const Index = () => {
               <div>{it.title}</div>
               <div/>
               <div>{it.updatedAt}</div>
-              <div><Button type="primary" onClick={() => setEditId(it.id)}>信息修改</Button></div>
+              <div><Button type="primary" onClick={() => setEditId(it.id)}>信息编辑</Button></div>
             </div>
             <div>
               <div>{it.description}</div>
               <div/>
-              <div>
-                <Select style={{ width: '100%' }} onChange={value => navigate(`/metadata/${it.id}?exampleId=${value}`)}>
-                  {it.examples.map(eit => (
-                    <Select.Option key={eit.id} value={eit.id} >{eit.title}</Select.Option>
-                  ))}
-                </Select>
-              </div>
-              <div><Button type="primary" onClick={() => navigate(`/metadata/${it.id}`)}>格式编辑</Button></div>
+              <div><Button type="primary" onClick={() => navigate(`/metadata/${it.id}`)}>格式定义</Button></div>
             </div>
           </Items>
           )

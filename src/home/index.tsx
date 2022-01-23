@@ -1,16 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import Header from '../components/Header'
 
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
-`
-
-const Header = styled.header`
-  width: 100%;
-  height: 62px;
-  border-bottom: 1px solid #ebe0e0;
 `
 
 const Content = styled.div`
@@ -74,8 +69,19 @@ const MENUS = [
 ]
 
 const Home = () => {
+  const navigate = useNavigate()
   const location = useLocation()
-  const menu = MENUS.find(it => it.url === location.pathname)!
+  const menu = MENUS.find(it => it.url === location.pathname)
+
+  useEffect(() => {
+    if (!menu) {
+      navigate(MENUS[0].url)
+    }
+  })
+
+  if (!menu) {
+    return null
+  }
 
   return (
     <Container>
@@ -83,7 +89,7 @@ const Home = () => {
       <Content>
         <Aside>
           {MENUS.map((it, index) => (
-            <Link to={it.url} key={it.url}>
+            <Link to={it.url} key={index}>
               <Menu index={index} isActive={it.url === menu.url}>{it.title}</Menu>
             </Link>
           ))}

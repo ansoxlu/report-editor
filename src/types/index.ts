@@ -9,28 +9,18 @@ export interface Metadata {
   //  数据项
   items: MetadataItem[]
   //  数据示例
-  examples: MetadataExample[]
+  example: string
 }
 
 // 模板数据项
 export interface MetadataItem {
-  id: string
-  //  数据的扁平化定位
-  uri: string
-  //  标题
-  title: string
+  id: number
+  //  数据的扁平化路径
+  path: string
+  //  别名
+  alias?: string
   //  是否必须
   required: boolean
-  description?: string
-}
-
-// 数据示例
-export interface MetadataExample {
-  id: string
-  //  标题
-  title: string
-  //  示例json数据
-  json: string
 }
 
 // 模板

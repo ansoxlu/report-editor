@@ -9,3 +9,8 @@ declare module '*.json' {
   const jsonValue: any
   export default jsonValue
 }
+
+declare module '*.png' {
+  const value: any
+  export = value;
+}

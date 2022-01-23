@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from './home'
 import Error404 from './errors/error-404'
 import Metadata from './metadata'
-import MetadataEdit from './metadata/edit'
+import MetadataEditor from './metadata/editor'
 import Template from './template'
 import TemplateEditor from './template/editor'
 
@@ -14,10 +14,10 @@ function App () {
     <Router>
       <Routes>
         <Route path="/" element={<Home/>} >
-          <Route path="/metadata" element={<Metadata/>} />
-          <Route path="/template" element={<Template/>} />
+          <Route path="template" element={<Template/>} />
+          <Route path="metadata" element={<Metadata/>} />
         </Route>
-        <Route path="/metadata/:id" element={<MetadataEdit/>}/>
+        <Route path="/metadata/:id" element={<MetadataEditor/>}/>
         <Route path="/template/:id" element={<TemplateEditor/>}/>
         <Route path="*" element={<Error404/>} />
       </Routes>

@@ -46,7 +46,7 @@ export const flattenData = (data: any | undefined): FlattenData => {
   return result
 }
 
-export const flattenUri = (data: object) => {
+export const flattenUri = (data: object): Record<string, boolean> => {
   const result: Record<string, boolean> = {}
   const precess = (key: string, value: any) => {
     if (value === undefined || value === null) {
@@ -57,13 +57,19 @@ export const flattenUri = (data: object) => {
         result[key] = true
       }
     } else if (Array.isArray(value)) {
-      for (const it of value) {
-        precess(`${key}[]`, it)
+      if (value.length === 0) {
+        result[`[${key}]`] = false
+      } else if (!value[0] || typeof value[0] !== 'object') {
+        result[`[${key}]`] = true
+      } else {
+        for (const it of value) {
+          precess(`${key}[]`, it)
+        }
       }
     } else {
       for (const nextKey in value) {
         if (Object.prototype.hasOwnProperty.call(value, nextKey)) {
-          precess(`${key}.${nextKey}`, value[nextKey])
+          precess(`${key}${key ? '.' : ''}${nextKey}`, value[nextKey])
         }
       }
     }
