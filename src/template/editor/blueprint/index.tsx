@@ -3,10 +3,12 @@ import styled from 'styled-components'
 import { Layout } from '../../../definition/layout'
 import { Content } from '../../../definition/content'
 import { Tabs } from 'antd'
+import LayoutContents from './layout-contents'
+import PageLayouts from './page-layouts'
+import { Page } from '../../../definition/types'
 
 const Container = styled.aside`
   width: 300px;
-  height: 100vh;
   display: flex;
   flex-direction: column;
 `
@@ -21,10 +23,25 @@ const Title = styled.span`
   width: 80px;
 `
 
+const Notice = styled.div`
+  display: flex;
+  flex: auto;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  color: #fff;
+  background-color: #ff7875;
+  font-size: 32px;
+  height: 88px;
+`
+
 function Blueprint (props: {
   value: Layout | Content<any, any> | undefined,
   data: object,
-  onChange: (value: Layout | Content<any, any>) => void
+  onChange: (value: Layout | Content<any, any>) => void,
+  onChangeActive: (layoutId: string, contentId?: string) => void
+  page: Page,
+  onChangePage: (value: Page) => void
 }) {
   const [current, setCurrent] = useState<number>(0)
 
@@ -58,8 +75,13 @@ function Blueprint (props: {
   const renderContentOrLayout = () => {
     if ((props.value as Layout)?.contents) {
       const layout = props.value as Layout
+      if (!layout.contents.length) {
+        return (
+          <Notice>请添加内容</Notice>
+        )
+      }
       return (
-        <layout.definition.Blueprint contents={(props.value as Layout).contents} onChangeContents={changeContents} />
+        <LayoutContents value={layout.contents} onChange={changeContents} onChangeActive={contentId => props.onChangeActive(layout.id, contentId) } />
       )
     }
     const content = props.value as Content<any, any>
@@ -77,16 +99,22 @@ function Blueprint (props: {
         size="large"
         style={{ height: '100%' }}
       >
-        <Tabs.TabPane tab="属性" key="0">
-          {!!props.value && (renderContentOrLayout())}
+        <Tabs.TabPane tab={!props.value || (props.value as Layout).contents ? '元素' : '属性'} key="0">
+          {current === 0 && !!props.value && (renderContentOrLayout())}
         </Tabs.TabPane>
         <Tabs.TabPane tab="样式" key="1">
-          {!!props.value && (props.value.styles.map((it, index) => (
+          {current === 1 && !!props.value && (props.value.styles.map((it, index) => (
             <Items key={index} >
               <Title>{it.definition.title}</Title>
               <it.definition.Blueprint value={it.value} onChange={value => changeStyle(it.definition.key, value)}/>
             </Items>
           )))}
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="页面元素" key="3">
+          {current === 3 && (<PageLayouts value={props.page} onChange={props.onChangePage} onChangeActive={layoutId => {
+            props.onChangeActive(layoutId)
+            setCurrent(0)
+          }} />)}
         </Tabs.TabPane>
       </Tabs>
     </Container>

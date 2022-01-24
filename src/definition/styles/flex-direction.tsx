@@ -9,7 +9,7 @@ const FlexDirection: StyleDefinition<Direction> = {
   describe: '',
   Blueprint (props: { value: Direction; onChange: (value: Direction) => void }) {
     return (
-      <Switch checked={props.value === 'row'} checkedChildren="行" unCheckedChildren="列" onChange={(v) => props.onChange(v ? 'row' : 'column')} />
+      <Switch checked={props.value === 'row'} checkedChildren="横" unCheckedChildren="竖" onChange={(v) => props.onChange(v ? 'row' : 'column')} />
     )
   },
   render (value: Direction) {

@@ -9,7 +9,7 @@ const Ellipsis: StyleDefinition<boolean> = {
     )
   },
   render (value: boolean) {
-    return { overflow: value ? 'hidden' : 'auto', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
+    return { overflow: value ? 'hidden' : 'unset', textOverflow: value ? 'ellipsis' : 'unset', whiteSpace: 'nowrap' }
   },
   defaultValue: false,
   describe: '配置最大宽/高使用',

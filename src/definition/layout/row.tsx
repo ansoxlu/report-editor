@@ -25,14 +25,12 @@ const Notice = styled.div`
   align-items: center;
   align-content: center;
   justify-content: center;
-  color: #aaa;
   font-size: 12px;
+  color: #fff;
+  background-color: #ff7875;
 `
 
 const Row: LayoutDefinition = {
-  Blueprint () {
-    return (<div/>)
-  },
   Render (props: LayoutRenderProps) {
     return (
       <div style={props.style}>
@@ -70,7 +68,7 @@ const Row: LayoutDefinition = {
                   )}
                 </Draggable>
               ))
-              : <Notice>请添加内容</Notice>
+              : <Notice>请拖动内容进行元素添加</Notice>
             }
             {provided.placeholder}
           </Container>

@@ -27,14 +27,12 @@ export interface LayoutDefinition {
   describe: string
   styles: StyleDefinition<any>[]
   Render: (props: LayoutRenderProps) => ReactElement
-  Blueprint: (props: LayoutBlueprintProps) => ReactElement
   Building: (props: LayoutBuildingProps) => ReactElement
 }
 
 export interface LayoutDeserialize {
   id: string
   styles: StyleDeserialize[]
-  value: any
   contents: ContentDeserialize[]
   definition: string
 }

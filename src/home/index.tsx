@@ -34,7 +34,7 @@ const Menu = styled.div<{index: number, isActive: boolean}>`
   border-bottom: 1px solid #ebe0e0;
   padding-top: 8px;
   padding-bottom: 8px;
-  padding-left: ${props => (props.index + 2) * 22}px;
+  padding-left: ${props => (props.index + 2) * 18}px;
   background-color: ${props => props.isActive ? 'peachpuff' : '#f3f3f3'};
 `
 const Description = styled.div`
@@ -56,7 +56,7 @@ const MENUS = [
   {
     title: '模板编辑',
     url: '/template',
-    description: '构造要打印的模板,结合已配置的数据开始编辑'
+    description: '结合已保存的数据开始编辑模板'
   },
   {
     title: '打印预览',

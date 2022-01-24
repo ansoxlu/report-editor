@@ -1,10 +1,9 @@
 import React from 'react'
-import { Layout } from '../../../definition/layout'
 import styled from 'styled-components'
 import { render } from '../../../definition/styles'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import { DroppableIds, MaterialType } from '../constants'
-import { Page } from '../../../definition/page'
+import { Page } from '../../../definition/types'
 
 const Container = styled.section`
   border-left: 1px solid #e0e0e0;
@@ -26,7 +25,6 @@ const PageContainer = styled.article<{isDragging: boolean}>`
   position: relative;
   display: flex;
   flex-direction: column;
-  box-sizing: content-box;
   border: 1px ${props => (props.isDragging ? 'dashed #4099ff' : 'solid #ddd')};
 `
 
@@ -58,11 +56,12 @@ const Notice = styled.div`
   align-items: center;
   align-content: center;
   justify-content: center;
-  color: #aaa;
+  color: #fff;
   font-size: 32px;
+  background-color: #ff7875;
 `
 
-const Building = (props: { page: Page, layouts: Layout[], getData: (values: string | string[]) => any, onChangeActive: (activeId: string, contentId?: string) => void }) => {
+const Building = (props: { page: Page, getData: (values: string | string[]) => any, onChangeActive: (layoutId: string, contentId?: string) => void }) => {
   return (
     <Container>
       <View>
@@ -77,11 +76,12 @@ const Building = (props: { page: Page, layouts: Layout[], getData: (values: stri
                   {...provided.droppableProps}
                   style={{
                     width: `${props.page.width}mm`,
-                    height: `${props.page.height}mm`
+                    height: `${props.page.height}mm`,
+                    ...render(props.page.styles)
                   }}
                 >
-                  {props.layouts.length
-                    ? props.layouts.map((it, idx) => (
+                  {props.page.layouts.length
+                    ? props.page.layouts.map((it, idx) => (
                       <Draggable
                         key={it.id}
                         draggableId={`${it.id}_${MaterialType.Layout}`}
@@ -113,7 +113,7 @@ const Building = (props: { page: Page, layouts: Layout[], getData: (values: stri
                         )}
                       </Draggable>
                     ))
-                    : (<Notice>请添加内容</Notice>)
+                    : (<Notice>请拖动布局或内容进行编辑</Notice>)
                   }
                   {provided.placeholder}
                 </PageContainer>

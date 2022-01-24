@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Input, message } from 'antd'
+import { Button, Input, message, Select } from 'antd'
 import styled from 'styled-components'
 import { Metadata } from '../types'
 import moment from 'moment'
@@ -107,11 +107,33 @@ const Index = () => {
       })
     }
 
+    const handleSelectMetadata = (id: string) => {
+      const metadata = JSON.parse(metatables).find((it: Metadata) => it.id === id)
+      if (metadata) {
+        setValue({
+          ...value,
+          items: metadata.items,
+          example: metadata.example
+        })
+      } else {
+        setValue({
+          ...value,
+          items: [],
+          example: '{}'
+        })
+      }
+    }
+
     return (
       <EditContainer>
         <EditHeader>
           <div>* 请输入标题：</div>
           <Input value={value.title} placeholder="请输入标题" onChange={ev => setValue({ ...value, title: ev.target.value })}/>
+          {!props.value && metatables.length && (
+            <Select placeholder="复制已有数据格式" allowClear style={{ width: 170 }} onChange={handleSelectMetadata}>
+              {JSON.parse(metatables).map((it: Metadata) => (<Select.Option key={it.id} value={it.id}>{it.title}</Select.Option>))}
+            </Select>
+          )}
           <Button type="primary" onClick={() => handleSave()}>{ value.createdAt ? '确定保存' : '确定新增' }</Button>
           {props.value && (<Button type="primary" onClick={() => props.onCancel && props.onCancel()}>取消修改</Button>)}
         </EditHeader>
@@ -152,7 +174,7 @@ const Index = () => {
             <div>
               <div>{it.description}</div>
               <div/>
-              <div><Button type="primary" onClick={() => navigate(`/metadata/${it.id}`)}>格式定义</Button></div>
+              <div><Button type="primary" onClick={() => navigate(`/metadata/${it.id}`)}>数据定义</Button></div>
             </div>
           </Items>
           )

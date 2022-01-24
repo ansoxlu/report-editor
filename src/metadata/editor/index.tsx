@@ -11,13 +11,16 @@ import Header from '../../components/Header'
 
 const Container = styled.div`
   height: 100vh;
-
-  @media (max-width: 900px) {
-    flex-direction: column;
-  }
+  display: flex;
+  flex-direction: column;
 
   > div:nth-child(2) {
     display: flex;
+    flex: auto;
+
+    @media (max-width: 1000px) {
+      flex-direction: column;
+    }
   }
 `
 
