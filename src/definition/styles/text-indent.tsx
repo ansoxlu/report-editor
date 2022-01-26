@@ -1,6 +1,7 @@
 import { InputNumber } from 'antd'
 import React from 'react'
-import { rem, StyleDefinition } from './index'
+import { StyleDefinition } from './types'
+import { rem } from './utils'
 
 const TextIndent: StyleDefinition<number> = {
   Blueprint (props: { value: number; onChange: (value: number) => void }) {
@@ -12,7 +13,7 @@ const TextIndent: StyleDefinition<number> = {
     return { textIndent: rem(value) }
   },
   defaultValue: 0,
-  describe: '',
+  description: '',
   title: '首行缩进',
   key: 'TextIndent'
 }

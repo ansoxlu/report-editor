@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import { render } from '../../../definition/styles'
+import { render } from '../../../definition/styles/utils'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
-import { DroppableIds, MaterialType } from '../constants'
+import { DroppableIds, MaterialType } from '../types'
 import { Page } from '../../../definition/types'
 
 const Container = styled.section`

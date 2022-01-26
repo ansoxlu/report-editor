@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleDefinition } from './index'
+import { StyleDefinition } from './types'
 import { SketchPicker } from 'react-color'
 import styled from 'styled-components'
 
@@ -56,7 +56,7 @@ const Color: StyleDefinition<string> = {
     return { color: value }
   },
   defaultValue: '#000',
-  describe: '',
+  description: '',
   title: '字体颜色',
   key: 'Color'
 }

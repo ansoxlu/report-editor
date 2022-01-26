@@ -1,24 +1,24 @@
 import { CSSProperties, ReactElement } from 'react'
-import { createStyle, StyleDefinition, Style } from '../styles'
-import { Layout } from '../layout'
-import { v4 as uuid4 } from 'uuid'
-import { cloneDeep } from 'lodash'
+import { StyleDefinition, Style } from '../styles/types'
+import { Layout, LayoutDefinition } from '../layout/types'
 import Text from './text'
 /**
- * T 获取解析 value 获取渲染数据的内容
+ * T: string | string[]
+ * R: getData(T) => R<undefined | object | object[]>
  */
 export interface ContentDefinition<T, R> {
   key: string
   title: string
-  describe: string
+  description: string
   defaultValue: T
+  layout?: LayoutDefinition
   styles: StyleDefinition<any>[]
   Render: (props: { result?: R, style: CSSProperties }) => ReactElement
   Blueprint: (props: { value: T, onChange: (value: T) => void }) => ReactElement,
   Building: (props: { result?: R, style: CSSProperties, onChangeActive: () => void }) => ReactElement
 }
 
-export interface ContentDeserialize {
+export interface ContentSerialize {
   id: string
   styles: StyleDefinition<any>[]
   value: any
@@ -36,20 +36,3 @@ export interface Content<T, R> {
 }
 
 export const CONTENT_DEFINITIONS: ContentDefinition<any, any>[] = [Text]
-
-export const createContent = (layout: Layout, content: ContentDefinition<any, any>): Content<any, any> => {
-  return {
-    id: uuid4(),
-    layout: layout,
-    definition: content,
-    styles: content.styles.map(it => createStyle(it)),
-    toJSON () {
-      return {
-        ...this,
-        definition: this.definition.key,
-        layout: this.layout.id
-      }
-    },
-    value: cloneDeep(content.defaultValue)
-  }
-}

@@ -1,5 +1,6 @@
 import React from 'react'
-import { rem, StyleDefinition } from './index'
+import { StyleDefinition } from './types'
+import { rem } from './utils'
 import { InputNumber } from 'antd'
 import styled from 'styled-components'
 
@@ -32,7 +33,7 @@ const Padding:StyleDefinition<{top: number, bottom: number, left: number, right:
   },
   defaultValue: { bottom: 0, left: 0, right: 0, top: 0 },
   title: '边距',
-  describe: '',
+  description: '',
   key: 'Padding'
 }
 

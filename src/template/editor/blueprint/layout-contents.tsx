@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Droppable, DragDropContext, DropResult, Draggable } from 'react-beautiful-dnd'
-import { Content } from '../../../definition/content'
+import { Content } from '../../../definition/content/types'
 import { Button, Popconfirm } from 'antd'
 
 const Container = styled.div<{isDragging: boolean}>`

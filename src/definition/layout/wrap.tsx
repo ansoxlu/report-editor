@@ -1,6 +1,6 @@
 import React from 'react'
-import { LayoutDefinition, LayoutBuildingProps, LayoutRenderProps } from './index'
-import { render } from '../styles'
+import { LayoutDefinition, LayoutBuildingProps, LayoutRenderProps } from './types'
+import { render } from '../styles/utils'
 import styled from 'styled-components'
 import { Droppable } from 'react-beautiful-dnd'
 
@@ -53,7 +53,7 @@ const Wrap: LayoutDefinition = {
       </Container>
     )
   },
-  describe: '能过最小宽度',
+  description: '能过最小宽度',
   key: 'Wrap',
   styles: [],
   title: '宽组合'

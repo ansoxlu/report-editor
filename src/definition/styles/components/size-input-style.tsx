@@ -13,13 +13,13 @@ const SizeSelect = (props: { value: Unit, onChange: (value: Unit) => void }) => 
   </Select>
 )
 
-export interface SizeInputStyle<T> {
+export interface SizeInputStyleDefinition<T> {
   defaultValue: T
   // 在 blueprint 区域显示的内容
   Blueprint: (props: {value: T, onChange: (value: T) => void}) => ReactElement
 }
 
-export const BaseSizeInputStyle: SizeInputStyle<SizeInputValue> = {
+export const SizeInputStyle: SizeInputStyleDefinition<SizeInputValue> = {
   Blueprint (props: { value: SizeInputValue; onChange: (value: SizeInputValue) => void }) {
     return (
       <InputNumber

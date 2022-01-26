@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
-import { DroppableIds } from '../constants'
+import { DroppableIds } from '../types'
 import { Page, PAPER_SIZES } from '../../../definition/types'
-import { CONTENT_DEFINITIONS, ContentDefinition } from '../../../definition/content'
-import { LAYOUT_DEFINITIONS, LayoutDefinition } from '../../../definition/layout'
+import { CONTENT_DEFINITIONS } from '../../../definition/content/types'
 import { Select, Button, message, InputNumber } from 'antd'
 import { SyncOutlined } from '@ant-design/icons'
-import { Style } from '../../../definition/styles'
+import { Style } from '../../../definition/styles/types'
 import JustifyContent from '../../../definition/styles/justify-content'
 
 const Container = styled.aside`
@@ -145,48 +144,39 @@ function Material (props: {
     )
   }
 
-  const ItemsBox = (props: { offset: number, list: LayoutDefinition[] | ContentDefinition<any, any>[]}) => {
-    return (
-      <Items>
-        {props.list.map((it, index) => (
-          <Draggable
-            key={it.key}
-            draggableId={it.key}
-            index={props.offset + index}>
-            {(provided, snapshot) => (
-              <React.Fragment>
-                <Item
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                  isDragging={snapshot.isDragging}
-                  style={snapshot.isDragging ? provided.draggableProps.style : {}}
-                >
-                  {it.title}
-                </Item>
-                {snapshot.isDragging && (
-                  <Clone>
-                    {it.title}
-                  </Clone>
-                )}
-              </React.Fragment>
-            )}
-          </Draggable>
-        ))}
-      </Items>
-    )
-  }
   return (
     <Droppable droppableId={DroppableIds.Material} isDropDisabled={true} >
       {(provided) => (
         <Container ref={provided.innerRef}>
           <Groups>
-            <Title>布局</Title>
-            <ItemsBox list={LAYOUT_DEFINITIONS} offset={0} />
-          </Groups>
-          <Groups>
             <Title>内容</Title>
-            <ItemsBox list={CONTENT_DEFINITIONS} offset={LAYOUT_DEFINITIONS.length} />
+            <Items>
+              {CONTENT_DEFINITIONS.map((it, index) => (
+                <Draggable
+                  key={it.key}
+                  draggableId={it.key}
+                  index={index}>
+                  {(provided, snapshot) => (
+                    <React.Fragment>
+                      <Item
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        isDragging={snapshot.isDragging}
+                        style={snapshot.isDragging ? provided.draggableProps.style : {}}
+                      >
+                        {it.title}
+                      </Item>
+                      {snapshot.isDragging && (
+                        <Clone>
+                          {it.title}
+                        </Clone>
+                      )}
+                    </React.Fragment>
+                  )}
+                </Draggable>
+              ))}
+            </Items>
           </Groups>
           <PageStyle
             width={props.page.width}

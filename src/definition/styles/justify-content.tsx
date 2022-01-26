@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleDefinition } from './index'
+import { StyleDefinition } from './types'
 import { Select } from 'antd'
 
 type Category = 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly'
@@ -18,15 +18,15 @@ const Categories: {title: string, value: Category}[] = [
     value: 'center'
   },
   {
-    title: '环绕平均',
+    title: '间距相等',
     value: 'space-between'
   },
   {
-    title: '尺寸平均',
+    title: '围绕间隔',
     value: 'space-around'
   },
   {
-    title: '间隔平均',
+    title: '边距相等',
     value: 'space-evenly'
   }
 ]
@@ -50,7 +50,7 @@ const JustifyContent: StyleDefinition<Category> = {
   },
   title: '主方向排列',
   defaultValue: 'flex-start',
-  describe: '',
+  description: '',
   key: 'JustifyContent'
 }
 

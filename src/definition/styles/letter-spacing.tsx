@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleDefinition } from './index'
+import { StyleDefinition } from './types'
 import { InputNumber } from 'antd'
 
 const LetterSpacing: StyleDefinition<number> = {
@@ -9,7 +9,7 @@ const LetterSpacing: StyleDefinition<number> = {
     )
   },
   defaultValue: 0,
-  describe: '',
+  description: '',
   key: 'LetterSpacing',
   render (value: number) {
     return { letterSpacing: value }

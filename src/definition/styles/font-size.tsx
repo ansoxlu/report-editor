@@ -1,5 +1,6 @@
 import React from 'react'
-import { rem, StyleDefinition } from './index'
+import { StyleDefinition } from './types'
+import { rem } from './utils'
 import { InputNumber } from 'antd'
 
 const FontSize: StyleDefinition<number> = {
@@ -14,8 +15,9 @@ const FontSize: StyleDefinition<number> = {
     }
   },
   defaultValue: 14,
-  describe: '',
+  description: '',
   title: '字体大小',
   key: 'FontSize'
 }
+
 export default FontSize

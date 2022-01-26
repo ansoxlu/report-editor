@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleDefinition } from './index'
+import { StyleDefinition } from './types'
 import { Select } from 'antd'
 
 type Category = 'center' | 'flex-start' | 'flex-end'
@@ -38,7 +38,7 @@ const AlignItems: StyleDefinition<Category> = {
   },
   title: '副方向排列',
   defaultValue: 'center',
-  describe: '',
+  description: '',
   key: 'AlignItems'
 }
 

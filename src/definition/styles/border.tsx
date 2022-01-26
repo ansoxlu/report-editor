@@ -1,5 +1,6 @@
 import React from 'react'
-import { rem, StyleDefinition } from './index'
+import { StyleDefinition } from './types'
+import { rem } from './utils'
 import { InputNumber, Select } from 'antd'
 import styled from 'styled-components'
 import Color from './color'
@@ -82,7 +83,7 @@ const Border: StyleDefinition<Value> = {
     right: { size: 0, color: '#000', style: 'solid' },
     top: { size: 0, color: '#000', style: 'solid' }
   },
-  describe: '',
+  description: '',
   title: '边距线',
   key: 'Border'
 }

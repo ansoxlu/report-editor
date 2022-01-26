@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleDefinition } from './index'
+import { StyleDefinition } from './types'
 import { Select } from 'antd'
 
 const FontWeight: StyleDefinition<number> = {
@@ -20,7 +20,7 @@ const FontWeight: StyleDefinition<number> = {
     return { fontWeight: value }
   },
   defaultValue: 400,
-  describe: '',
+  description: '',
   title: '字体粗细',
   key: 'FontWeight'
 }

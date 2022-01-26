@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleDefinition } from './index'
+import { StyleDefinition } from './types'
 import { InputNumber } from 'antd'
 
 const FlexGrow: StyleDefinition<number> = {
@@ -13,7 +13,7 @@ const FlexGrow: StyleDefinition<number> = {
   },
   defaultValue: 1,
   title: '主方向占比',
-  describe: '',
+  description: '',
   key: 'FlexGrow'
 }
 

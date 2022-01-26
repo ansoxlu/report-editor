@@ -3,14 +3,16 @@ import Material from './material'
 import Blueprint from './blueprint'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import styled from 'styled-components'
-import { DroppableIds, MaterialType } from './constants'
+import { DroppableIds, MaterialType } from './types'
 import Building from './building'
-import { LAYOUT_DEFINITIONS, createLayout, Layout } from '../../definition/layout'
-import Row from '../../definition/layout/row'
-import { Content, CONTENT_DEFINITIONS, createContent } from '../../definition/content'
+import { Layout } from '../../definition/layout/types'
+import { createLayout } from '../../definition/layout/utils'
+import Many from '../../definition/layout/many'
+import { Content, CONTENT_DEFINITIONS } from '../../definition/content/types'
+import { createContent } from '../../definition/content/utils'
 import { message } from 'antd'
-import { flattenData, getData } from '../../definition/utils'
-import { createPage, Page } from '../../definition/types'
+import { flattenData, getData, createPage } from '../../definition/utils'
+import { Page } from '../../definition/types'
 import Header from '../../components/Header'
 
 const Container = styled.div`
@@ -47,21 +49,6 @@ function Editor () {
 
   const [active, setActive] = useState<Layout | Content<any, any> | undefined>()
 
-  function setDefaultStyle<T> (target: T): T {
-    // @ts-ignore
-    const styles = target.styles.map(tit => {
-      const style = page.styles.find(pit => tit.definition.key === pit.definition.key)
-      if (style) {
-        tit.value = style.value
-      }
-      return tit
-    })
-    return {
-      ...target,
-      styles
-    }
-  }
-
   const onDragEnd = (result: DropResult) => {
     // dropped outside the list
     console.log('result => ', result)
@@ -76,40 +63,25 @@ function Editor () {
       return
     }
 
-    // 拖动素材
+    // 拖动内容素材
     if (source.droppableId === DroppableIds.Material) {
+      const contentDefinition = CONTENT_DEFINITIONS.find(it => it.key === draggableId)!
       // 移动到空白区域
       if (destination.droppableId === DroppableIds.Building) {
-        const lay = LAYOUT_DEFINITIONS.find(it => it.key === draggableId)
         // 移动内容到基础布局
-        const layout = setDefaultStyle(createLayout(lay || Row))
-        // 添加内容到布局
-        if (!lay) {
-          const contentDefinition = CONTENT_DEFINITIONS.find(it => it.key === draggableId)!
-          const content = setDefaultStyle(createContent(layout, contentDefinition))
-          layout.contents.push(content)
-          content.layout = layout
-          setActive(content)
-        }
+        const layout = createLayout(contentDefinition)
         page.layouts.splice(destination.index, 0, layout)
         setPage({ ...page, layouts: [...page.layouts] })
         return
       }
-      // null 表示移动布局
-      const contentDefinition = CONTENT_DEFINITIONS.find(it => it.key === draggableId)!
 
-      // 禁止布局套布局
-      if (!contentDefinition) {
-        return
-      }
       // 移动到现有布局
       const layout = page.layouts.find(it => destination.droppableId.startsWith(it.id))!
       const content = createContent(layout, contentDefinition)
-      if (layout.definition === Row) {
-        layout.contents.splice(destination.index, 0, content)
-      } else {
-        layout.contents.push(content)
+      if (layout.definition !== Many) {
+        return
       }
+      layout.contents.splice(destination.index, 0, content)
       setActive(content)
       setPage({ ...page, layouts: [...page.layouts] })
       return
@@ -145,23 +117,22 @@ function Editor () {
       return
     }
 
-    // 移动布局到内容
+    // 布局合并
     if (draggableId.endsWith(MaterialType.Layout) && destination.droppableId.endsWith(MaterialType.Content)) {
       const index = page.layouts.findIndex(it => draggableId.startsWith(it.id))
-      // 布局不是行排列禁止合并
-      if (index === -1 || page.layouts[index].definition !== Row) {
+      // 布局不是行多排列禁止合并
+      if (index === -1 || page.layouts[index].definition !== Many) {
         return
       }
-      const contents = page.layouts[index].contents
-      // 删除旧布局
-      page.layouts.splice(index, 1)
-      // 将旧布局内容合并到目标布局
       const layout = page.layouts.find(it => destination.droppableId.startsWith(it.id))!
       // 布局不是行排列禁止合并
-      if (!layout || layout.definition !== Row) {
-        setPage({ ...page, layouts: [...page.layouts] })
+      if (!layout || layout.definition !== Many) {
         return
       }
+      // 删除拖动布局
+      page.layouts.splice(index, 1)
+      // 将拖动布局内容合并到目标布局
+      const contents = page.layouts[index].contents
       layout.contents.splice(destination.index, 0, ...contents)
       setPage({ ...page, layouts: [...page.layouts] })
     }
@@ -171,27 +142,30 @@ function Editor () {
       const sourceLayout = page.layouts.find(it => source.droppableId.startsWith(it.id))!
       const content = sourceLayout.contents.find(it => it.id === draggableId)!
 
-      // 内容移出旧布局,插入新布局
+      // 拖动结果为建造区
       if (destination.droppableId === DroppableIds.Building) {
-        const layout = createLayout(Row)
+        const layout = createLayout(Many)
         layout.contents.push(content)
         page.layouts.splice(destination.index, 0, layout)
         content.layout = layout
         setActive(content)
-      }
-      // 向目标布局插入
-      const destinationLayout = page.layouts.find(it => destination.droppableId.startsWith(it.id))!
-      if (!destinationLayout || destinationLayout.definition !== Row) {
         setPage({ ...page, layouts: [...page.layouts] })
         return
       }
+      // 拖动结果为别一布局
+      const destinationLayout = page.layouts.find(it => destination.droppableId.startsWith(it.id))!
+      if (!destinationLayout || destinationLayout.definition !== Many) {
+        return
+      }
+      // 向结果布局插入内容
       destinationLayout.contents.splice(destination.index, 0, content)
       content.layout = destinationLayout
       setActive(content)
 
-      // 从原布局删除内容
+      // 从原拖动布局删除内容
       sourceLayout.contents.splice(source.index, 1)
-      // 判断删除原空布局
+
+      // 判断删除拖动布局是否空， 空删除
       if (!sourceLayout.contents.length) {
         const idx = page.layouts.findIndex(it => source.droppableId.startsWith(it.id))!
         page.layouts.splice(idx, 1)

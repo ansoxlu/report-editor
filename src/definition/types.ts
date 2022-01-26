@@ -1,12 +1,5 @@
-import { createStyle, Style } from './styles'
-import { Layout } from './layout'
-import Padding from './styles/padding'
-import FontSize from './styles/font-size'
-import FontWeight from './styles/font-weight'
-import Ellipsis from './styles/ellipsis'
-import Color from './styles/color'
-
-export type PageMode = 'headerFooter' | 'autoFixed'
+import { Style } from './styles/types'
+import { Layout } from './layout/types'
 
 export interface Page {
   // mm
@@ -17,12 +10,9 @@ export interface Page {
   styles: Style<any>[],
   // 多页根据 pageable.offsets 切割
   layouts: Layout[]
-  // 绝对定位内容
-  absolutes: Layout[]
-  // 分页类型
-  mode: PageMode,
-  // layouts 分页切割 index
-  offsets: number[]
+  header: number,
+  footer: number,
+  pageable: number[],
 }
 
 export const PAPER_SIZES = [
@@ -37,21 +27,3 @@ export const PAPER_SIZES = [
     height: 297
   }
 ]
-
-export const createPage = (): Page => {
-  return {
-    width: 210,
-    height: 297,
-    styles: [
-      FontSize,
-      FontWeight,
-      Ellipsis,
-      Color,
-      Padding
-    ].map(it => createStyle(it)),
-    layouts: [],
-    absolutes: [],
-    mode: 'autoFixed',
-    offsets: []
-  }
-}

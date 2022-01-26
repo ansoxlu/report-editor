@@ -129,7 +129,6 @@ const Overview = (props: { value: Metadata, onChange: (value: Metadata) => void,
     const index = items.findIndex(it => it.path === item.path)
     const it = props.value.items[index]!
     if ((item.status !== 'add')) {
-      console.log(item.required, it.required)
       if (item.required !== it.required || item.alias !== it.alias) {
         item.status = 'update'
       } else {

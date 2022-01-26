@@ -1,8 +1,8 @@
 import React from 'react'
-import { LayoutDefinition, LayoutBuildingProps, LayoutRenderProps } from './index'
+import { LayoutDefinition, LayoutBuildingProps, LayoutRenderProps } from './types'
 import styled from 'styled-components'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
-import { render, renderLayout } from '../styles'
+import { render, renderLayout } from '../styles/utils'
 
 const Container = styled.div<{ isDragging: boolean }>`
   display: flex;
@@ -30,7 +30,7 @@ const Notice = styled.div`
   background-color: #ff7875;
 `
 
-const Row: LayoutDefinition = {
+const Many: LayoutDefinition = {
   Render (props: LayoutRenderProps) {
     return (
       <div style={props.style}>
@@ -76,9 +76,9 @@ const Row: LayoutDefinition = {
       </Droppable>
     )
   },
-  describe: '',
+  description: '页面是竖向排列，使用该布局添加横向内容',
   styles: [],
-  title: '行排列',
-  key: 'Row'
+  title: '纵向多内容排列',
+  key: 'Many'
 }
-export default Row
+export default Many

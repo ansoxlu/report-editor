@@ -1,4 +1,11 @@
 import { sortBy } from 'lodash'
+import FontWeight from './styles/font-weight'
+import Ellipsis from './styles/ellipsis'
+import Color from './styles/color'
+import Padding from './styles/padding'
+import { createStyle } from './styles/utils'
+import { Page } from './types'
+import FontSize from './styles/font-size'
 
 export type FlattenData = Record<string, {
   // if key = 'hospital.name' keys = [hospital.name]
@@ -140,4 +147,22 @@ export const getData = (texts: string | string[], data: FlattenData) => {
     return data[p1]?.value ?? ''
   }) || undefined)
   return isArray ? result : result[0]
+}
+
+export const createPage = (): Page => {
+  return {
+    width: 210,
+    height: 297,
+    styles: [
+      FontSize,
+      FontWeight,
+      Ellipsis,
+      Color,
+      Padding
+    ].map(it => createStyle(it)),
+    layouts: [],
+    header: -1,
+    footer: -1,
+    pageable: []
+  }
 }
