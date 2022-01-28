@@ -20,20 +20,16 @@ export interface LayoutDefinition {
   key: string
   title: string
   description: string
-  type?: LayoutType
   styles: StyleDefinition<any>[]
   Render: (props: LayoutRenderProps) => ReactElement
   Building: (props: LayoutBuildingProps) => ReactElement
 }
 
-export type LayoutType = 'header' | 'footer' | 'normal' | 'list'
-
 export interface LayoutSerialize {
   id: string
   styles: StyleSerialize[]
   contents: ContentSerialize[]
-  definition: string,
-  type: LayoutType
+  definition: string
 }
 
 export interface Layout {
@@ -42,7 +38,6 @@ export interface Layout {
   contents: Content<any, any>[]
   definition: LayoutDefinition
   toJSON: () => any,
-  type: LayoutType
 }
 
 export const LAYOUT_DEFINITIONS: LayoutDefinition[] = [Many, Wrap]

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Droppable, DragDropContext, DropResult, Draggable } from 'react-beautiful-dnd'
 import { Button, Popconfirm, Menu, Dropdown } from 'antd'
 import { Page } from '../../../definition/types'
-import { Layout, LayoutType } from '../../../definition/layout/types'
+import { max, min } from 'lodash'
 
 const Header = styled.div`
   padding: 10px 15px;
@@ -33,34 +33,8 @@ const Items = styled.div<{isDragging: boolean}>`
   }
 `
 
-const formatType = (type: LayoutType) => {
-  switch (type) {
-    case 'header':
-      return '页头'
-    case 'footer':
-      return '页尾'
-    case 'list':
-      return '列表'
-    case 'normal':
-      return ''
-  }
-}
-
 const PageLayouts = (props: { value: Page, onChange: (value: Page) => void, onChangeActive:(layoutId: string) => void }) => {
-  const offsets = [-1, -1]
-  for (let i = 0; i < props.value.layouts.length; i++) {
-    const it = props.value.layouts[i]
-    if (it.type === 'list') {
-      if (!offsets[0]) {
-        offsets[0] = i
-      } else {
-        offsets[1] = i
-      }
-    }
-  }
-  if (offsets[0] && !offsets[1]) {
-    offsets[1] = offsets[0]
-  }
+  const offsets = [min(props.value.pageable) ?? -1, max(props.value.pageable) ?? -1]
 
   const PageSetting = (props: {index: number, value: Page, onChange: (value: Page) => void }) => {
     const handlePageable = () => {
@@ -136,6 +110,7 @@ const PageLayouts = (props: { value: Page, onChange: (value: Page) => void, onCh
                 <Draggable key={it.id} draggableId={it.id} index={index}>
                   {(provided, snapshot) => (
                     <React.Fragment>
+                      {index === props.value.footer && (<div>取消页尾</div>)}
                       <Items
                         ref={provided.innerRef}
                         {...provided.draggableProps}
@@ -144,7 +119,6 @@ const PageLayouts = (props: { value: Page, onChange: (value: Page) => void, onCh
                       >
                         <div {...provided.dragHandleProps}>
                           {index + 1}
-                          {formatType(it.type) && (<span>({formatType(it.type)})</span>)}
                         </div>
                         <div>
                           <Popconfirm
@@ -172,8 +146,7 @@ const PageLayouts = (props: { value: Page, onChange: (value: Page) => void, onCh
                           <Button type="primary" onClick={() => props.onChangeActive(it.id)}>编辑</Button>
                         </div>
                       </Items>
-                      {index <= props.value.header && (<div>取消页头</div>)}
-                      {index >= props.value.footer && props.value.footer > 0 && (<div>取消页尾</div>)}
+                      {index === props.value.header && (<div>取消页头</div>)}
                       {props.value.pageable.includes(index) && (<div>取消分页</div>)}
                     </React.Fragment>
                   )}
