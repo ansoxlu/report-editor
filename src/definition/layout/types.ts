@@ -1,8 +1,6 @@
 import { StyleDefinition, Style, StyleSerialize } from '../styles/types'
 import { Content, ContentSerialize } from '../content/types'
 import { CSSProperties, ReactElement } from 'react'
-import Many from './many'
-import Wrap from './wrap'
 
 export interface LayoutRenderProps {
   contents: Content<any, any>[],
@@ -39,5 +37,3 @@ export interface Layout {
   definition: LayoutDefinition
   toJSON: () => any,
 }
-
-export const LAYOUT_DEFINITIONS: LayoutDefinition[] = [Many, Wrap]

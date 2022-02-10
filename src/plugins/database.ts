@@ -1,4 +1,5 @@
-import { Metadata, Template } from '../types'
+import { Metadata, Template } from '../definition/types'
+import { DEFAULT_TEMPLATE_STYLES } from '../definition'
 
 export const METATABLES: Metadata[] = [
   {
@@ -20,6 +21,13 @@ export const TEMPLATES: Template[] = [
     createdAt: '2022-01-01 01:02:03',
     updatedAt: '2022-01-01 01:02:03',
     metadataId: 'example',
-    json: '{}'
+    footer: -1,
+    header: -1,
+    width: 210,
+    height: 297,
+    layouts: [],
+    listIndexes: [],
+    pageIndexes: [],
+    styles: DEFAULT_TEMPLATE_STYLES
   }
 ]

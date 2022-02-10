@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { render } from '../../../definition/styles/utils'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import { DroppableIds, MaterialType } from '../types'
-import { Page } from '../../../definition/types'
+import { Template } from '../../../definition/types'
 
 const Container = styled.section`
   border-left: 1px solid #e0e0e0;
@@ -61,11 +61,11 @@ const Notice = styled.div`
   background-color: #ff7875;
 `
 
-const Building = (props: { page: Page, getData: (values: string | string[]) => any, onChangeActive: (layoutId: string, contentId?: string) => void }) => {
+const Building = (props: { value: Template, getData: (values: string | string[]) => any, onChangeActive: (layoutId: string, contentId?: string) => void }) => {
   return (
     <Container>
       <View>
-        {!props.page.width && !props.page.height
+        {!props.value.width && !props.value.height
           ? null
           : (
             <Droppable droppableId={DroppableIds.Building}>
@@ -75,13 +75,13 @@ const Building = (props: { page: Page, getData: (values: string | string[]) => a
                   isDragging={dropSnapshot.isDraggingOver}
                   {...provided.droppableProps}
                   style={{
-                    width: `${props.page.width}mm`,
-                    height: `${props.page.height}mm`,
-                    ...render(props.page.styles)
+                    width: `${props.value.width}mm`,
+                    height: `${props.value.height}mm`,
+                    ...render(props.value.styles)
                   }}
                 >
-                  {props.page.layouts.length
-                    ? props.page.layouts.map((it, idx) => (
+                  {props.value.layouts.length
+                    ? props.value.layouts.map((it, idx) => (
                       <Draggable
                         key={it.id}
                         draggableId={`${it.id}_${MaterialType.Layout}`}

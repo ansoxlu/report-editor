@@ -1,11 +1,4 @@
 import { sortBy } from 'lodash'
-import FontWeight from './styles/font-weight'
-import Ellipsis from './styles/ellipsis'
-import Color from './styles/color'
-import Padding from './styles/padding'
-import { createStyle } from './styles/utils'
-import { Page } from './types'
-import FontSize from './styles/font-size'
 
 export type FlattenData = Record<string, {
   // if key = 'hospital.name' keys = [hospital.name]
@@ -50,38 +43,6 @@ export const flattenData = (data: any | undefined): FlattenData => {
       value: result[key]
     }
   }
-  return result
-}
-
-export const flattenUri = (data: object): Record<string, boolean> => {
-  const result: Record<string, boolean> = {}
-  const precess = (key: string, value: any) => {
-    if (value === undefined || value === null) {
-      result[key] = false
-    } else if (['string', 'number', 'boolean'].includes(typeof value)) {
-      const val = result[key]
-      if (val === undefined) {
-        result[key] = true
-      }
-    } else if (Array.isArray(value)) {
-      if (value.length === 0) {
-        result[`[${key}]`] = false
-      } else if (!value[0] || typeof value[0] !== 'object') {
-        result[`[${key}]`] = true
-      } else {
-        for (const it of value) {
-          precess(`${key}[]`, it)
-        }
-      }
-    } else {
-      for (const nextKey in value) {
-        if (Object.prototype.hasOwnProperty.call(value, nextKey)) {
-          precess(`${key}${key ? '.' : ''}${nextKey}`, value[nextKey])
-        }
-      }
-    }
-  }
-  precess('', data)
   return result
 }
 
@@ -147,22 +108,4 @@ export const getData = (texts: string | string[], data: FlattenData) => {
     return data[p1]?.value ?? ''
   }) || undefined)
   return isArray ? result : result[0]
-}
-
-export const createPage = (): Page => {
-  return {
-    width: 210,
-    height: 297,
-    styles: [
-      FontSize,
-      FontWeight,
-      Ellipsis,
-      Color,
-      Padding
-    ].map(it => createStyle(it)),
-    layouts: [],
-    header: -1,
-    footer: -1,
-    pageable: []
-  }
 }

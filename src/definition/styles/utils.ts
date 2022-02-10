@@ -1,7 +1,8 @@
 import { CSSProperties } from 'react'
 
-import { Style, STYLE_DEFINITIONS, StyleDefinition, StyleSerialize } from './types'
+import { Style, StyleDefinition, StyleSerialize } from './types'
 import { cloneDeep } from 'lodash'
+import { STYLE_DEFINITIONS } from '../index'
 
 /**
  * 使用 html2pdf 生成 pdf, html -> canvas -> img -> pdf
@@ -53,4 +54,35 @@ export const createStyle = (style: StyleSerialize | StyleDefinition<any>, value?
       }
     }
   }
+}
+
+export const getStyleDefinitions = async () => {
+  return [
+    await import('./flex-direction'),
+    await import('./justify-content'),
+    await import('./align-items'),
+    await import('./flex-grow'),
+    await import('./font-size'),
+    await import('./font-weight'),
+    await import('./text-indent'),
+    await import('./letter-spacing'),
+    await import('./color'),
+    await import('./ellipsis'),
+    await import('./min-height'),
+    await import('./min-width'),
+    await import('./max-height'),
+    await import('./max-width'),
+    await import('./padding'),
+    await import('./border')
+  ]
+}
+
+export const getDefaultTemplateStyles = async () => {
+  return [
+    await import('./font-size'),
+    await import('./font-weight'),
+    await import('./ellipsis'),
+    await import('./color'),
+    await import('./padding')
+  ]
 }

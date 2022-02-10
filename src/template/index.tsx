@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Button, Input, message, Select, Result } from 'antd'
 import styled from 'styled-components'
-import { Metadata, Template } from '../types'
+import { Metadata, Template } from '../definition/types'
+import { DEFAULT_TEMPLATE_STYLES } from '../definition'
 import moment from 'moment'
 import { v4 as uuid4 } from 'uuid'
 import { DATE_TIME_FORMAT } from '../plugins/moment'
@@ -91,9 +92,16 @@ const Index = () => {
       title: '',
       description: '',
       createdAt: '',
-      json: '{}',
       metadataId: '',
-      updatedAt: ''
+      updatedAt: '',
+      width: 210,
+      height: 297,
+      styles: DEFAULT_TEMPLATE_STYLES,
+      layouts: [],
+      header: -1,
+      footer: -1,
+      pageIndexes: [],
+      listIndexes: []
     })
 
     const handleSave = () => {
@@ -122,7 +130,6 @@ const Index = () => {
       const template = JSON.parse(templates).find((it: Template) => it.id === id)
       setValue({
         ...value,
-        json: template?.json ?? '{}',
         metadataId: template?.metadataId ?? (value.metadataId || '')
       })
     }

@@ -5,15 +5,21 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 import { DroppableIds, MaterialType } from './types'
 import Building from './building'
-import { Layout } from '../../definition/layout/types'
+import { Layout, LayoutSerialize } from '../../definition/layout/types'
 import { createLayout } from '../../definition/layout/utils'
-import Many from '../../definition/layout/many'
-import { Content, CONTENT_DEFINITIONS } from '../../definition/content/types'
+import { Content } from '../../definition/content/types'
 import { createContent } from '../../definition/content/utils'
 import { message } from 'antd'
-import { flattenData, getData, createPage } from '../../definition/utils'
-import { Page } from '../../definition/types'
+import { flattenData, getData } from '../../definition/utils'
+import { Template } from '../../definition/types'
 import Header from '../../components/Header'
+import { useParams, useNavigate } from 'react-router-dom'
+import { TEMPLATES } from '../../plugins/database'
+import useLocalStorage from 'react-use-localstorage'
+import { createStyle } from '../../definition/styles/utils'
+import { StyleSerialize } from '../../definition/styles/types'
+import { CONTENT_DEFINITIONS } from '../../definition'
+import Many from '../../definition/layout/many'
 
 const Container = styled.div`
   min-height: 100vh;
@@ -23,13 +29,6 @@ const Container = styled.div`
   > div:nth-child(2) {
     display: flex;
     flex: auto;
-  }
-`
-
-const HeaderContainer = styled(Header)`
-  > div {
-    width: 100%;
-    padding: 0 30px;
   }
 `
 
@@ -45,7 +44,30 @@ const data = flattenData({
 })
 
 function Editor () {
-  const [page, setPage] = useState<Page>(createPage())
+  const navigate = useNavigate()
+  const { id } = useParams()
+  const [templates, setTemplates] = useLocalStorage('RE-templates', JSON.stringify(TEMPLATES))
+
+  const list = JSON.parse(templates)
+  let target = list.find((it: any) => it.id === id)
+  if (!target) {
+    message.error('编辑内容已被删除')
+    navigate('/template')
+    return null
+  }
+
+  const [editCache, setEditCache] = useLocalStorage(`RE-editMetadata-${target.id}`)
+  if (editCache) {
+    target = JSON.parse(editCache)
+  }
+  const template: Template = {
+    ...target,
+    styles: target.styles.map((it: StyleSerialize) => createStyle(it)),
+    layouts: target.layouts.map((it: LayoutSerialize) => createLayout(it))
+  }
+  const setTemplate = (value: Template) => {
+    setEditCache(JSON.stringify(value))
+  }
 
   const [active, setActive] = useState<Layout | Content<any, any> | undefined>()
 
@@ -70,20 +92,20 @@ function Editor () {
       if (destination.droppableId === DroppableIds.Building) {
         // 移动内容到基础布局
         const layout = createLayout(contentDefinition)
-        page.layouts.splice(destination.index, 0, layout)
-        setPage({ ...page, layouts: [...page.layouts] })
+        template.layouts.splice(destination.index, 0, layout)
+        setTemplate({ ...template })
         return
       }
 
       // 移动到现有布局
-      const layout = page.layouts.find(it => destination.droppableId.startsWith(it.id))!
+      const layout = template.layouts.find(it => destination.droppableId.startsWith(it.id))!
       const content = createContent(layout, contentDefinition)
       if (layout.definition !== Many) {
         return
       }
       layout.contents.splice(destination.index, 0, content)
       setActive(content)
-      setPage({ ...page, layouts: [...page.layouts] })
+      setTemplate({ ...template, layouts: [...template.layouts] })
       return
     }
 
@@ -94,17 +116,17 @@ function Editor () {
 
       // 布局修改顺序
       if (source.droppableId === DroppableIds.Building) {
-        const target = page.layouts[source.index]
+        const target = template.layouts[source.index]
         // 删除原有
-        page.layouts.splice(source.index, 1)
+        template.layouts.splice(source.index, 1)
         // 重新插入
-        page.layouts.splice(destination.index - offset, 0, target)
+        template.layouts.splice(destination.index - offset, 0, target)
         setActive(target)
-        setPage({ ...page, layouts: [...page.layouts] })
+        setTemplate({ ...template, layouts: [...template.layouts] })
         return
       }
       // 内容修改顺序
-      const layout = page.layouts.find(it => destination.droppableId.startsWith(it.id))!
+      const layout = template.layouts.find(it => destination.droppableId.startsWith(it.id))!
       const contents = layout.contents
       const target = contents[source.index]
       // 删除原有
@@ -113,47 +135,47 @@ function Editor () {
       contents.splice(destination.index - offset, 0, target)
       target.layout = layout
       setActive(target)
-      setPage({ ...page, layouts: [...page.layouts] })
+      setTemplate({ ...template, layouts: [...template.layouts] })
       return
     }
 
     // 布局合并
     if (draggableId.endsWith(MaterialType.Layout) && destination.droppableId.endsWith(MaterialType.Content)) {
-      const index = page.layouts.findIndex(it => draggableId.startsWith(it.id))
+      const index = template.layouts.findIndex(it => draggableId.startsWith(it.id))
       // 布局不是行多排列禁止合并
-      if (index === -1 || page.layouts[index].definition !== Many) {
+      if (index === -1 || template.layouts[index].definition !== Many) {
         return
       }
-      const layout = page.layouts.find(it => destination.droppableId.startsWith(it.id))!
+      const layout = template.layouts.find(it => destination.droppableId.startsWith(it.id))!
       // 布局不是行排列禁止合并
       if (!layout || layout.definition !== Many) {
         return
       }
       // 删除拖动布局
-      page.layouts.splice(index, 1)
+      template.layouts.splice(index, 1)
       // 将拖动布局内容合并到目标布局
-      const contents = page.layouts[index].contents
+      const contents = template.layouts[index].contents
       layout.contents.splice(destination.index, 0, ...contents)
-      setPage({ ...page, layouts: [...page.layouts] })
+      setTemplate({ ...template, layouts: [...template.layouts] })
     }
 
     // 移动内容
     if (!draggableId.endsWith(MaterialType.Layout) && !draggableId.endsWith(MaterialType.Content)) {
-      const sourceLayout = page.layouts.find(it => source.droppableId.startsWith(it.id))!
+      const sourceLayout = template.layouts.find(it => source.droppableId.startsWith(it.id))!
       const content = sourceLayout.contents.find(it => it.id === draggableId)!
 
       // 拖动结果为建造区
       if (destination.droppableId === DroppableIds.Building) {
         const layout = createLayout(Many)
         layout.contents.push(content)
-        page.layouts.splice(destination.index, 0, layout)
+        template.layouts.splice(destination.index, 0, layout)
         content.layout = layout
         setActive(content)
-        setPage({ ...page, layouts: [...page.layouts] })
+        setTemplate({ ...template, layouts: [...template.layouts] })
         return
       }
       // 拖动结果为别一布局
-      const destinationLayout = page.layouts.find(it => destination.droppableId.startsWith(it.id))!
+      const destinationLayout = template.layouts.find(it => destination.droppableId.startsWith(it.id))!
       if (!destinationLayout || destinationLayout.definition !== Many) {
         return
       }
@@ -167,15 +189,15 @@ function Editor () {
 
       // 判断删除拖动布局是否空， 空删除
       if (!sourceLayout.contents.length) {
-        const idx = page.layouts.findIndex(it => source.droppableId.startsWith(it.id))!
-        page.layouts.splice(idx, 1)
+        const idx = template.layouts.findIndex(it => source.droppableId.startsWith(it.id))!
+        template.layouts.splice(idx, 1)
       }
-      setPage({ ...page, layouts: [...page.layouts] })
+      setTemplate({ ...template, layouts: [...template.layouts] })
     }
   }
 
   const changeActive = (layoutId: string, contentId?: string) => {
-    const layout = page.layouts.find(it => it.id === layoutId)!
+    const layout = template.layouts.find(it => it.id === layoutId)!
     if (contentId) {
       const content = layout.contents.find(it => it.id === contentId)!
       setActive(content)
@@ -186,50 +208,50 @@ function Editor () {
 
   const changeActiveValue = (value: Layout | Content<any, any>) => {
     setActive(value)
-    let layoutIndex = page.layouts.findIndex(it => it.id === value.id)
+    let layoutIndex = template.layouts.findIndex(it => it.id === value.id)
     // layout 修改
     if (layoutIndex !== -1) {
-      const layout = page.layouts[layoutIndex]
+      const layout = template.layouts[layoutIndex]
       layout.contents = (value as Layout).contents
       layout.styles = value.styles
-      page.layouts.splice(layoutIndex, 1, layout)
-      setPage({ ...page, layouts: [...page.layouts] })
+      template.layouts.splice(layoutIndex, 1, layout)
+      setTemplate({ ...template, layouts: [...template.layouts] })
       return
     }
     // content 修改
     const content = value as Content<any, any>
-    layoutIndex = page.layouts.findIndex(it => it.id === content.layout.id)
+    layoutIndex = template.layouts.findIndex(it => it.id === content.layout.id)
     // 移动后未修改 content.layout 发生错误
     if (layoutIndex === -1) {
       setActive(undefined)
       message.error('无效的修改,编辑的内容已过期')
       return
     }
-    const layout = page.layouts[layoutIndex]
+    const layout = template.layouts[layoutIndex]
     const contentIndex = layout.contents.findIndex(it => it.id === content.id)
     const target = layout.contents[contentIndex]
     target.value = (value as Content<any, any>).value
     target.styles = value.styles
     layout.contents.splice(contentIndex, 1, target)
-    page.layouts.splice(layoutIndex, 1, layout)
-    setPage({ ...page, layouts: [...page.layouts] })
+    template.layouts.splice(layoutIndex, 1, layout)
+    setTemplate({ ...template, layouts: [...template.layouts] })
   }
 
   return (
     <Container>
-      <HeaderContainer/>
+      <Header isFull={true}/>
       <div>
         <DragDropContext onDragEnd={onDragEnd}>
-          <Material page={page} onChangePage={setPage}/>
-          <Building page={page} getData={(texts) => getData(texts, data)} onChangeActive={changeActive} />
+          <Material value={template} onChange={setTemplate}/>
+          <Building value={template} getData={(texts) => getData(texts, data)} onChangeActive={changeActive} />
         </DragDropContext>
         <Blueprint
-          value={active}
+          active={active}
           data={data}
-          onChange={changeActiveValue}
+          onChangeActiveValue={changeActiveValue}
           onChangeActive={changeActive}
-          page={page}
-          onChangePage={setPage}
+          value={template}
+          onChange={setTemplate}
         />
       </div>
     </Container>

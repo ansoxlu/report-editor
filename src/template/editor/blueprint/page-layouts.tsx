@@ -2,8 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import { Droppable, DragDropContext, DropResult, Draggable } from 'react-beautiful-dnd'
 import { Button, Popconfirm, Menu, Dropdown } from 'antd'
-import { Page } from '../../../definition/types'
-import { max, min } from 'lodash'
+import { Template } from '../../../definition/types'
+import { sortBy } from 'lodash'
 
 const Header = styled.div`
   padding: 10px 15px;
@@ -18,7 +18,7 @@ const Elements = styled.div<{isDragging: boolean}>`
 const Items = styled.div<{isDragging: boolean}>`
   border: 1px ${props => (props.isDragging ? 'dashed #4099ff' : 'solid #ddd')};
   margin: 15px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   text-align: center;
   background: #f3f3f3;
@@ -33,15 +33,13 @@ const Items = styled.div<{isDragging: boolean}>`
   }
 `
 
-const PageLayouts = (props: { value: Page, onChange: (value: Page) => void, onChangeActive:(layoutId: string) => void }) => {
-  const offsets = [min(props.value.pageable) ?? -1, max(props.value.pageable) ?? -1]
-
-  const PageSetting = (props: {index: number, value: Page, onChange: (value: Page) => void }) => {
+const PageLayouts = (props: { value: Template, onChange: (value: Template) => void, onChangeActive:(layoutId: string) => void }) => {
+  const PageSetting = (props: {index: number, value: Template, onChange: (value: Template) => void }) => {
     const handlePageable = () => {
-      const pageable = props.value.pageable
-      if (!pageable.includes(props.index)) {
-        pageable.push(props.index)
-        props.onChange({ ...props.value, pageable: [...pageable] })
+      const indexes = props.value.pageIndexes
+      if (!indexes.includes(props.index)) {
+        indexes.push(props.index)
+        props.onChange({ ...props.value, pageIndexes: sortBy(indexes) })
       }
     }
 
@@ -75,16 +73,21 @@ const PageLayouts = (props: { value: Page, onChange: (value: Page) => void, onCh
     const index = layouts.findIndex(it => it.id === id)
     layouts.splice(index, 1)
 
-    const pageable = props.value.pageable
-    const idx = pageable.findIndex(it => it === index)
-    if (idx !== -1) {
-      layouts.splice(idx, 1)
+    const pageIndex = props.value.pageIndexes.findIndex(it => it === index)
+    if (pageIndex !== -1) {
+      props.value.pageIndexes.splice(pageIndex, 1)
+    }
+
+    const listIndex = props.value.listIndexes.findIndex(it => it === index)
+    if (listIndex !== -1) {
+      props.value.pageIndexes.splice(listIndex, 1)
     }
 
     props.onChange({
       ...props.value,
       layouts: [...layouts],
-      pageable: [...pageable]
+      pageIndexes: [...props.value.pageIndexes],
+      listIndexes: [...props.value.listIndexes]
     })
   }
 
@@ -136,9 +139,11 @@ const PageLayouts = (props: { value: Page, onChange: (value: Page) => void, onCh
                               // 已设置页头页尾
                               index <= props.value.header || (index >= props.value.footer && props.value.footer > 0) ||
                               // 已设置分页
-                              props.value.pageable.includes(index) ||
+                              props.value.pageIndexes.includes(index) ||
                               // 列表禁用分页或页头页尾
-                              offsets[0] >= index || (offsets[1] > 0 && offsets[1] <= index)
+                              (props.value.listIndexes.length === 1 && props.value.listIndexes[0] === index) ||
+                              (props.value.listIndexes.length > 1 && index > props.value.listIndexes[0]) ||
+                              (props.value.listIndexes.length > 1 && index < props.value.listIndexes[props.value.listIndexes.length - 1])
                             }
                           >
                             <Button type="primary">设置</Button>
@@ -147,7 +152,7 @@ const PageLayouts = (props: { value: Page, onChange: (value: Page) => void, onCh
                         </div>
                       </Items>
                       {index === props.value.header && (<div>取消页头</div>)}
-                      {props.value.pageable.includes(index) && (<div>取消分页</div>)}
+                      {props.value.pageIndexes.includes(index) && (<div>取消分页</div>)}
                     </React.Fragment>
                   )}
                 </Draggable>

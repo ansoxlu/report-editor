@@ -1,7 +1,7 @@
 import { CSSProperties, ReactElement } from 'react'
-import { StyleDefinition, Style } from '../styles/types'
+import { StyleDefinition, Style, StyleSerialize } from '../styles/types'
 import { Layout, LayoutDefinition } from '../layout/types'
-import Text from './text'
+import { Metadata } from '../types'
 /**
  * T: string | string[]
  * R: getData(T) => R<undefined | object | object[]>
@@ -14,13 +14,13 @@ export interface ContentDefinition<T, R> {
   layout?: LayoutDefinition
   styles: StyleDefinition<any>[]
   Render: (props: { result?: R, style: CSSProperties }) => ReactElement
-  Blueprint: (props: { value: T, onChange: (value: T) => void }) => ReactElement,
+  Blueprint: (props: { value: T, onChange: (value: T) => void, metadata: Metadata }) => ReactElement,
   Building: (props: { result?: R, style: CSSProperties, onChangeActive: () => void }) => ReactElement
 }
 
 export interface ContentSerialize {
   id: string
-  styles: StyleDefinition<any>[]
+  styles: StyleSerialize[]
   value: any
   definition: string
   layout: string
@@ -34,5 +34,3 @@ export interface Content<T, R> {
   layout: Layout
   toJSON: () => any
 }
-
-export const CONTENT_DEFINITIONS: ContentDefinition<any, any>[] = [Text]

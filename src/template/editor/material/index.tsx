@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 import { DroppableIds } from '../types'
-import { Page, PAPER_SIZES } from '../../../definition/types'
-import { CONTENT_DEFINITIONS } from '../../../definition/content/types'
+import { Template } from '../../../definition/types'
+import { CONTENT_DEFINITIONS, PAPER_SIZES } from '../../../definition'
 import { Select, Button, message, InputNumber } from 'antd'
 import { SyncOutlined } from '@ant-design/icons'
-import { Style } from '../../../definition/styles/types'
 import JustifyContent from '../../../definition/styles/justify-content'
 
 const Container = styled.aside`
@@ -58,46 +57,44 @@ const Clone = styled(Item)`
 `
 
 function Material (props: {
-  onChangePage: (page: Page) => void
-  page: Page
+  value: Template
+  onChange: (value: Template) => void
 }) {
-  const PageStyle = (props: { width: number, height: number, styles: Style<any>[], onChange:(width: number, height: number, styles: Style<any>[]) => void }) => {
-    const [value, setValue] = useState<{width: number, height: number, size: string}>({ width: props?.width ?? 0, height: props?.height ?? 0, size: '' })
+  const PageStyle = (props: { value: Template, onChange: (value: Template) => void }) => {
+    const [value, setValue] = useState<{width: number, height: number, title: string}>({ width: props.value.width, height: props.value.height, title: '' })
 
-    useEffect(() => {
-      if (!props.width && !props.height) {
-        const sizes = PAPER_SIZES.find(it => it.title === 'A4')!
-        props.onChange(sizes.width, sizes.height, props.styles)
-      }
-    })
-
+    // upset value.title
     useEffect(() => {
       const sizes = PAPER_SIZES.find(it => (it.width === value.width && it.height === value.height) || (it.width === value.height && it.height === value.width))
       setValue({
         ...value,
-        size: sizes?.title ?? '自定义'
+        title: sizes?.title ?? '自定义'
       })
-    }, [props.width, props.height, value.width, value.height])
+    }, [props.value.width, props.value.height, value.width, value.height])
 
     const handleChangeDirection = () => {
       if (!value.height) {
         message.error('方向切换失败,宽需要不能为0(无限)')
         return
       }
-      props.onChange(value.height, value.width, props.styles)
+      props.onChange({
+        ...props.value,
+        width: value.height,
+        height: value.width
+      })
     }
 
     const changeStyle = (key: string, value: any) => {
-      const index = props.styles.findIndex(it => it.definition.key === key)
-      const style = props.styles[index]
+      const index = props.value.styles.findIndex(it => it.definition.key === key)
+      const style = props.value.styles[index]
       style.value = value
-      props.styles.splice(index, 1, style)
-      props.onChange(props.width, props.height, [...props.styles])
+      props.value.styles.splice(index, 1, style)
+      props.onChange({ ...props.value })
     }
 
     const changeHeight = (height: number) => {
       setValue({ ...value, height })
-      props.onChange(props.width, height, props.styles)
+      props.onChange({ ...props.value, height: height })
     }
 
     const changeWidth = (width: number) => {
@@ -106,13 +103,17 @@ function Material (props: {
         message.error('宽需要不能为0(无限)')
         return
       }
-      props.onChange(width, props.height, props.styles)
+      props.onChange({ ...props.value, width: width })
     }
 
     const handleSizeChange = (key: string) => {
       const sizes = PAPER_SIZES.find(it => it.title === key)
       if (sizes) {
-        props.onChange(sizes.width, sizes.height, props.styles)
+        props.onChange({
+          ...props.value,
+          width: sizes.width,
+          height: sizes.height
+        })
       }
     }
 
@@ -120,7 +121,7 @@ function Material (props: {
       <div>
         <Groups>
           <Title>尺寸</Title>
-          <Select value={value.size} style={{ width: 112 }} onChange={handleSizeChange}>
+          <Select value={value.title} style={{ width: 112 }} onChange={handleSizeChange}>
             <Select.Option value={''}>自定义</Select.Option>
             {PAPER_SIZES.map((it, index) => (<Select.Option key={index} value={it.title}>{it.title}</Select.Option>))}
           </Select>
@@ -128,13 +129,13 @@ function Material (props: {
         </Groups>
         <Groups>
           <Title>宽度</Title>
-          <InputNumber value={value.width} min={0} max={999} style={{ width: 165 }} addonAfter="毫米" onChange={changeWidth} onBlur={() => changeWidth(props.width)}/>
+          <InputNumber value={value.width} min={0} max={999} style={{ width: 165 }} addonAfter="毫米" onChange={changeWidth} onBlur={() => changeWidth(value.width || props.value.width)}/>
         </Groups>
         <Groups>
           <Title>高度</Title>
           <InputNumber value={value.height} min={0} max={999} style={{ width: 165 }} addonAfter="毫米" onChange={changeHeight} />
         </Groups>
-        {props.styles.map((it, index) => (
+        {props.value.styles.map((it, index) => (
           <Groups key={index}>
             <Title>{it.definition.key === JustifyContent.key ? '竖向排列' : it.definition.title}</Title>
             <it.definition.Blueprint value={it.value} onChange={value => changeStyle(it.definition.key, value)}/>
@@ -179,10 +180,8 @@ function Material (props: {
             </Items>
           </Groups>
           <PageStyle
-            width={props.page.width}
-            height={props.page.height}
-            styles={props.page.styles}
-            onChange={((width, height, styles) => props.onChangePage({ ...props.page, width, height, styles }))}
+            value={props.value}
+            onChange={props.onChange}
           />
           {provided.placeholder}
         </Container>

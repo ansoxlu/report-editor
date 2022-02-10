@@ -1,23 +1,26 @@
 import { createStyle } from '../styles/utils'
-import { CONTENT_DEFINITIONS, ContentDefinition } from '../content/types'
-import { Layout, LAYOUT_DEFINITIONS, LayoutDefinition, LayoutSerialize } from './types'
+import { ContentDefinition, ContentSerialize } from '../content/types'
+import { Layout, LayoutDefinition, LayoutSerialize } from './types'
 import { v4 as uuid4 } from 'uuid'
 import { Style } from '../styles/types'
 import Many from './many'
 import { createContent } from '../content/utils'
+import { CONTENT_DEFINITIONS, LAYOUT_DEFINITIONS } from '../index'
 
-const createByLayoutDeserialize = (serialize: LayoutSerialize): Layout => {
+const createByLayoutSerialize = (serialize: LayoutSerialize): Layout => {
   const layout: Layout = {
     id: serialize.id,
     styles: serialize.styles.map(it => createStyle(it)),
     definition: LAYOUT_DEFINITIONS.find(it => it.key === serialize.definition)!,
     contents: [],
-    type: serialize.type,
     toJSON () {
-      return {
-        ...this,
+      const value: LayoutSerialize = {
+        contents: this.contents.map(it => it.toJSON()),
+        id: this.id,
+        styles: this.styles.map(it => it.toJSON()),
         definition: this.definition.key
       }
+      return value
     }
   }
   layout.contents = serialize.contents.map(it => {
@@ -28,10 +31,14 @@ const createByLayoutDeserialize = (serialize: LayoutSerialize): Layout => {
       definition: CONTENT_DEFINITIONS.find(item => item.key === it.definition)!,
       layout: layout,
       toJSON () {
-        return {
-          ...this,
-          source: this.definition.key
+        const value: ContentSerialize = {
+          value: this.value,
+          id: this.id,
+          styles: this.styles.map(it => it.toJSON()),
+          layout: this.layout.id,
+          definition: this.definition.key
         }
+        return value
       }
     }
   })
@@ -44,11 +51,10 @@ const createByLayoutDefinition = (definition: LayoutDefinition, defaultStyles: S
     styles: definition.styles.map(it => createStyle(it, defaultStyles.find(dit => it.key === dit.definition.key)?.value)),
     contents: [],
     definition: definition,
-    type: definition?.type ?? 'normal',
     toJSON () {
       return {
         ...this,
-        source: this.definition.key
+        definition: this.definition.key
       }
     }
   }
@@ -67,7 +73,13 @@ export const createLayout = (target: LayoutDefinition | LayoutSerialize | Conten
   }
 
   if ((target as LayoutSerialize).definition) {
-    return createByLayoutDeserialize(target as LayoutSerialize)
+    return createByLayoutSerialize(target as LayoutSerialize)
   }
   return createByLayoutDefinition(target as LayoutDefinition, defaultStyles ?? [])
+}
+
+export const getLayoutDefinitions = async () => {
+  return [
+    await import('./many')
+  ]
 }

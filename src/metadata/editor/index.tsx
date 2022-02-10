@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import JsonInput from './json-input'
 import { METATABLES } from '../../plugins/database'
 import useLocalStorage from 'react-use-localstorage'
-import { Metadata } from '../../types'
+import { Metadata } from '../../definition/types'
 import { useParams, useNavigate } from 'react-router-dom'
 import Overview from './overview'
 import { message } from 'antd'
@@ -61,9 +61,9 @@ const index = () => {
   }
   const [metadata, setMetadata] = useState(target)
 
-  const [jsonCache, setJsonCache] = useLocalStorage(`RE-editMetadata-${metadata.id}`)
+  const [editCache, setEditCache] = useLocalStorage(`RE-editMetadata-${metadata.id}`)
 
-  const [json, setJson] = useState<object>(JSON.parse(jsonCache || metadata.example))
+  const [json, setJson] = useState<object>(JSON.parse(editCache || metadata.example))
 
   const handleSave = (metadata: Metadata) => {
     setMetadata(metadata)
@@ -71,12 +71,12 @@ const index = () => {
     const index = list.findIndex(it => it.id === metadata.id)
     list.splice(index, 1, metadata)
     setMetatables(JSON.stringify(list))
-    setJsonCache('')
+    setEditCache('')
   }
 
   const handleJsonChange = (value: object, json: string) => {
     setJson(value)
-    setJsonCache(json)
+    setEditCache(json)
   }
 
   return (

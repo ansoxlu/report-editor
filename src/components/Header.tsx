@@ -10,8 +10,9 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
 `
-const Nav = styled.div`
-  width: 1230px;
+const Nav = styled.div<{isFull: boolean}>`
+  width: ${props => props.isFull ? '100%' : '1230px'};
+  padding: ${props => props.isFull ? '0 30px' : '0'};
   display: flex;
   align-items: center;
 
@@ -31,12 +32,12 @@ const Logo = styled.img.attrs(() => ({ src: logo }))`
   width: 60px;
 `
 
-const Header = (props: { className?: string }) => {
+const Header = (props: { className?: string, isFull?: boolean }) => {
   const navigate = useNavigate()
 
   return (
-    <Container className={props.className}>
-      <Nav>
+    <Container className={props.className} >
+      <Nav isFull={props?.isFull ?? true }>
         <div onClick={() => navigate('/')}>
           <Logo/>
           <p>

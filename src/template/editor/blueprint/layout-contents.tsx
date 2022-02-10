@@ -12,7 +12,7 @@ const Container = styled.div<{isDragging: boolean}>`
 const Items = styled.div<{isDragging: boolean}>`
   border: 1px ${props => (props.isDragging ? 'dashed #4099ff' : 'solid #ddd')};
   margin: 15px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   text-align: center;
   background: #f3f3f3;

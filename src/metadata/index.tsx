@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Input, message, Select } from 'antd'
 import styled from 'styled-components'
-import { Metadata } from '../types'
+import { Metadata } from '../definition/types'
 import moment from 'moment'
 import { v4 as uuid4 } from 'uuid'
 import { DATE_TIME_FORMAT } from '../plugins/moment'

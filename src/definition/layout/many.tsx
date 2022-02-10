@@ -3,6 +3,8 @@ import { LayoutDefinition, LayoutBuildingProps, LayoutRenderProps } from './type
 import styled from 'styled-components'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import { render, renderLayout } from '../styles/utils'
+import MinHeight from '../styles/min-height'
+import MaxHeight from '../styles/max-height'
 
 const Container = styled.div<{ isDragging: boolean }>`
   display: flex;
@@ -77,7 +79,7 @@ const Many: LayoutDefinition = {
     )
   },
   description: '页面是竖向排列，使用该布局添加横向内容',
-  styles: [],
+  styles: [MinHeight, MaxHeight],
   title: '纵向多内容排列',
   key: 'Many'
 }

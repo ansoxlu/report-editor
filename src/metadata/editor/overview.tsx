@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Metadata, MetadataItem } from '../../types'
+import { Metadata, MetadataItem } from '../../definition/types'
 import styled from 'styled-components'
 import { Button, Switch, Input, Tag, Table, message } from 'antd'
-import { flattenUri } from '../../definition/utils'
 import { sortBy, maxBy } from 'lodash'
 import moment from 'moment'
 import { DATE_TIME_FORMAT } from '../../plugins/moment'
@@ -74,22 +73,50 @@ const Overview = (props: { value: Metadata, onChange: (value: Metadata) => void,
   const [items, setItems] = useState<ItemEdit[]>([])
 
   useEffect(() => {
-    const data = flattenUri(props.json)
+    const result: Record<string, boolean> = {}
+    // 属性检查
+    const precess = (key: string, value: any) => {
+      if (value === undefined || value === null) {
+        result[key] = false
+      } else if (['string', 'number', 'boolean'].includes(typeof value)) {
+        const val = result[key]
+        if (val === undefined) {
+          result[key] = true
+        }
+      } else if (Array.isArray(value)) {
+        if (value.length === 0) {
+          result[`[${key}]`] = false
+        } else if (!value[0] || typeof value[0] !== 'object') {
+          result[`[${key}]`] = true
+        } else {
+          for (const it of value) {
+            precess(`${key}[]`, it)
+          }
+        }
+      } else {
+        for (const nextKey in value) {
+          if (Object.prototype.hasOwnProperty.call(value, nextKey)) {
+            precess(`${key}${key ? '.' : ''}${nextKey}`, value[nextKey])
+          }
+        }
+      }
+    }
+    precess('', result)
     const list: ItemEdit[] = props.value.items.map(it => ({
       id: it.id,
       path: it.path,
       alias: it.alias,
-      status: data[it.path] === undefined ? 'delete' : 'normal',
+      status: result[it.path] === undefined ? 'delete' : 'normal',
       required: it.required
     }))
 
-    for (const key in data) {
+    for (const key in result) {
       const it = list.find(it => it.path === key)
       if (!it) {
         list.push({
           path: key,
           status: 'add',
-          required: data[key]
+          required: result[key]
         })
       }
     }

@@ -1,12 +1,11 @@
 import React, { CSSProperties } from 'react'
 import { ContentDefinition } from './types'
 import { Input } from 'antd'
-import { STYLE_DEFINITIONS } from '../styles/types'
 
 const Text: ContentDefinition<string, string> = {
   key: 'Text',
   defaultValue: '',
-  styles: STYLE_DEFINITIONS,
+  styles: [],
   description: '单独的文本.用于医院标题,提示信息等内容',
   title: '文本',
   Blueprint (props: { value: string; onChange: (value: string) => void }) {
