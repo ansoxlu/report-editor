@@ -159,26 +159,28 @@ const Render = (props: {
 
   const print = () => {
     const wind = window.open('', 'print')!
+    const width = `${props.page.width}mm`
     wind.document.write(`<!DOCTYPE html>
-      <html lang="en" style="font-size: ${SCALE * 100}px">
+      <html lang="en">
         <head>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <title>report print</title>
           <style>
-          * { padding: 0; margin: 0; }
-          body { width: ${props.page.width}mm; }
-          img { width: ${props.page.width}mm; height: ${props.page.height ? `${props.page.height}mm` : 'auto'}; }
+          * { padding: 0; margin: 0; overflow: auto; }
+          html { font-size: ${SCALE * 100}px }
+          body { width: ${width}; height: ${props.page.height * canvas.length}mm; overflow: hidden; display: flex; flex-direction: column; }
+          img { width: ${width}; height: ${props.page.height ? `${props.page.height}mm` : 'auto'}; }
           </style>
         </head>
         <body>
-          ${canvas.map(it => `<img src="${it.toDataURL('image/jpeg')}" alt="" />`)}
+          ${canvas.map(it => `<img src="${it.toDataURL('image/jpeg')}" alt="" />`).join('')}
         </body>
       </html>
     `)
     setTimeout(() => {
       wind.print()
-      wind.close()
+      // wind.close()
     }, 200)
   }
 
