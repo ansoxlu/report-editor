@@ -52,17 +52,17 @@ const MENUS = [
   {
     title: '1. 数据编辑',
     url: '/metadata',
-    description: '配置你的数据格式,为打印时的动态数据作准备'
+    description: '报告模板需要注入动态数据,在此之前你需要编辑数据格式示例,用于验证渲染时的格式和注入'
   },
   {
     title: '2. 模板编辑',
     url: '/template',
-    description: '结合已保存的数据开始编辑模板'
+    description: '完成数据格式编辑后,开始编辑模板, 编辑视图和效果视图有所区别,“打印预览”查看最终效果'
   },
   {
     title: '3. 打印预览',
     url: '/preview',
-    description: '已完成数据和模板编辑，开始进行预览和打印'
+    description: '已完成数据和模板编辑后,开始查看渲染结果和PDF生成'
   },
   {
     title: ' 说明文档',
