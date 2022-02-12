@@ -1,0 +1,31 @@
+{
+  "files": {
+    "main.css": "/ansoxlu/report-editor/tree/gh-pages/static/css/main.7201aa67.chunk.css",
+    "main.js": "/ansoxlu/report-editor/tree/gh-pages/static/js/main.e61af629.chunk.js",
+    "main.js.map": "/ansoxlu/report-editor/tree/gh-pages/static/js/main.e61af629.chunk.js.map",
+    "runtime-main.js": "/ansoxlu/report-editor/tree/gh-pages/static/js/runtime-main.94c01aed.js",
+    "runtime-main.js.map": "/ansoxlu/report-editor/tree/gh-pages/static/js/runtime-main.94c01aed.js.map",
+    "static/css/2.14d445f6.chunk.css": "/ansoxlu/report-editor/tree/gh-pages/static/css/2.14d445f6.chunk.css",
+    "static/js/2.f914454b.chunk.js": "/ansoxlu/report-editor/tree/gh-pages/static/js/2.f914454b.chunk.js",
+    "static/js/2.f914454b.chunk.js.map": "/ansoxlu/report-editor/tree/gh-pages/static/js/2.f914454b.chunk.js.map",
+    "static/js/3.6c3a2bce.chunk.js": "/ansoxlu/report-editor/tree/gh-pages/static/js/3.6c3a2bce.chunk.js",
+    "static/js/3.6c3a2bce.chunk.js.map": "/ansoxlu/report-editor/tree/gh-pages/static/js/3.6c3a2bce.chunk.js.map",
+    "static/js/4.8a5c94d3.chunk.js": "/ansoxlu/report-editor/tree/gh-pages/static/js/4.8a5c94d3.chunk.js",
+    "static/js/4.8a5c94d3.chunk.js.map": "/ansoxlu/report-editor/tree/gh-pages/static/js/4.8a5c94d3.chunk.js.map",
+    "static/js/5.2da1b66f.chunk.js": "/ansoxlu/report-editor/tree/gh-pages/static/js/5.2da1b66f.chunk.js",
+    "static/js/5.2da1b66f.chunk.js.map": "/ansoxlu/report-editor/tree/gh-pages/static/js/5.2da1b66f.chunk.js.map",
+    "index.html": "/ansoxlu/report-editor/tree/gh-pages/index.html",
+    "static/css/2.14d445f6.chunk.css.map": "/ansoxlu/report-editor/tree/gh-pages/static/css/2.14d445f6.chunk.css.map",
+    "static/css/main.7201aa67.chunk.css.map": "/ansoxlu/report-editor/tree/gh-pages/static/css/main.7201aa67.chunk.css.map",
+    "static/js/2.f914454b.chunk.js.LICENSE.txt": "/ansoxlu/report-editor/tree/gh-pages/static/js/2.f914454b.chunk.js.LICENSE.txt",
+    "static/js/3.6c3a2bce.chunk.js.LICENSE.txt": "/ansoxlu/report-editor/tree/gh-pages/static/js/3.6c3a2bce.chunk.js.LICENSE.txt",
+    "static/js/4.8a5c94d3.chunk.js.LICENSE.txt": "/ansoxlu/report-editor/tree/gh-pages/static/js/4.8a5c94d3.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.94c01aed.js",
+    "static/css/2.14d445f6.chunk.css",
+    "static/js/2.f914454b.chunk.js",
+    "static/css/main.7201aa67.chunk.css",
+    "static/js/main.e61af629.chunk.js"
+  ]
+}
