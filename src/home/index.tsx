@@ -36,6 +36,7 @@ const Menu = styled.div<{index: number, isActive: boolean}>`
   padding-bottom: 8px;
   padding-left: ${props => (props.index + 2) * 18}px;
   background-color: ${props => props.isActive ? 'peachpuff' : '#f3f3f3'};
+  cursor: pointer;
 `
 const Description = styled.div`
   display: flex;
@@ -84,15 +85,21 @@ const Home = () => {
     return null
   }
 
+  const jump = (url: string) => {
+    if (url.startsWith('http')) {
+      window.open(url)
+    } else {
+      navigate(url)
+    }
+  }
+
   return (
     <Container>
       <Header/>
       <Content>
         <Aside>
           {MENUS.map((it, index) => (
-            <a href={it.url} key={index}>
-              <Menu index={index} isActive={it.url === menu.url}>{it.title}</Menu>
-            </a>
+            <Menu key={index} index={index} isActive={it.url === menu.url} onClick={() => jump(it.url)}>{it.title}</Menu>
           ))}
         </Aside>
         <Article>
