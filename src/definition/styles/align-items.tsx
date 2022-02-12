@@ -4,18 +4,18 @@ import { Select } from 'antd'
 
 type Category = 'center' | 'flex-start' | 'flex-end'
 
-const Categories: {title: string, value: Category}[] = [
+const Categories: { title: string, value: Category }[] = [
   {
     title: '开始',
     value: 'flex-start'
   },
   {
-    title: '结束',
-    value: 'flex-end'
-  },
-  {
     title: '居中',
     value: 'center'
+  },
+  {
+    title: '结束',
+    value: 'flex-end'
   }
 ]
 

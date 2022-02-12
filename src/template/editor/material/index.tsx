@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 import { DroppableIds } from '../types'
-import { Template } from '../../../definition/types'
 import { CONTENT_DEFINITIONS, PAPER_SIZES } from '../../../definition'
-import { Select, Button, message, InputNumber } from 'antd'
+import { Select, Button, message, InputNumber, Popconfirm } from 'antd'
 import { SyncOutlined } from '@ant-design/icons'
 import JustifyContent from '../../../definition/styles/justify-content'
+import { Page, Template } from '../../../definition/types'
+import { useNavigate } from 'react-router-dom'
 
 const Container = styled.aside`
   width: 250px;
@@ -22,6 +23,9 @@ const Groups = styled.div`
 `
 
 const Title = styled.div`
+`
+
+const Subject = styled.div`
   padding-right: 20px;
   display: flex;
   height: 40px;
@@ -57,10 +61,16 @@ const Clone = styled(Item)`
 `
 
 function Material (props: {
-  value: Template
-  onChange: (value: Template) => void
+  value: Page
+  onChange: (value: Page) => void
+  updating: boolean,
+  template: Template
+  onSave: (back: boolean) => void
+  onCancel: () => void
 }) {
-  const PageStyle = (props: { value: Template, onChange: (value: Template) => void }) => {
+  const navigate = useNavigate()
+
+  const PageStyle = (props: { value: Page, onChange: (value: Page) => void }) => {
     const [value, setValue] = useState<{width: number, height: number, title: string}>({ width: props.value.width, height: props.value.height, title: '' })
 
     // upset value.title
@@ -120,7 +130,7 @@ function Material (props: {
     return (
       <div>
         <Groups>
-          <Title>尺寸</Title>
+          <Subject>尺寸</Subject>
           <Select value={value.title} style={{ width: 112 }} onChange={handleSizeChange}>
             <Select.Option value={''}>自定义</Select.Option>
             {PAPER_SIZES.map((it, index) => (<Select.Option key={index} value={it.title}>{it.title}</Select.Option>))}
@@ -128,16 +138,16 @@ function Material (props: {
           <Button type="primary" onClick={handleChangeDirection}><SyncOutlined/></Button>
         </Groups>
         <Groups>
-          <Title>宽度</Title>
+          <Subject>宽度</Subject>
           <InputNumber value={value.width} min={0} max={999} style={{ width: 165 }} addonAfter="毫米" onChange={changeWidth} onBlur={() => changeWidth(value.width || props.value.width)}/>
         </Groups>
         <Groups>
-          <Title>高度</Title>
+          <Subject>高度</Subject>
           <InputNumber value={value.height} min={0} max={999} style={{ width: 165 }} addonAfter="毫米" onChange={changeHeight} />
         </Groups>
         {props.value.styles.map((it, index) => (
           <Groups key={index}>
-            <Title>{it.definition.key === JustifyContent.key ? '竖向排列' : it.definition.title}</Title>
+            <Subject>{it.definition.key === JustifyContent.key ? '竖向排列' : it.definition.title}</Subject>
             <it.definition.Blueprint value={it.value} onChange={value => changeStyle(it.definition.key, value)}/>
           </Groups>
         ))}
@@ -150,7 +160,47 @@ function Material (props: {
       {(provided) => (
         <Container ref={provided.innerRef}>
           <Groups>
-            <Title>内容</Title>
+            <Title>{props.template.title}</Title>
+            <div style={{ flex: 'auto' }}/>
+            {props.updating && (
+              <Popconfirm
+                placement="topRight"
+                title="是否保存后返回？"
+                okText="是"
+                cancelText="否"
+                onConfirm={() => props.onSave(true)}
+                onCancel={() => navigate('/template')}
+              >
+                <Button type="primary">返回</Button>
+              </Popconfirm>
+            )}
+            {!props.updating && (<Button type="primary" onClick={() => navigate('/template')}>返回</Button>)}
+          </Groups>
+          { props.updating && (
+            <Groups>
+              <Popconfirm
+                placement="topRight"
+                title="是否确定放弃修改？"
+                okText="是"
+                cancelText="否"
+                onConfirm={props.onCancel}
+              >
+                <Button type="primary" danger>放弃修改</Button>
+              </Popconfirm>
+              <div style={{ flex: 'auto' }}/>
+              <Popconfirm
+                placement="topRight"
+                title="是否确定保存？"
+                okText="是"
+                cancelText="否"
+                onConfirm={() => props.onSave(false)}
+              >
+                <Button type="primary" >确定保存</Button>
+              </Popconfirm>
+            </Groups>
+          )}
+          <Groups>
+            <Subject>内容</Subject>
             <Items>
               {CONTENT_DEFINITIONS.map((it, index) => (
                 <Draggable

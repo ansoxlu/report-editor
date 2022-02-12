@@ -4,13 +4,16 @@ import { Content, ContentDefinition, ContentSerialize } from './types'
 import { v4 as uuid4 } from 'uuid'
 import { cloneDeep } from 'lodash'
 import { STYLE_DEFINITIONS } from '../index'
+import { Style } from '../styles/types'
 
-export const createContent = (layout: Layout, definition: ContentDefinition<any, any>): Content<any, any> => {
+export const createContent = (layout: Layout, definition: ContentDefinition<any, any>, defaultStyles: Style<any>[]): Content<any, any> => {
   return {
     id: uuid4(),
     layout: layout,
     definition: definition,
-    styles: (definition.styles.length !== 0 ? definition.styles : STYLE_DEFINITIONS).map(it => createStyle(it)),
+    // STYLE_DEFINITIONS 由于循环依赖问题，只能创建时选择
+    styles: (definition.styles.length !== 0 ? definition.styles : STYLE_DEFINITIONS)
+      .map(it => createStyle(it, defaultStyles.find(dit => it.key === dit.definition.key)?.value)),
     toJSON () {
       const value: ContentSerialize = {
         id: this.id,

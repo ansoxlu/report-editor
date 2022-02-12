@@ -10,12 +10,12 @@ const Categories: {title: string, value: Category}[] = [
     value: 'flex-start'
   },
   {
-    title: '结束',
-    value: 'flex-end'
-  },
-  {
     title: '居中',
     value: 'center'
+  },
+  {
+    title: '结束',
+    value: 'flex-end'
   },
   {
     title: '间距相等',

@@ -1,25 +1,25 @@
 import React from 'react'
+import styled from 'styled-components'
 import JSONInput from 'react-json-editor-ajrm'
 import locale from 'react-json-editor-ajrm/locale/zh-cn'
-import styled from 'styled-components'
 import { message } from 'antd'
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  color: #000
 `
 
-const JsonInput = (props: { value: object, onChange: (value: object, json: string) => void }) => {
+const JsonEditor = (props: {
+  value: object
+  onChange: (value?: object) => void
+}) => {
   const handleChange = (result: any) => {
     if (!result.error) {
       if (!result.json) {
-        return props.onChange({}, '{}')
+        return props.onChange()
       }
       if (Array.isArray(result.jsObject)) {
         return message.error('数据不是JSON对象')
       }
-      props.onChange(result.jsObject, result.json)
+      props.onChange(result.jsObject)
     }
   }
 
@@ -49,4 +49,4 @@ const JsonInput = (props: { value: object, onChange: (value: object, json: strin
   )
 }
 
-export default JsonInput
+export default JsonEditor

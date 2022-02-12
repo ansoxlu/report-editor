@@ -2,8 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import { Droppable, DragDropContext, DropResult, Draggable } from 'react-beautiful-dnd'
 import { Button, Popconfirm, Menu, Dropdown } from 'antd'
-import { Template } from '../../../definition/types'
 import { sortBy } from 'lodash'
+import { Page } from '../../../definition/types'
 
 const Header = styled.div`
   padding: 10px 15px;
@@ -33,8 +33,8 @@ const Items = styled.div<{isDragging: boolean}>`
   }
 `
 
-const PageLayouts = (props: { value: Template, onChange: (value: Template) => void, onChangeActive:(layoutId: string) => void }) => {
-  const PageSetting = (props: {index: number, value: Template, onChange: (value: Template) => void }) => {
+const PageLayouts = (props: { value: Page, onChange: (value: Page) => void, onChangeActive:(layoutId: string) => void }) => {
+  const PageSetting = (props: {index: number, value: Page, onChange: (value: Page) => void }) => {
     const handlePageable = () => {
       const indexes = props.value.pageIndexes
       if (!indexes.includes(props.index)) {
@@ -45,9 +45,9 @@ const PageLayouts = (props: { value: Template, onChange: (value: Template) => vo
 
     return (
       <Menu>
-        <Menu.Item onClick={() => props.onChange({ ...props.value, header: props.index })}>页头</Menu.Item>
-        <Menu.Item onClick={() => props.onChange({ ...props.value, footer: props.index })}>页尾</Menu.Item>
-        <Menu.Item onClick={handlePageable}>分页</Menu.Item>
+        <Menu.Item disabled onClick={() => props.onChange({ ...props.value, header: props.index })}>页头</Menu.Item>
+        <Menu.Item disabled onClick={() => props.onChange({ ...props.value, footer: props.index })}>页尾</Menu.Item>
+        <Menu.Item disabled onClick={handlePageable}>分页</Menu.Item>
       </Menu>
     )
   }

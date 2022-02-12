@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 
 const Container = styled.div`
@@ -49,22 +49,23 @@ const Description = styled.div`
 
 const MENUS = [
   {
-    title: '数据编辑',
+    title: '1. 数据编辑',
     url: '/metadata',
     description: '配置你的数据格式,为打印时的动态数据作准备'
   },
   {
-    title: '模板编辑',
+    title: '2. 模板编辑',
     url: '/template',
     description: '结合已保存的数据开始编辑模板'
   },
   {
-    title: '打印预览',
-    url: '/preview'
+    title: '3. 打印预览',
+    url: '/preview',
+    description: '已完成数据和模板编辑，开始进行预览和打印'
   },
   {
-    title: '使用文档',
-    url: '/guide'
+    title: ' 说明文档',
+    url: 'https://github.com/ansoxlu/report-editor'
   }
 ]
 
@@ -89,9 +90,9 @@ const Home = () => {
       <Content>
         <Aside>
           {MENUS.map((it, index) => (
-            <Link to={it.url} key={index}>
+            <a href={it.url} key={index}>
               <Menu index={index} isActive={it.url === menu.url}>{it.title}</Menu>
-            </Link>
+            </a>
           ))}
         </Aside>
         <Article>

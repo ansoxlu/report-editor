@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 import { Button, Input, message, Select, Result } from 'antd'
 import styled from 'styled-components'
-import { Metadata, Template } from '../definition/types'
-import { DEFAULT_TEMPLATE_STYLES } from '../definition'
+import { Metadata, PageSerialize, Template } from '../definition/types'
 import moment from 'moment'
 import { v4 as uuid4 } from 'uuid'
-import { DATE_TIME_FORMAT } from '../plugins/moment'
+import { DATE_TIME } from '../plugins/moment'
 import { METATABLES, TEMPLATES } from '../plugins/database'
 import useLocalStorage from 'react-use-localstorage'
 import { useNavigate } from 'react-router-dom'
@@ -43,6 +42,10 @@ const Items = styled.div`
 
     > div:nth-child(2) {
       flex: auto;
+    }
+
+    > div:last-child {
+      margin-left: 25px;
     }
   }
 `
@@ -82,7 +85,7 @@ const EditDescription = styled.div`
 const Index = () => {
   const navigate = useNavigate()
   const [metatables] = useLocalStorage('RE-metatables', JSON.stringify(METATABLES))
-  const [templates] = useLocalStorage('RE-templates', JSON.stringify(TEMPLATES))
+  const [templates, setTemplates] = useLocalStorage('RE-templates', JSON.stringify(TEMPLATES))
 
   const [editId, setEditId] = useState<string | undefined>()
 
@@ -94,14 +97,7 @@ const Index = () => {
       createdAt: '',
       metadataId: '',
       updatedAt: '',
-      width: 210,
-      height: 297,
-      styles: DEFAULT_TEMPLATE_STYLES,
-      layouts: [],
-      header: -1,
-      footer: -1,
-      pageIndexes: [],
-      listIndexes: []
+      json: ''
     })
 
     const handleSave = () => {
@@ -111,7 +107,7 @@ const Index = () => {
       if (!value.metadataId) {
         return message.error('请选择数据来源')
       }
-      const now = moment().format(DATE_TIME_FORMAT)
+      const now = moment().format(DATE_TIME)
       props.onOk({
         ...value,
         createdAt: value.createdAt || now,
@@ -140,7 +136,7 @@ const Index = () => {
           <div>* 请输入标题：</div>
           <Input value={value.title} placeholder="请输入标题" onChange={ev => setValue({ ...value, title: ev.target.value })}/>
           {!props.value && metatables.length && (
-            <Select placeholder="请选择数据来源" style={{ width: 170 }} value={value.metadataId || undefined} onChange={handleSelectMetadata}>
+            <Select placeholder="请选择数据源" style={{ width: 170 }} value={value.metadataId || undefined} onChange={handleSelectMetadata}>
               {JSON.parse(metatables).map((it: Metadata) => (<Select.Option key={it.id} value={it.id}>{it.title}</Select.Option>))}
             </Select>
           )}
@@ -168,6 +164,7 @@ const Index = () => {
     } else {
       list.push(value)
     }
+    setTemplates(JSON.stringify(list))
     setEditId(undefined)
   }
 
@@ -190,17 +187,18 @@ const Index = () => {
         ? (<EditItem key={it.id} value={it} onOk={value => handleSave(value)} onCancel={() => { setEditId(undefined) }}/>)
         : (
           <Items key={it.id}>
-          <div>
-          <div>{it.title}</div>
-          <div/>
-          <div>{it.updatedAt}</div>
-          <div><Button type="primary" onClick={() => setEditId(it.id)}>信息编辑</Button></div>
-          </div>
-          <div>
-          <div>{it.description}</div>
-          <div/>
-          <div><Button type="primary" onClick={() => navigate(`/template/${it.id}`)}>模板定义</Button></div>
-          </div>
+            <div>
+            <div>{it.title}</div>
+            <div/>
+            <div>{it.updatedAt}</div>
+            <div><Button type="primary" onClick={() => setEditId(it.id)}>信息编辑</Button></div>
+            </div>
+            <div>
+            <div>{it.description}</div>
+            <div/>
+            <div><Button disabled={!it.json || (JSON.parse(it.json) as PageSerialize).layouts.length === 0} type="primary" onClick={() => navigate(`/preview/${it.id}`)}>打印预览</Button></div>
+            <div><Button type="primary" onClick={() => navigate(`/template/${it.id}`)}>模板定义</Button></div>
+            </div>
           </Items>
           )
       )}

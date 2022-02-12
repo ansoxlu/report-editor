@@ -12,6 +12,7 @@ export interface LayoutRenderProps {
 export interface LayoutBuildingProps extends LayoutRenderProps{
   id: string,
   onChangeActive: (contentId: string) => void
+  active: Layout | Content<any, any> | undefined
 }
 
 export interface LayoutDefinition {

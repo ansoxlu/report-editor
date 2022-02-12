@@ -19,7 +19,7 @@ export const render = (styles: Style<any>[]): CSSProperties => {
   }, { display: 'flex' })
 }
 
-const LAYOUT_STYLE = ['FlexDirection', 'JustifyContent', 'AlignItems', 'FlexGrow']
+const LAYOUT_STYLE = ['FlexDirection', 'JustifyContent', 'AlignItems', 'FlexGrow', 'MinHeight', 'MinWidth', 'MaxHeight', 'MaxWidth']
 export const renderLayout = (styles: Style<any>[]): CSSProperties => {
   return styles.reduce<CSSProperties>((pv, it) => {
     if (!LAYOUT_STYLE.includes(it.definition.key)) {

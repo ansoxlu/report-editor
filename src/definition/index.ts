@@ -57,8 +57,7 @@ export const DEFAULT_TEMPLATE_STYLES = [
   FontSize,
   FontWeight,
   Ellipsis,
-  Color,
-  Padding
+  Color
 ].map(it => createStyle(it))
 
 export const CONTENT_DEFINITIONS: ContentDefinition<any, any>[] = [

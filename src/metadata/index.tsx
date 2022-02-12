@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Metadata } from '../definition/types'
 import moment from 'moment'
 import { v4 as uuid4 } from 'uuid'
-import { DATE_TIME_FORMAT } from '../plugins/moment'
+import { DATE_TIME } from '../plugins/moment'
 import { METATABLES } from '../plugins/database'
 import useLocalStorage from 'react-use-localstorage'
 import { useNavigate } from 'react-router-dom'
@@ -90,7 +90,7 @@ const Index = () => {
       title: '',
       description: '',
       createdAt: '',
-      example: '{}',
+      json: '{}',
       items: [],
       updatedAt: ''
     })
@@ -99,7 +99,7 @@ const Index = () => {
       if (!value.title) {
         return message.error('请输入标题')
       }
-      const now = moment().format(DATE_TIME_FORMAT)
+      const now = moment().format(DATE_TIME)
       props.onOk({
         ...value,
         createdAt: value.createdAt || now,
@@ -113,13 +113,13 @@ const Index = () => {
         setValue({
           ...value,
           items: metadata.items,
-          example: metadata.example
+          json: metadata.json
         })
       } else {
         setValue({
           ...value,
           items: [],
-          example: '{}'
+          json: '{}'
         })
       }
     }

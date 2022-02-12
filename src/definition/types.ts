@@ -1,7 +1,7 @@
-import { Style } from './styles/types'
-import { Layout } from './layout/types'
-
 // 模板数据源
+import { Style, StyleSerialize } from './styles/types'
+import { Layout, LayoutSerialize } from './layout/types'
+
 export interface Metadata {
   id: string
   //  标题
@@ -11,8 +11,8 @@ export interface Metadata {
   updatedAt: string
   //  数据项
   items: MetadataItem[]
-  //  数据示例
-  example: string
+  //  json 数据示例
+  json: string
 }
 
 // 模板数据项
@@ -40,6 +40,28 @@ export interface Template {
   updatedAt: string
   //  模板数据源
   metadataId: string
+  // 模板 json: PageSerialize
+  json: string
+}
+
+export interface PageSerialize {
+  // mm
+  width: number
+  // mm
+  height: number
+  // 默认样式
+  styles: StyleSerialize[]
+  // 多页根据 pageable.offsets 切割
+  layouts: LayoutSerialize[]
+  // 页头结束位置 -1 表示无
+  header: number
+  // 页尾开始位置 -1 表示无
+  footer: number
+  pageIndexes: number[]
+  listIndexes: number[]
+}
+
+export interface Page {
   // mm
   width: number
   // mm
@@ -55,16 +77,3 @@ export interface Template {
   pageIndexes: number[]
   listIndexes: number[]
 }
-
-export const PAPER_SIZES = [
-  {
-    title: 'A5',
-    width: 148,
-    height: 210
-  },
-  {
-    title: 'A4',
-    width: 210,
-    height: 297
-  }
-]

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import logo from '../asserts/images/logo.png'
@@ -32,7 +32,7 @@ const Logo = styled.img.attrs(() => ({ src: logo }))`
   width: 60px;
 `
 
-const Header = (props: { className?: string, isFull?: boolean }) => {
+const Header = (props: { className?: string, isFull?: boolean, children?: ReactNode }) => {
   const navigate = useNavigate()
 
   return (
@@ -44,6 +44,7 @@ const Header = (props: { className?: string, isFull?: boolean }) => {
             报告编辑器
           </p>
         </div>
+        {props.children}
       </Nav>
     </Container>
   )

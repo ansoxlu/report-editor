@@ -62,20 +62,20 @@ const createByLayoutDefinition = (definition: LayoutDefinition, defaultStyles: S
 
 const createByContentDefinition = (definition: ContentDefinition<any, any>, defaultStyles: Style<any>[]): Layout => {
   const layout = createByLayoutDefinition(definition?.layout ?? Many, defaultStyles)
-  const content = createContent(layout, definition)
+  const content = createContent(layout, definition, defaultStyles)
   layout.contents.push(content)
   return layout
 }
 
 export const createLayout = (target: LayoutDefinition | LayoutSerialize | ContentDefinition<any, any>, defaultStyles?: Style<any>[]): Layout => {
   if ((target as ContentDefinition<any, any>).Blueprint) {
-    return createByContentDefinition(target as ContentDefinition<any, any>, defaultStyles ?? [])
+    return createByContentDefinition(target as ContentDefinition<any, any>, defaultStyles!)
   }
 
   if ((target as LayoutSerialize).definition) {
     return createByLayoutSerialize(target as LayoutSerialize)
   }
-  return createByLayoutDefinition(target as LayoutDefinition, defaultStyles ?? [])
+  return createByLayoutDefinition(target as LayoutDefinition, defaultStyles!)
 }
 
 export const getLayoutDefinitions = async () => {

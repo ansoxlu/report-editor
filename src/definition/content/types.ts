@@ -14,8 +14,8 @@ export interface ContentDefinition<T, R> {
   layout?: LayoutDefinition
   styles: StyleDefinition<any>[]
   Render: (props: { result?: R, style: CSSProperties }) => ReactElement
-  Blueprint: (props: { value: T, onChange: (value: T) => void, metadata: Metadata }) => ReactElement,
-  Building: (props: { result?: R, style: CSSProperties, onChangeActive: () => void }) => ReactElement
+  Blueprint: (props: { value: T, onChange: (value: T) => void, metadata: Metadata, getData: (value: string | string[]) => any }) => ReactElement,
+  Building: (props: { value: T, result?: R, style: CSSProperties, onChangeActive: () => void }) => ReactElement
 }
 
 export interface ContentSerialize {

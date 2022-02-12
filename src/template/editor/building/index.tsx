@@ -3,7 +3,9 @@ import styled from 'styled-components'
 import { render } from '../../../definition/styles/utils'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import { DroppableIds, MaterialType } from '../types'
-import { Template } from '../../../definition/types'
+import { Layout } from '../../../definition/layout/types'
+import { Content } from '../../../definition/content/types'
+import { Page } from '../../../definition/types'
 
 const Container = styled.section`
   border-left: 1px solid #e0e0e0;
@@ -34,20 +36,22 @@ const LayoutContainer = styled.div<{ isDragging: boolean }>`
   position: relative;
 `
 
-const LayoutHandle = styled.div`
-  display: flex;
-  align-items: center;
-  align-content: center;
+const LayoutHandle = styled.div<{index: number}>`
   user-select: none;
-  margin: -5px 5px -5px -0.5px;
-  padding: 5px;
-  line-height: 1.5;
-  border-radius: 3px 0 0 3px;
-  background: #fff;
-  border-right: 1px solid #ddd;
-  color: #000;
   position: absolute;
-  left: -36px;
+  width: 40px;
+  height: 1px;
+  left: -${props => props.index % 2 === 0 ? 40 : 27}px;
+  background-color: aquamarine;
+
+  > div {
+    width: 40px;
+    height: 30px;
+    clip-path: polygon(100% 0, 0 0, 0 100%);
+    position: absolute;
+    left: -${props => props.index % 2 === 0 ? 40 : 27}px;
+    background-color: #1890ff;
+  }
 `
 
 const Notice = styled.div`
@@ -61,7 +65,7 @@ const Notice = styled.div`
   background-color: #ff7875;
 `
 
-const Building = (props: { value: Template, getData: (values: string | string[]) => any, onChangeActive: (layoutId: string, contentId?: string) => void }) => {
+const Building = (props: { value: Page, getData: (value: string | string[]) => any, onChangeActive: (layoutId: string, contentId?: string) => void, active: Layout | Content<any, any> | undefined }) => {
   return (
     <Container>
       <View>
@@ -81,11 +85,11 @@ const Building = (props: { value: Template, getData: (values: string | string[])
                   }}
                 >
                   {props.value.layouts.length
-                    ? props.value.layouts.map((it, idx) => (
+                    ? props.value.layouts.map((it, index) => (
                       <Draggable
                         key={it.id}
                         draggableId={`${it.id}_${MaterialType.Layout}`}
-                        index={idx}>
+                        index={index}>
                         {(provided, snapshot) => (
                           <LayoutContainer
                             ref={provided.innerRef}
@@ -96,19 +100,18 @@ const Building = (props: { value: Template, getData: (values: string | string[])
                             <LayoutHandle
                               {...provided.dragHandleProps}
                               onClick={() => props.onChangeActive(it.id)}
+                              index={index}
                             >
-                              <svg
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24">
-                                <path
-                                  fill="currentColor"
-                                  d="M3,15H21V13H3V15M3,19H21V17H3V19M3,11H21V9H3V11M3,5V7H21V5H3Z"
-                                />
-                              </svg>
+                              <div>{index + 1}</div>
                             </LayoutHandle>
-                            {<it.definition.Building key={it.id} contents={it.contents} id={`${it.id}_${MaterialType.Content}`}
-                                                 style={render(it.styles)} getData={props.getData} onChangeActive={(id) => props.onChangeActive(it.id, id)}/>}
+                            {<it.definition.Building
+                              {...props}
+                              contents={it.contents}
+                              key={it.id}
+                              id={`${it.id}_${MaterialType.Content}`}
+                              style={render(it.styles)}
+                              onChangeActive={(id) => props.onChangeActive(it.id, id)}
+                            />}
                           </LayoutContainer>
                         )}
                       </Draggable>

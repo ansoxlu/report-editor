@@ -2,12 +2,10 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Layout } from '../../../definition/layout/types'
 import { Content } from '../../../definition/content/types'
-import { Tabs } from 'antd'
+import { Tabs, Button } from 'antd'
 import LayoutContents from './layout-contents'
 import PageLayouts from './page-layouts'
-import { Metadata, Template } from '../../../definition/types'
-import { METATABLES } from '../../../plugins/database'
-import useLocalStorage from 'react-use-localstorage'
+import { Metadata, Page } from '../../../definition/types'
 
 const Container = styled.aside`
   width: 300px;
@@ -39,11 +37,12 @@ const Notice = styled.div`
 
 function Blueprint (props: {
   active: Layout | Content<any, any> | undefined,
-  data: object,
   onChangeActiveValue: (value: Layout | Content<any, any>) => void,
   onChangeActive: (layoutId: string, contentId?: string) => void
-  value: Template,
-  onChange: (value: Template) => void
+  value: Page,
+  onChange: (value: Page) => void,
+  metadata: Metadata,
+  getData: (value: string | string[]) => any
 }) {
   const [current, setCurrent] = useState<number>(0)
 
@@ -74,8 +73,6 @@ function Blueprint (props: {
     })
   }
 
-  const [metatables] = useLocalStorage('RE-metatables', JSON.stringify(METATABLES))
-  const metadata = (JSON.parse(metatables) as Metadata[]).find(it => it.id === props.value.metadataId)!
   const renderContentOrLayout = () => {
     if ((props.active as Layout)?.contents) {
       const layout = props.active as Layout
@@ -90,8 +87,31 @@ function Blueprint (props: {
     }
     const content = props.active as Content<any, any>
     return (
-      <content.definition.Blueprint value={content.value} onChange={changeValue} metadata={metadata} />
+      <content.definition.Blueprint value={content.value} onChange={changeValue} metadata={props.metadata} getData={props.getData} />
     )
+  }
+
+  const handleDelete = () => {
+    if ((props.active as Layout)?.contents) {
+      // 删除 layout
+      const index = props.value.layouts.findIndex(it => it.id === props.active!.id)
+      props.value.layouts.splice(index, 1)
+    } else {
+      // 删除 content
+      const content = props.active as Content<any, any>
+      const contentIndex = content.layout.contents.findIndex(it => it.id === content.id)
+      content.layout.contents.splice(contentIndex, 1)
+
+      // 修改 layout
+      const layoutIndex = props.value.layouts.findIndex(it => it.id === content.layout.id)
+      if (content.layout.contents.length === 0) {
+        // 无内容删除 layout
+        props.value.layouts.splice(layoutIndex, 1)
+      } else {
+        props.value.layouts.splice(layoutIndex, 1, content.layout)
+      }
+    }
+    props.onChange({ ...props.value })
   }
 
   return (
@@ -107,12 +127,15 @@ function Blueprint (props: {
           {current === 0 && !!props.active && (renderContentOrLayout())}
         </Tabs.TabPane>
         <Tabs.TabPane tab="样式" key="1">
-          {current === 1 && !!props.active && (props.active.styles.map((it, index) => (
-            <Items key={index} >
-              <Title>{it.definition.title}</Title>
-              <it.definition.Blueprint value={it.value} onChange={value => changeStyle(it.definition.key, value)}/>
-            </Items>
-          )))}
+          {current === 1 && !!props.active && [
+            <Items key="button" style={{ justifyContent: 'center' }}><Button type="primary" danger onClick={handleDelete} >删除</Button></Items>,
+            props.active.styles.map((it, index) => (
+              <Items key={index} >
+                <Title>{it.definition.title}</Title>
+                <it.definition.Blueprint value={it.value} onChange={value => changeStyle(it.definition.key, value)}/>
+              </Items>
+            ))
+          ]}
         </Tabs.TabPane>
         <Tabs.TabPane tab="页面元素" key="3">
           {current === 3 && (<PageLayouts value={props.value} onChange={props.onChange} onChangeActive={layoutId => {

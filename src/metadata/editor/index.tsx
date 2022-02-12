@@ -63,7 +63,7 @@ const index = () => {
 
   const [editCache, setEditCache] = useLocalStorage(`RE-editMetadata-${metadata.id}`)
 
-  const [json, setJson] = useState<object>(JSON.parse(editCache || metadata.example))
+  const [json, setJson] = useState<object>(JSON.parse(editCache || metadata.json))
 
   const handleSave = (metadata: Metadata) => {
     setMetadata(metadata)

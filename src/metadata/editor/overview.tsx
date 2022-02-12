@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Button, Switch, Input, Tag, Table, message } from 'antd'
 import { sortBy, maxBy } from 'lodash'
 import moment from 'moment'
-import { DATE_TIME_FORMAT } from '../../plugins/moment'
+import { DATE_TIME } from '../../plugins/moment'
 import { useNavigate } from 'react-router-dom'
 
 const Container = styled.div`
@@ -79,18 +79,26 @@ const Overview = (props: { value: Metadata, onChange: (value: Metadata) => void,
       if (value === undefined || value === null) {
         result[key] = false
       } else if (['string', 'number', 'boolean'].includes(typeof value)) {
-        const val = result[key]
-        if (val === undefined) {
+        if (result[key] === undefined) {
           result[key] = true
         }
       } else if (Array.isArray(value)) {
         if (value.length === 0) {
-          result[`[${key}]`] = false
+          result[`${key}[]`] = false
         } else if (!value[0] || typeof value[0] !== 'object') {
-          result[`[${key}]`] = true
+          result[`${key}[]`] = true
         } else {
           for (const it of value) {
-            precess(`${key}[]`, it)
+            for (const itKey in it) {
+              const val = it[itKey]
+              if (val === undefined || val === null) {
+                result[`${key}[].${itKey}`] = false
+              } else if (['string', 'number', 'boolean'].includes(typeof value)) {
+                if (result[key] === undefined) {
+                  result[key] = true
+                }
+              }
+            }
           }
         }
       } else {
@@ -101,7 +109,7 @@ const Overview = (props: { value: Metadata, onChange: (value: Metadata) => void,
         }
       }
     }
-    precess('', result)
+    precess('', props.json)
     const list: ItemEdit[] = props.value.items.map(it => ({
       id: it.id,
       path: it.path,
@@ -146,8 +154,8 @@ const Overview = (props: { value: Metadata, onChange: (value: Metadata) => void,
     props.onChange({
       ...props.value,
       items: result,
-      updatedAt: moment().format(DATE_TIME_FORMAT),
-      example: JSON.stringify(props.json)
+      updatedAt: moment().format(DATE_TIME),
+      json: JSON.stringify(props.json)
     })
     message.success('保存成功')
   }

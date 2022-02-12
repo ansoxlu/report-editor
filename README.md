@@ -1,46 +1,94 @@
-# Getting Started with Create React App
+报告编辑器
+===========
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+#### 通过数据和模板组合生成PDF文件
 
-## Available Scripts
+该项目以动态数据生成PDF报告文件为目标
 
-In the project directory, you can run:
+允许A4/A5等标准或自定义纸张格式
 
-### `yarn start`
+允许自动分页/固定分页/页头页尾
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### 如何使用
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+1. 数据编辑
 
-### `yarn test`
+   报告模板需要注入动态数据,在此之前你需要编辑数据格式示例,用于验证渲染时的格式和注入
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. 模板编辑
 
-### `yarn build`
+    完成数据格式编辑后,开始编辑模板, 编辑视图和效果视图有所区别,完成编辑去`打印预览`查看最终效果
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. 打印预览
+    
+    已完成数据和模板编辑后,开始查看效果和PDF生成
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 模板内容组件:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. 文本
 
-### `yarn eject`
+  一段允许动态数据文本. 如输入格式为: `姓名: ${name}` 数据: {name: "张三"}, 渲染结果为 `姓名: 张三`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+2. 图片(待完成)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  使用时请设置宽高防止渲染差异  
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+3. 一维码(待完成)
+   使用时请设置宽高防止渲染差异
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+4. 二维码(待完成)
+   使用时请设置宽高防止渲染差异
 
-## Learn More
+5. 表格(待完成)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  表格数据可能会超出单页, 因此不允许设置页头页尾
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+6. 自定义表格(隐藏属性)(待完成)
+
+  渲染对象数组数据时,普通表格不满足需求,需要自定义布局, 在设置属性时选择`数据标志数据([])`, 渲染时将会检测渲染成自定义表格显示
+
+### 分页功能(待完成)
+
+自动分页
+固定分页
+页头页尾
+
+### 数据格式说明
+
+1. 非对象数据: 渲染时会换行渲染, 不构成表格数据
+```json5
+{
+  nums: [1, 2, 3], // => 1 \n 2 \n 3
+  strs: ['a', 'b']  // => a \n b \n c
+}
+```
+
+2. 对象数组不允许再嵌套对象数据, 无法进行处理 
+
+```json5
+{
+  a: [
+    {
+      b: [{ c: 1}], // 错误,禁止重复嵌套
+      d: [1, 2], // 允许, 非对象数组参考 1
+      'e': '1' // 正确, 允许非数组属性
+    }
+  ]
+}
+```
+
+### 内置数据参数(待完成)
+
+当前页码
+总页数
+表格序号(表格组件内有效)
+
+### 未完成功能列表
+
+1. 分页功能
+
+2. 内置数据参数
+
+3. 大部分模板内容组件
+
+4. 编辑时和打印时的数据格式验证
