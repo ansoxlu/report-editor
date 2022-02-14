@@ -180,7 +180,7 @@ const Render = (props: {
     `)
     setTimeout(() => {
       wind.print()
-      // wind.close()
+      wind.close()
     }, 200)
   }
 
