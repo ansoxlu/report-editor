@@ -1,8 +1,8 @@
 import React from 'react'
 
-const Single = () => {
+function Single() {
   return (
-    <div/>
+    <div />
   )
 }
 

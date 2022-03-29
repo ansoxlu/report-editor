@@ -1,6 +1,18 @@
 // 模板数据源
-import { Style, StyleSerialize } from './styles/types'
+import { Style, StyleSerialize } from './style/types'
+// eslint-disable-next-line import/no-cycle
 import { Layout, LayoutSerialize } from './layout/types'
+
+// 模板数据项
+export interface MetadataItem {
+  id: number
+  //  数据的扁平化路径
+  path: string
+  //  别名
+  alias?: string
+  //  是否必须
+  required: boolean
+}
 
 export interface Metadata {
   id: string
@@ -15,17 +27,6 @@ export interface Metadata {
   json: string
 }
 
-// 模板数据项
-export interface MetadataItem {
-  id: number
-  //  数据的扁平化路径
-  path: string
-  //  别名
-  alias?: string
-  //  是否必须
-  required: boolean
-}
-
 // 模板
 export interface Template {
   //  主键
@@ -33,7 +34,7 @@ export interface Template {
   //  标题
   title: string
   //  说明
-  description: string
+  description?: string
   //  创建于
   createdAt: string
   //  更新于
@@ -41,7 +42,7 @@ export interface Template {
   //  模板数据源
   metadataId: string
   // 模板 json: PageSerialize
-  json: string
+  json?: string
 }
 
 export interface PageSerialize {
@@ -57,8 +58,6 @@ export interface PageSerialize {
   header: number
   // 页尾开始位置 -1 表示无
   footer: number
-  pageIndexes: number[]
-  listIndexes: number[]
 }
 
 export interface Page {
@@ -74,6 +73,4 @@ export interface Page {
   header: number
   // 页尾开始位置 -1 表示无
   footer: number
-  pageIndexes: number[]
-  listIndexes: number[]
 }

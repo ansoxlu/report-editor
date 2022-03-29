@@ -1,16 +1,18 @@
 import React, { useState, useRef } from 'react'
-import { Metadata, MetadataItem } from '../../types'
 import styled from 'styled-components'
-import { Input, Popover as AntdPopover, Tag, message } from 'antd'
+import {
+  Input, Popover as AntdPopover, Tag, message,
+} from 'antd'
 import { TextAreaRef } from 'antd/lib/input/TextArea'
 import { EditTwoTone } from '@ant-design/icons'
+import { Metadata, MetadataItem } from '../../types'
 
 const Container = styled.div`
 `
 
 const InputArea = styled.div<{ focus: boolean }>`
   position: relative;
-  ${props => !props.focus ? '' : 'z-index: 3;'}
+  ${(props) => (!props.focus ? '' : 'z-index: 3;')}
 `
 
 const Popover = styled.div`
@@ -74,7 +76,7 @@ const Items = styled.div`
 
 export type Type = 'text' | 'object'
 
-const MetadataInput = (props: { metadata: Metadata, value: string, onChange:(value: string) => void, getData: (value: string | string[]) => any, type?: Type }) => {
+function MetadataInput(props: { metadata: Metadata, value: string, onChange:(value: string) => void, getData: (value: string | string[]) => any, type?: Type }) {
   const [focus, setFocus] = useState(false)
   const [search, setSearch] = useState<{ value: string, items: MetadataItem[] }>({ value: '', items: [] })
   const ref = useRef<TextAreaRef | null>(null)
@@ -87,11 +89,11 @@ const MetadataInput = (props: { metadata: Metadata, value: string, onChange:(val
   }
 
   const changeSearch = (value: string) => {
-    const items = props.metadata.items.filter(it => it.path.includes(value) || it.alias?.includes(value))
+    const items = props.metadata.items.filter((it) => it.path.includes(value) || it.alias?.includes(value))
 
     setSearch({
       value,
-      items
+      items,
     })
   }
 
@@ -129,22 +131,23 @@ const MetadataInput = (props: { metadata: Metadata, value: string, onChange:(val
     <Container>
       <InputArea focus={focus}>
         <Input.TextArea
-          ref={value => { ref.current = value }}
+          ref={(value) => { ref.current = value }}
           style={{ height: props.type === 'object' ? 60 : 150 }}
-          placeholder="请输入内容" value={props.value}
+          placeholder="请输入内容"
+          value={props.value}
           onChange={(ev) => changeInput(ev.target.value)}
           onFocus={onFocus}
         />
       </InputArea>
       {focus && (
         <Popover>
-          <Cover onClick={() => setFocus(false)}/>
+          <Cover onClick={() => setFocus(false)} />
           <MetadataContainer>
             <Title onClick={() => window.open(`/metadata/${props.metadata.id}`)}>
               数据源
               <EditTwoTone />
             </Title>
-            <Input allowClear value={search.value} onChange={ev => changeSearch(ev.target.value)} placeholder="请输入搜索内容" />
+            <Input allowClear value={search.value} onChange={(ev) => changeSearch(ev.target.value)} placeholder="请输入搜索内容" />
             {(props.metadata.items.length === 0 || (search.value && search.items.length === 0)) && (<div>无内容</div>)}
             {props.metadata.items.map((it, index) => (
               <Items key={index} onClick={() => entryMetadata(it)}>
@@ -152,7 +155,7 @@ const MetadataInput = (props: { metadata: Metadata, value: string, onChange:(val
                   <AntdPopover content={it.path} trigger="hover" placement="left">
                     <p><Tag color="blue">{it?.alias ?? it.path}</Tag></p>
                   </AntdPopover>
-                  <p/>
+                  <p />
                   <p>
                     {it.required && (<Tag color="cyan">必填</Tag>)}
                     {!it.required && (<Tag color="red">选填</Tag>)}

@@ -1,6 +1,7 @@
-import { StyleDefinition, Style, StyleSerialize } from '../styles/types'
-import { Content, ContentSerialize } from '../content/types'
 import { CSSProperties, ReactElement } from 'react'
+import { Style, StyleDefinition, StyleSerialize } from '../style/types'
+// eslint-disable-next-line import/no-cycle
+import { Content, ContentSerialize } from '../content/types'
 
 export interface LayoutRenderProps {
   contents: Content<any, any>[],
@@ -12,6 +13,7 @@ export interface LayoutRenderProps {
 export interface LayoutBuildingProps extends LayoutRenderProps{
   id: string,
   onChangeActive: (contentId: string) => void
+  // eslint-disable-next-line no-use-before-define
   active: Layout | Content<any, any> | undefined
 }
 

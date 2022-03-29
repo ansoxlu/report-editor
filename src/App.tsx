@@ -1,11 +1,10 @@
 import React from 'react'
-import './App.css'
+import Routing from './app/Routing'
 import 'antd/dist/antd.css'
-import Routing from './plugins/routing'
 
-function App () {
+function App() {
   return (
-    <Routing/>
+    <Routing />
   )
 }
 
