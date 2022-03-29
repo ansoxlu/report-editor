@@ -128,19 +128,6 @@ function Render(props: {
             getData={getData}
           />
         ))}
-
-        <table>
-          <thead>
-            <tr>
-              <th>th</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>td</td>
-            </tr>
-          </tbody>
-        </table>
       </RenderContainer>
     </Container>
   )

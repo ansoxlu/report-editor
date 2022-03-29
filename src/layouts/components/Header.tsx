@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import { GithubOutlined } from '@ant-design/icons'
-import logo from '../../asserts/images/logo.png'
+import logo from '../../assets/images/logo.png'
 
 const Container = styled.div`
   height: var(--header-h);
