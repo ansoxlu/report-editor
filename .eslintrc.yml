@@ -44,5 +44,6 @@ rules: {
   no-unused-vars: off,
   no-shadow: off,
   react/no-array-index-key: off,
-  semi: ["error", "never"]
+  semi: ["error", "never"],
+  "react/jsx-props-no-spreading": off
 }

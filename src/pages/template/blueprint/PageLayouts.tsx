@@ -88,6 +88,7 @@ function PageLayouts(props: Props) {
             <Elements
               ref={provided.innerRef}
               isDragging={snapshot.isDraggingOver}
+              {...provided.droppableProps}
             >
               {props.value.layouts.map((it, index) => (
                 <Draggable key={it.id} draggableId={it.id} index={index}>
@@ -99,7 +100,7 @@ function PageLayouts(props: Props) {
                         style={provided.draggableProps.style}
                         isDragging={snapshot.isDragging}
                       >
-                        <div tabIndex={provided.dragHandleProps?.tabIndex}>
+                        <div {...provided.dragHandleProps}>
                           {index + 1}
                         </div>
                         <div>

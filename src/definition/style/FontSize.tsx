@@ -1,7 +1,7 @@
 import React from 'react'
 import { InputNumber } from 'antd'
 import { StyleDefinition } from './types'
-import utils from './utils'
+import utils from './style-utils'
 
 const FontSize: StyleDefinition<number> = {
   Blueprint(props: { value: number; onChange: (value: number) => void }) {

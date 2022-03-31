@@ -1,4 +1,4 @@
-import styleUtils from './style/utils'
+import styleUtils from './style/style-utils'
 import { ContentDefinition } from './content/types'
 import { LayoutDefinition } from './layout/types'
 import { StyleDefinition } from './style/types'
@@ -40,7 +40,7 @@ const styles: StyleDefinition<any>[] = [
   Border,
 ]
 
-const defaultTemplateStyles = [
+const pageStyles = [
   FontSize,
   FontWeight,
   Ellipsis,
@@ -72,6 +72,6 @@ export default {
   paperSizes,
   layouts,
   contents,
-  pageStyles: defaultTemplateStyles,
+  pageStyles,
   styles,
 }

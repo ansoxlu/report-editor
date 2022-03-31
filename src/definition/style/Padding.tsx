@@ -2,7 +2,7 @@ import React from 'react'
 import { InputNumber } from 'antd'
 import styled from 'styled-components'
 import { StyleDefinition } from './types'
-import utils from './utils'
+import utils from './style-utils'
 
 const Container = styled.div`
   flex: auto;

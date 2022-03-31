@@ -1,7 +1,6 @@
 import { message } from 'antd'
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import useLocalStorage from 'react-use-localstorage'
 import styled from 'styled-components'
 import hooks from '../../app/hooks'
 import Mutation from './Mutation'
@@ -41,27 +40,31 @@ function MedataEditor() {
     return null
   }
 
-  const [jsonCache, setJsonCache] = useLocalStorage(`RE-editMetadata-${id}`, metadata.json)
+  const cacheKey = React.useMemo(() => `RE-editMetadata-${id}`, [id])
 
-  const json: Record<string, any> = React.useMemo(() => JSON.parse(jsonCache), [jsonCache])
+  const [json, setJson] = React.useState<Record<string, any>>(
+    () => JSON.parse(localStorage.getItem(cacheKey) || metadata.json || '{}'),
+  )
 
-  const onJsonChange = (json: string) => {
-    setJsonCache(json)
+  const onJsonChange = (value: Record<string, any>) => {
+    localStorage.setItem(cacheKey, JSON.stringify(value))
+    setJson(json)
   }
 
-  const onChange = (value: Metadata) => {
+  const onSave = (value: Metadata) => {
     const index = database.metatables.findIndex((it) => it.id === value.id)
     database.metatables.splice(index, 1, value)
     setDatabase(database)
+    localStorage.removeItem(cacheKey)
   }
 
   return (
     <Container>
       <Left>
-        <Mutation value={metadata} onChange={onChange} json={json} />
+        <Mutation value={metadata} onChange={onSave} json={json} />
       </Left>
       <Right>
-        <JsonInput value={json} onChange={onJsonChange} />
+        <JsonInput value={json} onChange={(value) => onJsonChange(value)} />
       </Right>
     </Container>
   )

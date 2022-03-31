@@ -68,6 +68,7 @@ function LayoutContents(props: Props) {
             {...provided.droppableProps}
             ref={provided.innerRef}
             isDragging={snapshot.isDraggingOver}
+            {...provided.droppableProps}
           >
             {props.value.map((it, index) => (
               <Draggable key={it.id} draggableId={it.id} index={index}>
@@ -76,8 +77,9 @@ function LayoutContents(props: Props) {
                     ref={provided.innerRef}
                     style={provided.draggableProps.style}
                     isDragging={snapshot.isDragging}
+                    {...provided.draggableProps}
                   >
-                    <div tabIndex={provided.dragHandleProps?.tabIndex}>
+                    <div {...provided.dragHandleProps}>
                       {index + 1}
                     </div>
                     <div>

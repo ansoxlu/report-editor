@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
-import styleUtils from '../../../definition/style/utils'
+import styleUtils from '../../../definition/style/style-utils'
 import { DroppableIds, MaterialType } from '../types'
 import { Layout } from '../../../definition/layout/types'
 import { Content } from '../../../definition/content/types'
@@ -84,6 +84,7 @@ function Building(props: Props) {
                 <PageContainer
                   ref={provided.innerRef}
                   isDragging={dropSnapshot.isDraggingOver}
+                  {...provided.droppableProps}
                   style={{
                     width: `${props.value.width}mm`,
                     height: `${props.value.height}mm`,
@@ -101,12 +102,13 @@ function Building(props: Props) {
                           <LayoutContainer
                             ref={provided.innerRef}
                             isDragging={snapshot.isDragging}
+                            {...provided.draggableProps}
                             style={dropSnapshot.draggingOverWith?.endsWith(MaterialType.Layout)
                               ? provided.draggableProps.style
                               : undefined}
                           >
                             <LayoutHandle
-                              tabIndex={provided.dragHandleProps?.tabIndex}
+                              {...provided.dragHandleProps}
                               onClick={() => props.onChangeActive(it.id)}
                               index={index}
                             >

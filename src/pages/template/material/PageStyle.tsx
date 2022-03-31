@@ -23,24 +23,29 @@ const Subject = styled.div`
 `
 
 function PageStyle(props: { value: Page, onChange: (value: Page) => void }) {
-  const [value, setValue] = React.useState<{width: number, height: number, title: string}>({ width: props.value.width, height: props.value.height, title: '' })
-
-  // upset value.title
-  React.useEffect(() => {
+  const getSizeTile = (value: { width: number, height: number }) => {
     const sizes = definition.paperSizes
       .find((it) => (it.width === value.width && it.height === value.height)
         || (it.width === value.height && it.height === value.width))
-    setValue({
-      ...value,
-      title: sizes?.title ?? '自定义',
-    })
-  }, [props.value.width, props.value.height, value.width, value.height])
+    return sizes?.title ?? '自定义'
+  }
 
-  const handleChangeDirection = () => {
+  const [value, setValue] = React.useState(() => ({
+    width: props.value.width,
+    height: props.value.height,
+    title: getSizeTile(props.value),
+  }))
+
+  const onDirectionChange = () => {
     if (!value.height) {
       message.error('方向切换失败,宽需要不能为0(无限)')
       return
     }
+    setValue({
+      title: value.title,
+      width: value.height,
+      height: value.width,
+    })
     props.onChange({
       ...props.value,
       width: value.height,
@@ -48,7 +53,7 @@ function PageStyle(props: { value: Page, onChange: (value: Page) => void }) {
     })
   }
 
-  const changeStyle = (key: string, value: any) => {
+  const onStyleChange = (key: string, value: any) => {
     const index = props.value.styles.findIndex((it) => it.definition.key === key)
     const style = props.value.styles[index]
     style.value = value
@@ -56,23 +61,18 @@ function PageStyle(props: { value: Page, onChange: (value: Page) => void }) {
     props.onChange({ ...props.value })
   }
 
-  const changeHeight = (height: number) => {
-    setValue({ ...value, height })
-    props.onChange({ ...props.value, height })
+  const onHeightChange = (height: number) => {
+    setValue({ width: value.width, height, title: getSizeTile({ width: value.width, height }) })
   }
 
-  const changeWidth = (width: number) => {
-    setValue({ ...value, width })
-    if (!width) {
-      message.error('宽需要不能为0(无限)')
-      return
-    }
-    props.onChange({ ...props.value, width })
+  const onWidthChange = (width: number) => {
+    setValue({ width, height: value.height, title: getSizeTile({ width, height: value.height }) })
   }
 
-  const handleSizeChange = (key: string) => {
+  const onSizeChange = (key: string) => {
     const sizes = definition.paperSizes.find((it) => it.title === key)
     if (sizes) {
+      setValue(sizes)
       props.onChange({
         ...props.value,
         width: sizes.width,
@@ -81,11 +81,28 @@ function PageStyle(props: { value: Page, onChange: (value: Page) => void }) {
     }
   }
 
+  const onBlur = () => {
+    if (!value.width) {
+      message.error('修改失败,宽需要不能为0(无限)')
+      setValue({
+        width: props.value.width,
+        height: props.value.height,
+        title: getSizeTile(props.value),
+      })
+      return
+    }
+    props.onChange({
+      ...props.value,
+      width: props.value.width,
+      height: props.value.height,
+    })
+  }
+
   return (
     <div>
       <Groups>
         <Subject>尺寸</Subject>
-        <Select value={value.title} style={{ width: 112 }} onChange={handleSizeChange}>
+        <Select value={value.title} style={{ width: 112 }} onChange={onSizeChange}>
           <Select.Option value="">自定义</Select.Option>
           {definition.paperSizes.map((it, index) => (
             <Select.Option key={index} value={it.title}>
@@ -93,22 +110,38 @@ function PageStyle(props: { value: Page, onChange: (value: Page) => void }) {
             </Select.Option>
           ))}
         </Select>
-        <Button type="primary" onClick={handleChangeDirection}><SyncOutlined /></Button>
+        <Button type="primary" onClick={onDirectionChange}><SyncOutlined /></Button>
       </Groups>
       <Groups>
         <Subject>宽度</Subject>
-        <InputNumber value={value.width} min={0} max={999} style={{ width: 165 }} addonAfter="毫米" onChange={changeWidth} onBlur={() => changeWidth(value.width || props.value.width)} />
+        <InputNumber
+          value={value.width}
+          min={0}
+          max={999}
+          style={{ width: 165 }}
+          addonAfter="毫米"
+          onChange={onWidthChange}
+          onBlur={() => onBlur()}
+        />
       </Groups>
       <Groups>
         <Subject>高度</Subject>
-        <InputNumber value={value.height} min={0} max={999} style={{ width: 165 }} addonAfter="毫米" onChange={changeHeight} />
+        <InputNumber
+          value={value.height}
+          min={0}
+          max={999}
+          style={{ width: 165 }}
+          addonAfter="毫米"
+          onChange={onHeightChange}
+          onBlur={() => onBlur()}
+        />
       </Groups>
       {props.value.styles.map((it, index) => (
         <Groups key={index}>
           <Subject>{it.definition.key === JustifyContent.key ? '竖向排列' : it.definition.title}</Subject>
           <it.definition.Blueprint
             value={it.value}
-            onChange={(value) => changeStyle(it.definition.key, value)}
+            onChange={(value) => onStyleChange(it.definition.key, value)}
           />
         </Groups>
       ))}

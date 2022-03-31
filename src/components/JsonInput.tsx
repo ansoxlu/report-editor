@@ -12,21 +12,21 @@ const Container = styled.div`
 
 type Props = {
   value: Record<any, string>
-  onChange: (json: string) => void
+  onChange: (value: Record<any, string>, json: string) => void
 }
 
 function JsonInput(props: Props) {
   const onChange = (result: any) => {
     if (!result.error) {
       if (!result.json) {
-        props.onChange('{}')
+        props.onChange(result.jsObject || {}, '{}')
         return
       }
       if (Array.isArray(result.jsObject)) {
         message.error('数据不是JSON对象')
         return
       }
-      props.onChange(result.json)
+      props.onChange(result.jsObject, result.json)
     }
   }
 

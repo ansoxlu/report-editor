@@ -1,7 +1,7 @@
 import { v4 as uuid4 } from 'uuid'
 import { cloneDeep } from 'lodash'
 import { Layout } from '../layout/types'
-import styleUtil from '../style/utils'
+import styleUtil from '../style/style-utils'
 import { Content, ContentDefinition, ContentSerialize } from './types'
 import definition from '../definition'
 import { Style } from '../style/types'

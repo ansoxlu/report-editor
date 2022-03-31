@@ -1,7 +1,7 @@
 import { InputNumber } from 'antd'
 import React from 'react'
 import { StyleDefinition } from './types'
-import utils from './utils'
+import utils from './style-utils'
 
 const TextIndent: StyleDefinition<number> = {
   Blueprint(props: { value: number; onChange: (value: number) => void }) {

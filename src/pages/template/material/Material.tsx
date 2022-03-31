@@ -62,7 +62,7 @@ const Clone = styled(Item)`
 function Material(props: {
   value: Page
   onChange: (value: Page) => void
-  updating: boolean,
+  updated: boolean,
   template: Template
   onSave: () => void
   onCancel: () => void
@@ -81,7 +81,7 @@ function Material(props: {
           <Groups>
             <Title>{props.template.title}</Title>
             <div style={{ flex: 'auto' }} />
-            {props.updating && (
+            {props.updated && (
               <Popconfirm
                 placement="topRight"
                 title="是否保存后返回？"
@@ -93,10 +93,10 @@ function Material(props: {
                 <Button type="primary">返回首页</Button>
               </Popconfirm>
             )}
-            {!props.updating && (
+            {!props.updated && (
               <Button type="primary" onClick={() => navigate('/')}>返回首页</Button>)}
           </Groups>
-          {props.updating && (
+          {props.updated && (
             <Groups>
               <Popconfirm
                 placement="topRight"
@@ -132,7 +132,8 @@ function Material(props: {
                     <>
                       <Item
                         ref={provided.innerRef}
-                        tabIndex={provided.dragHandleProps?.tabIndex}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
                         isDragging={snapshot.isDragging}
                         style={snapshot.isDragging ? provided.draggableProps.style : {}}
                       >

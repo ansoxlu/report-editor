@@ -1,10 +1,10 @@
 import { v4 as uuid4 } from 'uuid'
-import styleUtils from '../style/utils'
+import styleUtils from '../style/style-utils'
 import { ContentDefinition, ContentSerialize } from '../content/types'
 import { Layout, LayoutDefinition, LayoutSerialize } from './types'
 import { Style } from '../style/types'
 import Many from './many'
-import contentUtils from '../content/utils'
+import contentUtils from '../content/content-utils'
 import definition from '../definition'
 
 const createByLayoutSerialize = (serialize: LayoutSerialize): Layout => {

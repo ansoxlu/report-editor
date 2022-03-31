@@ -1,6 +1,6 @@
 import { StyleDefinition } from './types'
 import { SizeInputStyle, SizeInputValue } from './components/SizeInputStyle'
-import utils from './utils'
+import utils from './style-utils'
 
 const MinWidth: StyleDefinition<SizeInputValue> = {
   ...SizeInputStyle,

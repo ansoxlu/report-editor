@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import { LayoutBuildingProps, LayoutDefinition, LayoutRenderProps } from './types'
-import styleUtils from '../style/utils'
+import styleUtils from '../style/style-utils'
 import MinHeight from '../style/MinHeight'
 import MaxHeight from '../style/MaxHeight'
 import Padding from '../style/Padding'
@@ -71,7 +71,8 @@ const Many: LayoutDefinition = {
                       ref={provided.innerRef}
                       isDragging={snapshot.isDragging}
                       isActive={props.active?.id === it.id}
-                      tabIndex={provided.dragHandleProps?.tabIndex}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
                       style={Object.assign(
                         provided.draggableProps.style,
                         styleUtils.renderLayout(it.styles),

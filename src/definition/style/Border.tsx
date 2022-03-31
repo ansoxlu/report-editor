@@ -2,7 +2,7 @@ import React from 'react'
 import { InputNumber, Select } from 'antd'
 import styled from 'styled-components'
 import { StyleDefinition } from './types'
-import utils from './utils'
+import utils from './style-utils'
 import Color from './Color'
 
 const Container = styled.div`
