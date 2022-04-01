@@ -44,7 +44,6 @@ const Single: LayoutDefinition = {
   description: '内容列表只有一个，且不允许为空',
   key: 'Single',
   styles: [],
-  title: '',
 }
 
 export default Single

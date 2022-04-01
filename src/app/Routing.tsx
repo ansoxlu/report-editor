@@ -38,6 +38,8 @@ export default function Routing() {
 
           <Route path="/preview/:id" element={<Preview />} />
 
+          <Route path="/:key" element={<Home />} />
+
           <Route path="/" element={<Home />} />
 
         </Route>

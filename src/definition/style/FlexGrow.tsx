@@ -12,7 +12,7 @@ const FlexGrow: StyleDefinition<number> = {
     return { flexGrow: value }
   },
   defaultValue: 1,
-  title: '主方向占比',
+  title: '行占比率',
   description: '',
   key: 'FlexGrow',
 }

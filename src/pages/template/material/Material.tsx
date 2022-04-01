@@ -46,7 +46,8 @@ const Item = styled.li<{ isDragging?: boolean }>`
   width: 170px;
   align-items: center;
   justify-content: center;
-  background: #f3f3f3;
+  background-color: #1890ff;
+  color: #fff;
   border: 1px ${(props) => (props.isDragging ? 'dashed #4099ff' : 'solid #ddd')};
   user-select: none;
   margin-bottom: 8px;
@@ -71,7 +72,7 @@ function Material(props: {
 
   const onSaveAndHome = () => {
     props.onSave()
-    navigate('/')
+    navigate('/template')
   }
 
   return (
@@ -88,13 +89,13 @@ function Material(props: {
                 okText="是"
                 cancelText="否"
                 onConfirm={() => onSaveAndHome}
-                onCancel={() => navigate('/')}
+                onCancel={() => navigate('/template')}
               >
                 <Button type="primary">返回首页</Button>
               </Popconfirm>
             )}
             {!props.updated && (
-              <Button type="primary" onClick={() => navigate('/')}>返回首页</Button>)}
+              <Button type="primary" onClick={() => navigate('/template')}>返回首页</Button>)}
           </Groups>
           {props.updated && (
             <Groups>
@@ -120,7 +121,7 @@ function Material(props: {
             </Groups>
           )}
           <Groups>
-            <Subject>内容</Subject>
+            <Subject>拖动内容</Subject>
             <Items>
               {definition.contents.map((it, index) => (
                 <Draggable

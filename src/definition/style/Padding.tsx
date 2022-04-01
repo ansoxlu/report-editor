@@ -16,7 +16,16 @@ type Value = {
 }
 
 function PaddingInput(props: {title: string, value: number, onChange: (value: number) => void}) {
-  return <InputNumber addonBefore={props.title} min="0" max="999" style={{ width: '100%' }} value={String(props.value)} onChange={(v) => props.onChange(Number(v))} />
+  return (
+    <InputNumber
+      addonBefore={props.title}
+      min="0"
+      max="999"
+      style={{ width: '100%' }}
+      value={String(props.value)}
+      onChange={(v) => props.onChange(Number(v))}
+    />
+  )
 }
 
 const Padding:StyleDefinition<Value> = {

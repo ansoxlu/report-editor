@@ -1,12 +1,18 @@
 import React from 'react'
 import {
-  Button, InputNumber, message, Select,
+  Button, InputNumber, message, Select, Tooltip,
 } from 'antd'
 import styled from 'styled-components'
 import { SyncOutlined } from '@ant-design/icons'
 import { Page } from '../../../definition/types'
 import definition from '../../../definition/definition'
-import JustifyContent from '../../../definition/style/JustifyContent'
+
+const Title = styled.div`
+  font-size: 22px;
+  text-align: center;
+  border-bottom: 1px solid #aaa;
+  padding: 10px 0;
+`
 
 const Groups = styled.div`
   border-bottom: 1px solid #aaa;
@@ -136,9 +142,12 @@ function PageStyle(props: { value: Page, onChange: (value: Page) => void }) {
           onBlur={() => onBlur()}
         />
       </Groups>
+      <Tooltip placement="right" title="添加新内容时使用的默认值，不影响已添加内容">
+        <Title>默认样式</Title>
+      </Tooltip>
       {props.value.styles.map((it) => (
         <Groups key={it.definition.key}>
-          <Subject>{it.definition.key === JustifyContent.key ? '竖向排列' : it.definition.title}</Subject>
+          <Subject>{it.definition.title}</Subject>
           <it.definition.Blueprint
             value={it.value}
             onChange={(value) => onStyleChange(it.definition.key, value)}

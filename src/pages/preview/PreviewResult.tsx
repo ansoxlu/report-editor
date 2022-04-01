@@ -73,7 +73,7 @@ function Render(props: {
       <Header>
         <Button type="primary" onClick={() => onDownload()}>PDF下载</Button>
         <Button type="primary" onClick={() => onPrint()}>打印</Button>
-        <Button type="primary" onClick={() => navigate('/')}>返回首页</Button>
+        <Button type="primary" onClick={() => navigate('/preview')}>返回首页</Button>
       </Header>
       {canvas.map((it, index) => (
         // eslint-disable-next-line react/no-array-index-key

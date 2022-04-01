@@ -5,7 +5,7 @@ import { GithubOutlined } from '@ant-design/icons'
 import logo from '../../assets/images/logo.png'
 
 const Container = styled.div`
-  height: var(--header-h);
+  height: 65px;
   display: flex;
   align-items: center;
   justify-content: space-between;

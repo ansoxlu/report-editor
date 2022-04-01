@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Button, Tabs } from 'antd'
+import { Button, Tabs, Tooltip } from 'antd'
 import { Layout } from '../../../definition/layout/types'
 import { Content } from '../../../definition/content/types'
 import LayoutContents from './LayoutContents'
@@ -16,11 +16,13 @@ const Items = styled.div`
   border-bottom: 1px solid #aaa;
   padding: 10px 15px;
   display: flex;
-  align-items: center;
 `
-const Title = styled.span`
-  display: inline-block;
-  width: 80px;
+const Title = styled.div`
+  max-width: 80px;
+  min-width: 26px;
+  flex: auto;
+  display: flex;
+  align-items: center;
 `
 
 const Notice = styled.div`
@@ -140,7 +142,9 @@ function Blueprint(props: {
             <Items key="button" style={{ justifyContent: 'center' }}><Button type="primary" danger onClick={handleDelete}>删除</Button></Items>,
             props.active.styles.map((it) => (
               <Items key={it.definition.key}>
-                <Title>{it.definition.title}</Title>
+                <Tooltip placement="left" title={it.definition.description}>
+                  <Title>{it.definition.title}</Title>
+                </Tooltip>
                 <it.definition.Blueprint
                   value={it.value}
                   onChange={(value) => changeStyle(it.definition.key, value)}

@@ -3,8 +3,6 @@ import styled from 'styled-components'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import { LayoutBuildingProps, LayoutDefinition, LayoutRenderProps } from './types'
 import styleUtils from '../style/style-utils'
-import MinHeight from '../style/MinHeight'
-import MaxHeight from '../style/MaxHeight'
 import Padding from '../style/Padding'
 
 const Container = styled.div<{ isDragging: boolean, isActive: boolean }>`
@@ -103,8 +101,7 @@ const Many: LayoutDefinition = {
     )
   },
   description: '页面是竖向排列，使用该布局添加横向内容',
-  styles: [MinHeight, MaxHeight, Padding],
-  title: '纵向多内容排列',
+  styles: [Padding],
   key: 'Many',
 }
 export default Many

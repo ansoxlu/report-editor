@@ -19,7 +19,6 @@ export interface LayoutBuildingProps extends LayoutRenderProps{
 
 export interface LayoutDefinition {
   key: string
-  title: string
   description: string
   styles: StyleDefinition<any>[]
   Render: (props: LayoutRenderProps) => ReactElement

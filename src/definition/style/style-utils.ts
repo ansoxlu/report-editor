@@ -12,7 +12,7 @@ const rem = (px: number): string => `${px / 100}rem`
 
 const render = (styles: Style<any>[]): CSSProperties => styles.reduce<CSSProperties>((pv, it) => Object.assign(pv, it.definition.render(it.value)) as CSSProperties, { display: 'flex' })
 
-const LAYOUT_STYLE = ['FlexDirection', 'JustifyContent', 'AlignItems', 'FlexGrow', 'MinHeight', 'MinWidth', 'MaxHeight', 'MaxWidth']
+const LAYOUT_STYLE = ['WidthHeight', 'Direction']
 
 function renderLayout(styles: Style<any>[]): CSSProperties {
   return styles.reduce<CSSProperties>((pv, it) => {
@@ -31,7 +31,7 @@ function createStyle(
   if ((style as StyleSerialize).definition) {
     const serialize = style as StyleSerialize
     return {
-      value: value ?? serialize.value,
+      value: serialize.value,
       definition: definitions.find((it) => it.key === serialize.definition)!,
       toJSON() {
         return {
@@ -43,12 +43,12 @@ function createStyle(
   }
   const definition = style as StyleDefinition<any>
   return {
-    value: cloneDeep(definition.defaultValue),
+    value: cloneDeep(value || definition.defaultValue),
     definition,
     toJSON() {
       return {
         definition: this.definition.key,
-        value: value ?? this.value,
+        value: this.value,
       }
     },
   }

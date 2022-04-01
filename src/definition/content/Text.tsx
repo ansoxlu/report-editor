@@ -35,28 +35,24 @@ const Text: ContentDefinition<string, string> = {
     if (direction === 'column') {
       return (
         <div style={props.style}>
-          {
-          (lines.length > 1
+          {(lines.length > 1
             ? lines
             : Array.from(props.result)).map((it, index) => (
             // eslint-disable-next-line react/no-array-index-key
               <div key={index}>{it}</div>
-          ))
-        }
+          ))}
         </div>
       )
     }
     return (
       <div style={props.style}>
-        <div>
-          {lines.map((it, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <span key={index}>
-              {it}
-              <br />
-            </span>
-          ))}
-        </div>
+        {lines.map((it, index) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <React.Fragment key={index}>
+            {it}
+            <br />
+          </React.Fragment>
+        ))}
       </div>
     )
   },
@@ -72,28 +68,24 @@ const Text: ContentDefinition<string, string> = {
     if (direction === 'column') {
       return (
         <div style={props.style} onClick={() => props.onChangeActive()}>
-          {
-          (lines.length > 1
+          {(lines.length > 1
             ? lines
             : Array.from(props.result)).map((it, index) => (
             // eslint-disable-next-line react/no-array-index-key
               <div key={index}>{it}</div>
-          ))
-        }
+          ))}
         </div>
       )
     }
     return (
       <div style={props.style} onClick={() => props.onChangeActive()}>
-        <div>
-          {lines.map((it, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <span key={index}>
-              {it}
-              <br />
-            </span>
-          ))}
-        </div>
+        {lines.map((it, index) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <React.Fragment key={index}>
+            {it}
+            <br />
+          </React.Fragment>
+        ))}
       </div>
     )
   },

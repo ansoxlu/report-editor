@@ -1,12 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useParams } from 'react-router-dom'
 import { Menu } from './types'
 import HomeMetadata from './HomeMetadata'
 import HomeTemplate from './HomeTemplate'
 import HomePreview from './HomePreview'
 
 const Container = styled.div`
-  width: var(--content-w);
+  width: 1230px;
   display: flex;
   padding: 30px 0;
 `
@@ -45,29 +46,36 @@ const Description = styled.div`
 
 const MENUS: Menu[] = [
   {
-    key: 'Metadata',
+    key: 'metadata',
     title: '数据模板',
     description: '打印模板需要注入动态数据,在此之前你需要编辑数据格式,用于验证渲染时的格式和注入',
     Element: HomeMetadata,
   },
   {
-    key: 'Template',
+    key: 'template',
     title: '打印模板',
     description: '完成数据格式编辑后,开始编辑模板, 编辑视图和效果视图有所区别,“打印预览”查看最终效果',
     Element: HomeTemplate,
   },
   {
     description: '已完成数据和模板编辑后,开始查看效果和PDF生成',
-    key: 'Preview',
+    key: 'preview',
     title: '打印预览',
     Element: HomePreview,
   },
 ]
 
 export default function Home() {
-  const [activeKey, setActiveKey] = React.useState(MENUS[0].key)
+  const { key } = useParams()
 
-  const active = React.useMemo(() => MENUS.find((it) => it.key === activeKey)!, [activeKey])
+  const [activeKey, setActiveKey] = React.useState(() => (
+    MENUS.find((it) => it.key === key)?.key ?? MENUS[0].key
+  ))
+
+  const active = React.useMemo(
+    () => MENUS.find((it) => it.key === activeKey)!,
+    [activeKey],
+  )
 
   return (
     <Container>

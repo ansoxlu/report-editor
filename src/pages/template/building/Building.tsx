@@ -34,7 +34,6 @@ const PageContainer = styled.article<{isDragging: boolean}>`
 const LayoutContainer = styled.div<{ isDragging: boolean }>`
   display: flex;
   ${(props) => (props.isDragging ? 'border: 1px dashed #4099ff;' : '')}
-  position: relative;
 `
 
 const LayoutHandle = styled.div<{index: number}>`
@@ -89,7 +88,6 @@ function Building(props: Props) {
                   style={{
                     width: `${props.value.width}mm`,
                     height: `${props.value.height}mm`,
-                    ...styleUtils.render(props.value.styles),
                   }}
                 >
                   {props.value.layouts.length

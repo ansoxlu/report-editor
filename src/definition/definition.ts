@@ -4,40 +4,26 @@ import { LayoutDefinition } from './layout/types'
 import { StyleDefinition } from './style/types'
 import Text from './content/Text'
 import Many from './layout/Many'
-import FlexDirection from './style/FlexDirection'
-import FlexGrow from './style/FlexGrow'
-import JustifyContent from './style/JustifyContent'
-import AlignItems from './style/AlignItems'
 import FontSize from './style/FontSize'
 import FontWeight from './style/FontWeight'
 import TextIndent from './style/TextIndent'
 import LetterSpacing from './style/LetterSpacing'
-import MinWidth from './style/MinWidth'
 import Color from './style/Color'
-import Ellipsis from './style/Ellipsis'
-import MinHeight from './style/MinHeight'
-import MaxHeight from './style/MaxHeight'
-import MaxWidth from './style/MaxWidth'
 import Padding from './style/Padding'
 import Border from './style/Border'
 import PageLine from './content/PageLine'
 import Single from './layout/Single'
+import Direction from './style/Direction'
+import WidthHeight from './style/WidthHeight'
 
 const styles: StyleDefinition<any>[] = [
-  FlexDirection,
-  JustifyContent,
-  AlignItems,
-  FlexGrow,
   FontSize,
   FontWeight,
   TextIndent,
   LetterSpacing,
   Color,
-  Ellipsis,
-  MinHeight,
-  MinWidth,
-  MaxHeight,
-  MaxWidth,
+  WidthHeight,
+  Direction,
   Padding,
   Border,
 ]

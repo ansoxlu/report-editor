@@ -15,8 +15,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-:root {
-  --header-h: 62px;
-  --content-w: 1230px;
-}
