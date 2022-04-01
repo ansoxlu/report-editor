@@ -104,8 +104,8 @@ function PageStyle(props: { value: Page, onChange: (value: Page) => void }) {
         <Subject>尺寸</Subject>
         <Select value={value.title} style={{ width: 112 }} onChange={onSizeChange}>
           <Select.Option value="">自定义</Select.Option>
-          {definition.paperSizes.map((it, index) => (
-            <Select.Option key={index} value={it.title}>
+          {definition.paperSizes.map((it) => (
+            <Select.Option key={it.title} value={it.title}>
               {it.title}
             </Select.Option>
           ))}
@@ -136,8 +136,8 @@ function PageStyle(props: { value: Page, onChange: (value: Page) => void }) {
           onBlur={() => onBlur()}
         />
       </Groups>
-      {props.value.styles.map((it, index) => (
-        <Groups key={index}>
+      {props.value.styles.map((it) => (
+        <Groups key={it.definition.key}>
           <Subject>{it.definition.key === JustifyContent.key ? '竖向排列' : it.definition.title}</Subject>
           <it.definition.Blueprint
             value={it.value}

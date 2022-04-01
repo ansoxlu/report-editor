@@ -51,7 +51,7 @@ const getValue = (key: string, metadata: Metadata, data: FlattenData) => {
       return data[path]
     }
   }
-  return data[k]
+  return metadata.items.some((it) => it.path === k) ? data[k] : undefined
 }
 
 /**
@@ -61,6 +61,10 @@ const getValue = (key: string, metadata: Metadata, data: FlattenData) => {
  * @param data        渲染数据
  */
 const getRenderData = (texts: string | string[], metadata: Metadata, data: FlattenData) => {
+  if (!texts) {
+    return ''
+  }
+
   const isArray = Array.isArray(texts)
   const result = (isArray ? texts as string[] : [texts as string]).map((text) => {
     // 字符串类型
@@ -73,7 +77,8 @@ const getRenderData = (texts: string | string[], metadata: Metadata, data: Flatt
         return value || ''
       })
     }
-    return getValue(text, metadata, data)
+    // object 类型
+    return getValue(text, metadata, data) || text
   })
   return isArray ? result : result[0]
 }

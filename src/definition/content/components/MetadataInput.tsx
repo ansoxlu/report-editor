@@ -76,20 +76,30 @@ const Items = styled.div`
 
 export type Type = 'text' | 'object'
 
-function MetadataInput(props: { metadata: Metadata, value: string, onChange:(value: string) => void, getData: (value: string | string[]) => any, type?: Type }) {
+type Props = {
+  metadata: Metadata
+  value: string
+  onChange:(value: string) => void
+  getData: (value: string | string[]) => any
+  type?: Type
+}
+
+function MetadataInput(props: Props) {
   const [focus, setFocus] = useState(false)
   const [search, setSearch] = useState<{ value: string, items: MetadataItem[] }>({ value: '', items: [] })
   const ref = useRef<TextAreaRef | null>(null)
 
   const changeInput = (value: string) => {
     if (props.type === 'object') {
-      return message.warn('请点击数据源进行输入')
+      message.warn('请点击数据源进行输入')
+      return
     }
     props.onChange(value)
   }
 
   const changeSearch = (value: string) => {
-    const items = props.metadata.items.filter((it) => it.path.includes(value) || it.alias?.includes(value))
+    const items = props.metadata.items
+      .filter((it) => it.path.includes(value) || it.alias?.includes(value))
 
     setSearch({
       value,
@@ -103,7 +113,8 @@ function MetadataInput(props: { metadata: Metadata, value: string, onChange:(val
 
   const entryMetadata = (item: MetadataItem) => {
     if (props.type === 'object') {
-      return props.onChange(item.path)
+      props.onChange(item.alias ? `${item.alias}[${item.id}]` : item.path)
+      return
     }
 
     const selectionStart = ref.current?.resizableTextArea?.textArea.selectionStart ?? 0
@@ -148,9 +159,11 @@ function MetadataInput(props: { metadata: Metadata, value: string, onChange:(val
               <EditTwoTone />
             </Title>
             <Input allowClear value={search.value} onChange={(ev) => changeSearch(ev.target.value)} placeholder="请输入搜索内容" />
-            {(props.metadata.items.length === 0 || (search.value && search.items.length === 0)) && (<div>无内容</div>)}
-            {props.metadata.items.map((it, index) => (
-              <Items key={index} onClick={() => entryMetadata(it)}>
+            {(props.metadata.items.length === 0 || (search.value && search.items.length === 0))
+              ? (<div>无内容</div>)
+              : null}
+            {props.metadata.items.map((it) => (
+              <Items key={it.id} onClick={() => entryMetadata(it)}>
                 <div>
                   <AntdPopover content={it.path} trigger="hover" placement="left">
                     <p><Tag color="blue">{it?.alias ?? it.path}</Tag></p>

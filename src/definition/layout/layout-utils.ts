@@ -3,15 +3,20 @@ import styleUtils from '../style/style-utils'
 import { ContentDefinition, ContentSerialize } from '../content/types'
 import { Layout, LayoutDefinition, LayoutSerialize } from './types'
 import { Style } from '../style/types'
-import Many from './many'
+import Many from './Many'
 import contentUtils from '../content/content-utils'
 import definition from '../definition'
 
 const createByLayoutSerialize = (serialize: LayoutSerialize): Layout => {
+  const layoutDefinition = definition.layouts.find((it) => it.key === serialize.definition)
+  if (!layoutDefinition) {
+    throw new Error(`createByLayoutSerialize: ${serialize.definition} is not found`)
+  }
+
   const layout: Layout = {
     id: serialize.id,
     styles: serialize.styles.map((it) => styleUtils.createStyle(definition.styles, it)),
-    definition: definition.layouts.find((it) => it.key === serialize.definition)!,
+    definition: layoutDefinition,
     contents: [],
     toJSON() {
       const value: LayoutSerialize = {

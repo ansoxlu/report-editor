@@ -75,15 +75,18 @@ function Render(props: {
         <Button type="primary" onClick={() => onPrint()}>打印</Button>
         <Button type="primary" onClick={() => navigate('/')}>返回首页</Button>
       </Header>
-      {canvas.map((it, index) => (<PageImg key={index} src={it.toDataURL('image/jpeg', 1 / SCALE)} alt="" width={props.page.width} height={props.page.height} />))}
+      {canvas.map((it, index) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <PageImg key={index} src={it.toDataURL('image/jpeg', 1 / SCALE)} alt="" width={props.page.width} height={props.page.height} />
+      ))}
       <RenderContainer
         ref={(value) => { ref.current = value }}
         width={props.page.width}
         height={props.page.height}
       >
-        {props.page.layouts.map((it, index) => (
+        {props.page.layouts.map((it) => (
           <it.definition.Render
-            key={index}
+            key={it.id}
             style={styleUtils.render(it.styles)}
             contents={it.contents}
             getData={getData}

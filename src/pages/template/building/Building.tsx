@@ -27,6 +27,7 @@ const PageContainer = styled.article<{isDragging: boolean}>`
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow: auto !important;
   border: 1px ${(props) => (props.isDragging ? 'dashed #4099ff' : 'solid #ddd')};
 `
 

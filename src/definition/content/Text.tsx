@@ -1,12 +1,11 @@
 import React, { CSSProperties } from 'react'
 import { ContentDefinition } from './types'
 import { Metadata } from '../types'
-import MetadataInput from './components/metadata-input'
+import MetadataInput from './components/MetadataInput'
 
 const Text: ContentDefinition<string, string> = {
   key: 'Text',
   defaultValue: '',
-  styles: [],
   description: '单独的文本.用于医院标题,提示信息等内容',
   title: '文本',
   Blueprint(props: {
@@ -39,7 +38,10 @@ const Text: ContentDefinition<string, string> = {
           {
           (lines.length > 1
             ? lines
-            : Array.from(props.result)).map((it, index) => (<div key={String(index)}>{it}</div>))
+            : Array.from(props.result)).map((it, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+              <div key={index}>{it}</div>
+          ))
         }
         </div>
       )
@@ -48,6 +50,7 @@ const Text: ContentDefinition<string, string> = {
       <div style={props.style}>
         <div>
           {lines.map((it, index) => (
+            // eslint-disable-next-line react/no-array-index-key
             <span key={index}>
               {it}
               <br />
@@ -72,7 +75,10 @@ const Text: ContentDefinition<string, string> = {
           {
           (lines.length > 1
             ? lines
-            : Array.from(props.result)).map((it, index) => (<div key={index}>{it}</div>))
+            : Array.from(props.result)).map((it, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+              <div key={index}>{it}</div>
+          ))
         }
         </div>
       )
@@ -81,6 +87,7 @@ const Text: ContentDefinition<string, string> = {
       <div style={props.style} onClick={() => props.onChangeActive()}>
         <div>
           {lines.map((it, index) => (
+            // eslint-disable-next-line react/no-array-index-key
             <span key={index}>
               {it}
               <br />

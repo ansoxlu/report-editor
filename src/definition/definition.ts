@@ -2,8 +2,8 @@ import styleUtils from './style/style-utils'
 import { ContentDefinition } from './content/types'
 import { LayoutDefinition } from './layout/types'
 import { StyleDefinition } from './style/types'
-import Text from './content/text'
-import Many from './layout/many'
+import Text from './content/Text'
+import Many from './layout/Many'
 import FlexDirection from './style/FlexDirection'
 import FlexGrow from './style/FlexGrow'
 import JustifyContent from './style/JustifyContent'
@@ -20,6 +20,8 @@ import MaxHeight from './style/MaxHeight'
 import MaxWidth from './style/MaxWidth'
 import Padding from './style/Padding'
 import Border from './style/Border'
+import PageLine from './content/PageLine'
+import Single from './layout/Single'
 
 const styles: StyleDefinition<any>[] = [
   FlexDirection,
@@ -43,16 +45,15 @@ const styles: StyleDefinition<any>[] = [
 const pageStyles = [
   FontSize,
   FontWeight,
-  Ellipsis,
   Color,
 ].map((it) => styleUtils.createStyle(styles, it))
 
 const contents: ContentDefinition<any, any>[] = [
-  Text,
+  Text, PageLine,
 ]
 
 const layouts: LayoutDefinition[] = [
-  Many,
+  Many, Single,
 ]
 
 const paperSizes = [

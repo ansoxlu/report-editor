@@ -55,21 +55,21 @@ const elementToCanvas = async (
 ): Promise<HTMLCanvasElement[]> => {
   // 单页高度
   const pageHeight = target.offsetHeight
-  // 单页
-  if (pageHeight >= target.scrollHeight || height === 0) {
-    return htmlToCanvas(target.innerHTML, width, height).then((canvas) => ([canvas]))
+  // 无限高单页
+  if (height === 0) {
+    return htmlToCanvas(target.innerHTML, width, height)
+      .then((canvas) => ([canvas]))
   }
 
+  // 多页内容处理
   const pages: string[] = ['']
   // 可用高度
   let usableHeight = pageHeight
   for (let i = 0; i < target.children.length; i += 1) {
     const it = target.children[i]
     const itHeight = it.scrollHeight
+    // br 分页处理
     if (it.nodeName === 'BR') {
-      const index = pages.length - 1
-      const html = `${pages[index]}<div style="page-break-after:always;">`
-      pages.splice(index, 1, html)
       pages.push('')
     } else if (it.nodeName === 'TABLE') {
       // 表格单页保留表头和表尾
@@ -77,14 +77,18 @@ const elementToCanvas = async (
     } else {
       // 可用高度不满足，进行换页
       // eslint-disable-next-line no-lonely-if
-      if (itHeight > usableHeight || itHeight >= pageHeight) {
+      if (itHeight > usableHeight) {
         usableHeight = pageHeight - itHeight
-        pages.push(it.innerHTML)
+        pages.push(it.outerHTML)
+      } else if (itHeight >= pageHeight) {
+        // 内容进出单页
+        pages.push(it.outerHTML)
+        usableHeight = pageHeight
       } else {
         // 将当前页内容取出，合并后再添加
         usableHeight -= itHeight
         const index = pages.length - 1
-        const html = `${pages[index]}${it.outerHTML}<div style="page-break-after:always;">`
+        const html = `${pages[index]}${it.outerHTML}`
         pages.splice(index, 1, html)
       }
     }
@@ -142,7 +146,7 @@ const print = (canvas: HTMLCanvasElement[], width: number, height: number) => {
     `)
   setTimeout(() => {
     wind.print()
-    // wind.close()
+    wind.close()
   }, 200)
 }
 

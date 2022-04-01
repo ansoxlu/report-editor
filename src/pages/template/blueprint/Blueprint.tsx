@@ -138,8 +138,8 @@ function Blueprint(props: {
         <Tabs.TabPane tab="样式" key="1">
           {current === 1 && !!props.active && [
             <Items key="button" style={{ justifyContent: 'center' }}><Button type="primary" danger onClick={handleDelete}>删除</Button></Items>,
-            props.active.styles.map((it, index) => (
-              <Items key={index}>
+            props.active.styles.map((it) => (
+              <Items key={it.definition.key}>
                 <Title>{it.definition.title}</Title>
                 <it.definition.Blueprint
                   value={it.value}

@@ -39,7 +39,9 @@ const JustifyContent: StyleDefinition<Category> = {
         onChange={props.onChange}
         style={{ width: 190 }}
       >
-        {Categories.map((it, index) => (<Select.Option key={index} value={it.value}>{it.title}</Select.Option>))}
+        {Categories.map((it) => (
+          <Select.Option key={it.value} value={it.value}>{it.title}</Select.Option>
+        ))}
       </Select>
     )
   },

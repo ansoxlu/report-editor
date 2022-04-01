@@ -11,7 +11,6 @@ const Container = styled.div<{ isDragging: boolean, isActive: boolean }>`
   display: flex;
   flex: auto;
   flex-direction: row;
-  position: relative;
   ${(props) => (props.isDragging ? 'border: 1px dashed #4099ff;' : '')}
   ${(props) => (props.isActive ? 'background-color: springgreen' : '')}
 `
@@ -19,7 +18,6 @@ const Container = styled.div<{ isDragging: boolean, isActive: boolean }>`
 const ContentContainer = styled.div<{ isDragging: boolean, isActive: boolean }>`
   display: flex;
   ${(props) => (props.isDragging ? 'border: 1px dashed #4099ff;' : '')}
-  position: relative;
   flex: 1;
   ${(props) => (props.isActive ? 'background-color: springgreen' : '')}
 `
@@ -39,9 +37,9 @@ const Many: LayoutDefinition = {
   Render(props: LayoutRenderProps) {
     return (
       <div style={props.style}>
-        {props.contents.map((it, index) => (
+        {props.contents.map((it) => (
           <it.definition.Render
-            key={index}
+            key={it.id}
             style={styleUtils.render(it.styles)}
             result={props.getData(it.value)}
           />
@@ -81,7 +79,7 @@ const Many: LayoutDefinition = {
                       {it.value
                         ? (
                           <it.definition.Building
-                            key={index}
+                            key={it.id}
                             style={styleUtils.render(it.styles)}
                             value={it.value}
                             result={props.getData(it.value) || it.value}
@@ -89,7 +87,7 @@ const Many: LayoutDefinition = {
                           />
                         )
                         : (
-                          <Notice key={index} onClick={() => props.onChangeActive(it.id)}>
+                          <Notice key={it.id} onClick={() => props.onChangeActive(it.id)}>
                             未配置属性
                           </Notice>
                         )}

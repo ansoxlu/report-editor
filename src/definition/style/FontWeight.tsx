@@ -10,8 +10,8 @@ const FontWeight: StyleDefinition<number> = {
         onChange={props.onChange}
         style={{ width: 190 }}
       >
-        {[400, 500, 600, 700, 800, 900].map((it, index) => (
-          <Select.Option key={index} value={it}>{it}</Select.Option>
+        {[400, 500, 600, 700, 800, 900].map((it) => (
+          <Select.Option key={it} value={it}>{it}</Select.Option>
         ))}
       </Select>
     )

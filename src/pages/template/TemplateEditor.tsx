@@ -14,7 +14,7 @@ import Material from './material/Material'
 import { DroppableIds, MaterialType } from './types'
 import definition from '../../definition/definition'
 import layoutUtils from '../../definition/layout/layout-utils'
-import Many from '../../definition/layout/many'
+import Many from '../../definition/layout/Many'
 import contentUtils from '../../definition/content/content-utils'
 
 const Container = styled.div`

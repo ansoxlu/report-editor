@@ -57,7 +57,7 @@ const MENUS: Menu[] = [
     Element: HomeTemplate,
   },
   {
-    description: '',
+    description: '已完成数据和模板编辑后,开始查看效果和PDF生成',
     key: 'Preview',
     title: '打印预览',
     Element: HomePreview,
